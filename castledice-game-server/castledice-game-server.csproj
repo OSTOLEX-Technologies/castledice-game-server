@@ -15,4 +15,13 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="castledice-game-data-logic">
+        <HintPath>..\..\castledice-game-data-logic\castledice-game-data-logic\bin\Debug\netstandard2.1\castledice-game-data-logic.dll</HintPath>
+      </Reference>
+      <Reference Include="castledice-game-logic">
+        <HintPath>..\..\castledice-game-logic\castledice-game-logic\bin\Debug\netstandard2.1\castledice-game-logic.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>
