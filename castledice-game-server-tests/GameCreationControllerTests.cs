@@ -59,19 +59,19 @@ public class GameCreationControllerTests
     }
 
     [Fact]
-    public void CreatedGameStartData_ShouldBePassedToSaveGameStart_OnGivenGameSavingService()
+    public void CreatedGame_ShouldBePassedToSaveGameStart_OnGivenGameSavingService()
     {
         var gameSavingServiceMock = new Mock<IGameSavingService>();
-        var createdGameStartData = GetGameStartData();
+        var createdGame = GetGame();
         var gameCreationController = new GameCreationControllerBuilder
         {
-            GameStartDataCreator = GetGameStartDataCreatorMock(createdGameStartData).Object,
+            GameCreator = GetGameCreatorMock(createdGame).Object,
             GameSavingService = gameSavingServiceMock.Object
         }.Build();
         
         gameCreationController.CreateGame(new List<int>{1, 2});
         
-        gameSavingServiceMock.Verify(saver => saver.SaveGameStart(createdGameStartData), Times.Once);
+        gameSavingServiceMock.Verify(saver => saver.SaveGameStart(createdGame), Times.Once);
     }
     
     [Fact]

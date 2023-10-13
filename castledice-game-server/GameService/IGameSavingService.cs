@@ -5,6 +5,6 @@ namespace castledice_game_server.GameDataSaver;
 
 public interface IGameSavingService
 {
-    void SaveGameStart(GameStartData gameStartData);
+    void SaveGameStart(Game game);
     void SaveGameEnd(Game game);
 }

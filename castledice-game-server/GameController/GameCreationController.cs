@@ -24,8 +24,8 @@ public class GameCreationController
     {
         var game = _gameCreator.CreateGame(playersIds);
         _activeGamesCollection.ActiveGames.Add(game);
+        _gameSavingService.SaveGameStart(game);
         var gameStartData = _gameStartDataCreator.CreateGameStartData(game);
         _gameStartDataSender.SendGameStartData(gameStartData);
-        _gameSavingService.SaveGameStart(gameStartData);
     }
 }
