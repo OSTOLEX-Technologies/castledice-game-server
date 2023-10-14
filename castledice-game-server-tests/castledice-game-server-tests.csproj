@@ -25,6 +25,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Reference Include="casltedice-events-logic">
+        <HintPath>..\..\casltedice-events-logic\casltedice-events-logic\bin\Debug\netstandard2.1\casltedice-events-logic.dll</HintPath>
+      </Reference>
       <Reference Include="castledice-game-data-logic">
         <HintPath>..\..\castledice-game-data-logic\castledice-game-data-logic\bin\Debug\netstandard2.1\castledice-game-data-logic.dll</HintPath>
       </Reference>
