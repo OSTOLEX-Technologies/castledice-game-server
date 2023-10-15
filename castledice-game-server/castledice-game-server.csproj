@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <RootNamespace>castledice_game_server</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="casltedice-events-logic">
+        <HintPath>..\..\casltedice-events-logic\casltedice-events-logic\bin\Debug\netstandard2.1\casltedice-events-logic.dll</HintPath>
+      </Reference>
+      <Reference Include="castledice-game-data-logic">
+        <HintPath>..\..\castledice-game-data-logic\castledice-game-data-logic\bin\Debug\netstandard2.1\castledice-game-data-logic.dll</HintPath>
+      </Reference>
+      <Reference Include="castledice-game-logic">
+        <HintPath>..\..\castledice-game-logic\castledice-game-logic\bin\Debug\netstandard2.1\castledice-game-logic.dll</HintPath>
+      </Reference>
+      <Reference Include="castledice-riptide-message-extensions">
+        <HintPath>..\..\castledice-riptide-dto-adapters\castledice-riptide-message-extensions\bin\Debug\netstandard2.1\castledice-riptide-message-extensions.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="RiptideNetworking.Riptide" Version="2.0.0" />
+    </ItemGroup>
+
+</Project>
