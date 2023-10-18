@@ -5,5 +5,5 @@
 /// </summary>
 public static class PlayersDictionary
 {
-    public static Dictionary<int, int> Dictionary { get; } = new();
+    public static Dictionary<int, ushort> Dictionary { get; } = new();
 }

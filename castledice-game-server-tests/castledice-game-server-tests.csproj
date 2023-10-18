@@ -34,6 +34,9 @@
       <Reference Include="castledice-game-logic">
         <HintPath>..\..\castledice-game-logic\castledice-game-logic\bin\Debug\netstandard2.1\castledice-game-logic.dll</HintPath>
       </Reference>
+      <Reference Include="castledice-riptide-message-extensions">
+        <HintPath>..\..\castledice-riptide-dto-adapters\castledice-riptide-message-extensions\bin\Debug\netstandard2.1\castledice-riptide-message-extensions.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
     <ItemGroup>
