@@ -17,12 +17,17 @@ public class ObjectCreationUtility
 {
     public static GameStartData GetGameStartData()
     {
+        return GetGameStartData(1, 2);
+    }
+    
+    public static GameStartData GetGameStartData(params int[] playerIdsArray)
+    {
         var version = "1.0.0";
         var boardLength = 10;
         var boardWidth = 10;
         var cellType = CellType.Square;
         var cellsPresence = GetValuesMatrix(10, 10, true);
-        var playerIds = new List<int>() { 1, 2 };
+        var playerIds = new List<int>(playerIdsArray);
         var firstCastle = new CastleData((0, 0), 1, 1, 3, 3, playerIds[0]);
         var secondCastle = new CastleData((9, 9), 1, 1, 3, 3, playerIds[1]);
         var generatedContent = new List<GeneratedContentData>
