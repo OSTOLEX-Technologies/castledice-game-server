@@ -21,6 +21,10 @@ public class GameCreator : IGameCreator
 
     public Game CreateGame(List<int> playersIds)
     {
-        throw new NotImplementedException();
+        var players = _playersListProvider.GetPlayersList(playersIds);
+        var boardConfig = _boardConfigProvider.GetBoardConfig();
+        var placeablesConfig = _placeablesConfigProvider.GetPlaceablesConfig();
+        var decksList = _playersDecksProvider.GetPlayersDecksList(players);
+        return _gameConstructorWrapper.ConstructGame(players, boardConfig, placeablesConfig, decksList);
     }
 }
