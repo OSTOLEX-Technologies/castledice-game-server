@@ -20,6 +20,11 @@ public class ObjectCreationUtility
     {
         return GetGameStartData(1, 2);
     }
+
+    public static Player GetPlayer(int id)
+    {
+        return new Player(new PlayerActionPoints(), id);
+    }
     
     public static GameStartData GetGameStartData(params int[] playerIds)
     {
@@ -109,5 +114,38 @@ public class ObjectCreationUtility
 
         return game;
     }
+
+    public static BoardConfig GetBoardConfig()
+    {
+        var playersToCastlesPositions = new Dictionary<Player, Vector2Int>()
+        {
+            { new Player(new PlayerActionPoints(), 1), (0, 0) },
+            { new Player(new PlayerActionPoints(), 2), (9, 9) }
+        };
+        return GetBoardConfig(playersToCastlesPositions);
+    }
     
+    public static BoardConfig GetBoardConfig(Dictionary<Player, Vector2Int> playersToCastlesPositions)
+    {
+        var castleConfig = new CastleConfig(3, 1, 1);
+        var castlesFactory = new CastlesFactory(castleConfig);
+        var castlesSpawner = new CastlesSpawner(playersToCastlesPositions, castlesFactory);
+
+        var contentSpawners = new List<IContentSpawner>
+        {
+            castlesSpawner
+        };
+
+        var cellsGenerator = new RectCellsGenerator(10, 10);
+            
+        var boardConfig = new BoardConfig(contentSpawners, cellsGenerator, CellType.Square);
+
+        return boardConfig;
+    }
+    
+    public static PlaceablesConfig GetPlaceablesConfig()
+    {
+        var unitsConfig = new PlaceablesConfig(new KnightConfig(1, 2));
+        return unitsConfig;
+    }
 }
