@@ -1,6 +1,7 @@
 ﻿using casltedice_events_logic.ServerToClient;
 using castledice_game_server_tests.TestImplementations;
 using castledice_game_server.NetworkManager;
+using castledice_game_server.NetworkManager.PlayersTracking;
 using castledice_riptide_dto_adapters.Extensions;
 using Moq;
 using Riptide;
@@ -10,24 +11,19 @@ namespace castledice_game_server_tests;
 
 public class GameStartDataSenderTests
 {
-    [Fact]
-    public void SendGameStartData_ShouldThrowInvalidOperationException_IfPlayersIdsAreAbsentInPlayersDictionary()
-    {
-        var messageSender = new Mock<IMessageSenderById>().Object;
-        var gameStartDataSender = new GameStartDataSender(messageSender);
-        var gameStartData = GetGameStartData();
-        
-        Assert.Throws<InvalidOperationException>(() => gameStartDataSender.SendGameStartData(gameStartData));
-    }
-
+    
     [Theory]
     [MemberData(nameof(PlayersToClientsIds))]
-    public void SendGameStartData_ShouldSendMessageWithCreateGameDTO_ToPlayersWithIdsFromGameStartData(Dictionary<int, ushort> playersToClientsIds)
+    public void SendGameStartData_ShouldSendMessageToPlayersFromGameStartData_WithClientIdsFromGivenProvider(Dictionary<int, ushort> playersToClientsIds)
     {
-        SetUpPlayersDictionary(playersToClientsIds);
         var messageSenderMock = new Mock<IMessageSenderById>();
         var gameStartData = GetGameStartData(playersToClientsIds.Keys.ToArray());
-        var gameStartDataSender = new GameStartDataSender(messageSenderMock.Object);
+        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        foreach (var playersToClientsId in playersToClientsIds)
+        {
+            clientIdProviderMock.Setup(provider => provider.GetClientIdForPlayer(playersToClientsId.Key)).Returns(playersToClientsId.Value);
+        }
+        var gameStartDataSender = new GameStartDataSender(messageSenderMock.Object, clientIdProviderMock.Object);
         
         gameStartDataSender.SendGameStartData(gameStartData);
 
@@ -35,7 +31,6 @@ public class GameStartDataSenderTests
         {
             messageSenderMock.Verify(s => s.Send(It.IsAny<Message>(), clientId), Times.Once);
         }
-        PlayersDictionary.Dictionary.Clear();
     }
 
     public static IEnumerable<object[]> PlayersToClientsIds()
@@ -64,14 +59,12 @@ public class GameStartDataSenderTests
     {
         var firstPlayerId = 1;
         var secondPlayerId = 2;
-        SetUpPlayersDictionary(new Dictionary<int, ushort>
-        {
-            { firstPlayerId, 3 },
-            { secondPlayerId, 4 }
-        });
         var gameStartData = GetGameStartData(firstPlayerId, secondPlayerId);
         var messageSender = new TestMessageSenderById();
-        var gameStartDataSender = new GameStartDataSender(messageSender);
+        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        clientIdProviderMock.Setup(provider => provider.GetClientIdForPlayer(firstPlayerId)).Returns(3);
+        clientIdProviderMock.Setup(provider => provider.GetClientIdForPlayer(secondPlayerId)).Returns(4);
+        var gameStartDataSender = new GameStartDataSender(messageSender, clientIdProviderMock.Object);
         var expectedDTO = new CreateGameDTO(gameStartData);
         
         gameStartDataSender.SendGameStartData(gameStartData);
@@ -81,14 +74,5 @@ public class GameStartDataSenderTests
         var sentDTO = sentMessage.GetCreateGameDTO();
 
         Assert.Equal(expectedDTO, sentDTO);
-        PlayersDictionary.Dictionary.Clear();
-    }
-
-    private static void SetUpPlayersDictionary(Dictionary<int, ushort> playersIdsToClientsIds)
-    {
-        foreach (var keyValue in playersIdsToClientsIds)
-        {
-            PlayersDictionary.Dictionary.Add(keyValue.Key, keyValue.Value);
-        }
     }
 }
