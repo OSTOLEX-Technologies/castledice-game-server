@@ -11,23 +11,6 @@ public class PlayerDisconnecterTests
     [InlineData(2)]
     [InlineData(3)]
     [InlineData(4)]
-    public void DisconnectPlayerWithId_ShouldCallRemoveClientIdForPlayer_OnGivenPlayerClientIdRemover(int id)
-    {
-        var removerMock = new Mock<IPlayerClientIdRemover>();
-        var clientDisconnecterMock = new Mock<IClientDisconnecter>();
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
-        var playerDisconnecter = new PlayerDisconnecter(clientDisconnecterMock.Object, removerMock.Object, clientIdProviderMock.Object);
-        
-        playerDisconnecter.DisconnectPlayerWithId(id);
-        
-        removerMock.Verify(remover => remover.RemoveClientIdForPlayer(id), Times.Once);
-    }
-    
-    [Theory]
-    [InlineData(1)]
-    [InlineData(2)]
-    [InlineData(3)]
-    [InlineData(4)]
     public void DisconnectPlayerWithId_ShouldPassGivenId_ToPlayerClientIdProvider(int id)
     {
         var removerMock = new Mock<IPlayerClientIdRemover>();
@@ -53,8 +36,25 @@ public class PlayerDisconnecterTests
         clientIdProviderMock.Setup(provider => provider.GetClientIdForPlayer(playerId)).Returns(clientId);
         var playerDisconnecter = new PlayerDisconnecter(clientDisconnecterMock.Object, removerMock.Object, clientIdProviderMock.Object);
         
-        playerDisconnecter.DisconnectPlayerWithId(1);
+        playerDisconnecter.DisconnectPlayerWithId(playerId);
         
         clientDisconnecterMock.Verify(disconnecter => disconnecter.DisconnectClient(clientId, null), Times.Once);
+    }
+    
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    public void DisconnectPlayerWithId_ShouldCallRemoveClientIdForPlayer_OnGivenPlayerClientIdRemover(int id)
+    {
+        var removerMock = new Mock<IPlayerClientIdRemover>();
+        var clientDisconnecterMock = new Mock<IClientDisconnecter>();
+        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        var playerDisconnecter = new PlayerDisconnecter(clientDisconnecterMock.Object, removerMock.Object, clientIdProviderMock.Object);
+        
+        playerDisconnecter.DisconnectPlayerWithId(id);
+        
+        removerMock.Verify(remover => remover.RemoveClientIdForPlayer(id), Times.Once);
     }
 }

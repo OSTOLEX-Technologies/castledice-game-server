@@ -17,6 +17,8 @@ public class PlayerDisconnecter : IPlayerDisconnecter
 
     public void DisconnectPlayerWithId(int playerId)
     {
-        
+        var clientId = _playerClientIdProvider.GetClientIdForPlayer(playerId);
+        _clientDisconnecter.DisconnectClient(clientId);
+        _playerClientIdRemover.RemoveClientIdForPlayer(playerId);
     }
 }
