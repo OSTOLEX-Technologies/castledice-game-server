@@ -1,43 +1,109 @@
 ﻿using casltedice_events_logic.ClientToServer;
 using castledice_game_server.Auth;
+using castledice_game_server.GameController.GameInitialization.GameCreation;
 using castledice_game_server.NetworkManager;
+using castledice_game_server.NetworkManager.PlayerDisconnection;
+using castledice_game_server.NetworkManager.PlayersTracking;
 using Moq;
 
 namespace castledice_game_server_tests;
 
 public class PlayerInitializerTests
 {
-    [Fact]
-    public void InitializePlayer_ShouldAddPlayerAndClientIdsToDictionary()
+    [Theory]
+    [InlineData("token")]
+    [InlineData("anotherToken")]
+    [InlineData("yetAnotherToken")]
+    public void InitializePlayer_ShouldPassTokenFromDTO_ToGivenIdRetriever(string token)
     {
-        var idRetriever = new Mock<IIdRetriever>();
-        var dto = new InitializePlayerDTO("token");
-        var clientId = (ushort) 1;
-        var playerId = 3;
-        idRetriever.Setup(x => x.RetrievePlayerId(dto.VerificationKey)).Returns(playerId);
-        var playerInitializer = new PlayerInitializer(idRetriever.Object);
+        var retrieverMock = new Mock<IIdRetriever>();
+        var initializer = new PlayerInitializerBuilder
+        {
+            IdRetriever = retrieverMock.Object
+        }.Build();
         
-        playerInitializer.InitializePlayer(dto, clientId);
+        initializer.InitializePlayer(new InitializePlayerDTO(token), 0);
         
-        Assert.Equal(clientId, PlayersDictionary.Dictionary[playerId]);
-        PlayersDictionary.Dictionary.Clear();
+        retrieverMock.Verify(retriever => retriever.RetrievePlayerId(token), Times.Once);
     }
 
-    [Fact]
-    public void InitializePlayer_ShouldRemoveOldClientIdAndAddNew_IfGivenPlayerIdAlreadyInDictionary()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    public void InitializePlayer_ShouldDisconnectPlayerById_IfPlayerHasClientId(int playerId)
     {
-        var oldClientId = (ushort) 3;
-        var newClientId = (ushort) 5;
-        var playerId = 3;
-        PlayersDictionary.Dictionary.Add(playerId, oldClientId);
-        var idRetriever = new Mock<IIdRetriever>();
-        var dto = new InitializePlayerDTO("token");
-        idRetriever.Setup(x => x.RetrievePlayerId(dto.VerificationKey)).Returns(playerId);
-        var playerInitializer = new PlayerInitializer(idRetriever.Object);
+        var retrieverMock = new Mock<IIdRetriever>();
+        retrieverMock.Setup(retriever => retriever.RetrievePlayerId(It.IsAny<string>())).Returns(playerId);
+        var disconnecterMock = new Mock<IPlayerDisconnecter>();
+        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        clientIdProviderMock.Setup(c => c.PlayerHasClientId(playerId)).Returns(true);
+        var initializer = new PlayerInitializerBuilder
+        {
+            IdRetriever = retrieverMock.Object,
+            PlayerDisconnecter = disconnecterMock.Object,
+            PlayerClientIdProvider = clientIdProviderMock.Object
+        }.Build();
         
-        playerInitializer.InitializePlayer(dto, newClientId);
+        initializer.InitializePlayer(new InitializePlayerDTO("token"), 0);
         
-        Assert.Equal(newClientId, PlayersDictionary.Dictionary[playerId]);
-        PlayersDictionary.Dictionary.Clear();
+        disconnecterMock.Verify(disconnecter => disconnecter.DisconnectPlayerWithId(playerId), Times.Once);
     }
+    
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    public void InitializePlayer_ShouldNotDisconnectPlayerById_IfPlayerDoesNotHaveClientId(int playerId)
+    {
+        var retrieverMock = new Mock<IIdRetriever>();
+        retrieverMock.Setup(retriever => retriever.RetrievePlayerId(It.IsAny<string>())).Returns(playerId);
+        var disconnecterMock = new Mock<IPlayerDisconnecter>();
+        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        clientIdProviderMock.Setup(c => c.PlayerHasClientId(playerId)).Returns(false);
+        var initializer = new PlayerInitializerBuilder
+        {
+            IdRetriever = retrieverMock.Object,
+            PlayerDisconnecter = disconnecterMock.Object,
+            PlayerClientIdProvider = clientIdProviderMock.Object
+        }.Build();
+        
+        initializer.InitializePlayer(new InitializePlayerDTO("token"), 0);
+        
+        disconnecterMock.Verify(disconnecter => disconnecter.DisconnectPlayerWithId(playerId), Times.Never);
+    }
+    
+    [Theory]
+    [InlineData(1, 2)]
+    [InlineData(2, 3)]
+    [InlineData(3, 4)]
+    public void InitializePlayer_ShouldSaveClientId_ByUsingGivenPlayerClientIdSaver(int playerId, ushort clientId)
+    {
+        var retrieverMock = new Mock<IIdRetriever>();
+        retrieverMock.Setup(retriever => retriever.RetrievePlayerId(It.IsAny<string>())).Returns(playerId);
+        var clientIdSaverMock = new Mock<IPlayerClientIdSaver>();
+        var initializer = new PlayerInitializerBuilder
+        {
+            IdRetriever = retrieverMock.Object,
+            PlayerClientIdSaver = clientIdSaverMock.Object
+        }.Build();
+        
+        initializer.InitializePlayer(new InitializePlayerDTO("token"), clientId);
+        
+        clientIdSaverMock.Verify(saver => saver.SaveClientIdForPlayer(playerId, clientId), Times.Once);
+    }
+
+    private class PlayerInitializerBuilder
+    {
+        public IIdRetriever IdRetriever { get; set; } = new Mock<IIdRetriever>().Object;
+        public IPlayerClientIdSaver PlayerClientIdSaver { get; set; } = new Mock<IPlayerClientIdSaver>().Object;
+        public IPlayerClientIdProvider PlayerClientIdProvider { get; set; } = new Mock<IPlayerClientIdProvider>().Object;
+        public IPlayerDisconnecter PlayerDisconnecter { get; set; } = new Mock<IPlayerDisconnecter>().Object;
+        
+        public PlayerInitializer Build()
+        {
+            return new PlayerInitializer(IdRetriever, PlayerClientIdSaver, PlayerClientIdProvider, PlayerDisconnecter);
+        }
+    }
+
 }

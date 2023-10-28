@@ -56,4 +56,21 @@ public class PlayerToClientDictionaryTests
         
         Assert.True(dictionary.RemoveClientIdForPlayer(1));
     }
+    
+    [Fact]
+    public void PlayerHasClientId_ShouldReturnFalse_IfNoClientIdForGivenPlayerId()
+    {
+        var dictionary = new PlayerToClientDictionary();
+        
+        Assert.False(dictionary.PlayerHasClientId(1));
+    }
+    
+    [Fact]
+    public void PlayerHasClientId_ShouldReturnTrue_IfClientIdForGivenPlayerId()
+    {
+        var dictionary = new PlayerToClientDictionary();
+        dictionary.SaveClientIdForPlayer(1, 2);
+        
+        Assert.True(dictionary.PlayerHasClientId(1));
+    }
 }

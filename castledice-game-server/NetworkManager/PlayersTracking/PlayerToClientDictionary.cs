@@ -10,6 +10,11 @@ public class PlayerToClientDictionary : IPlayerClientIdProvider, IPlayerClientId
         throw new InvalidOperationException("No client id found for given player id: " + playerId);
     }
 
+    public bool PlayerHasClientId(int playerId)
+    {
+        return _playerToClientIds.ContainsKey(playerId);
+    }
+
     public bool RemoveClientIdForPlayer(int playerId)
     {
         return _playerToClientIds.Remove(playerId);
