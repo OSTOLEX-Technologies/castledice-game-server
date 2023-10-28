@@ -23,7 +23,10 @@ public class PlayerInitializer
     public void InitializePlayer(InitializePlayerDTO dto, ushort clientId)
     {
         var playerId = _idRetriever.RetrievePlayerId(dto.VerificationKey);
-        PlayersDictionary.Dictionary.Remove(playerId); //TODO: Disconnect player with this id and send dto to old client.
-        PlayersDictionary.Dictionary.Add(playerId, clientId);
+        if (_playerClientIdProvider.PlayerHasClientId(playerId))
+        {
+            _playerDisconnecter.DisconnectPlayerWithId(playerId);
+        }
+        _playerClientIdSaver.SaveClientIdForPlayer(playerId, clientId);
     }
 }
