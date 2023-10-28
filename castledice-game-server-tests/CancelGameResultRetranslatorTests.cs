@@ -25,8 +25,8 @@ public class CancelGameResultRetranslatorTests
     {
         var playerId = 3;
         var playerClientId = (ushort)4;
-        PlayersDictionary.Dictionary.Add(playerClientId, playerClientId);
-        var DTO = new CancelGameResultDTO(false, playerClientId);
+        PlayersDictionary.Dictionary.Add(playerId, playerClientId);
+        var DTO = new CancelGameResultDTO(false, playerId);
         var messageSenderMock = new Mock<IMessageSenderById>();
         var retranslator = new CancelGameResultRetranslator(messageSenderMock.Object);
         

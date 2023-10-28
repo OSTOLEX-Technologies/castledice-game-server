@@ -1,4 +1,4 @@
-﻿namespace castledice_game_server.GameController;
+﻿namespace castledice_game_server.GameController.GameInitialization;
 
 public interface IGameInitializationController
 {

@@ -1,4 +1,5 @@
-﻿using castledice_game_data_logic;
+﻿using System.Net.Cache;
+using castledice_game_data_logic;
 using castledice_game_data_logic.Content.Generated;
 using castledice_game_data_logic.Content.Placeable;
 using castledice_game_logic;
@@ -20,32 +21,39 @@ public class ObjectCreationUtility
         return GetGameStartData(1, 2);
     }
     
-    public static GameStartData GetGameStartData(params int[] playerIdsArray)
+    public static GameStartData GetGameStartData(params int[] playerIds)
     {
         var version = "1.0.0";
-        var boardLength = 10;
-        var boardWidth = 10;
-        var cellType = CellType.Square;
-        var cellsPresence = GetValuesMatrix(10, 10, true);
-        var playerIds = new List<int>(playerIdsArray);
-        var firstCastle = new CastleData((0, 0), 1, 1, 3, 3, playerIds[0]);
-        var secondCastle = new CastleData((9, 9), 1, 1, 3, 3, playerIds[1]);
-        var generatedContent = new List<GeneratedContentData>
-        {
-            firstCastle, 
-            secondCastle
-        };
-        var placeablesConfigs = new List<PlaceableContentData>
-        {
-            new KnightData(1, 2)
-        };
+        var boardData = GetBoardData();
+        var playersIdsList = new List<int>(playerIds);
+        var placeablesConfigs = new PlaceablesConfigData(new KnightConfigData(1, 2));
         var playerDecks = new List<PlayerDeckData>()
         {
             new(playerIds[0], new List<PlacementType> { PlacementType.Knight }),
             new (playerIds[1], new List<PlacementType> { PlacementType.Knight })
         };
-        var data = new GameStartData(version, boardLength, boardWidth, cellType, cellsPresence, generatedContent, placeablesConfigs, playerIds, playerDecks);
+        var data = new GameStartData(version, boardData, placeablesConfigs, playersIdsList, playerDecks);
         return data;
+    }
+
+    public static BoardData GetBoardData(CellType cellType = CellType.Square)
+    {
+        var cellsPresence = GetValuesMatrix(10, 10, true);
+        return GetBoardData(cellsPresence, cellType);
+    }
+        
+    public static BoardData GetBoardData(bool[,] cellsPresence, CellType cellType = CellType.Square)
+    {
+        var boardLength = 10;
+        var boardWidth = 10;
+        var firstCastle = new CastleData((0, 0), 1, 1, 3, 3, 1);
+        var secondCastle = new CastleData((9, 9), 1, 1, 3, 3, 2);
+        var generatedContent = new List<GeneratedContentData>
+        {
+            firstCastle, 
+            secondCastle
+        };
+        return new BoardData(boardLength, boardWidth, cellType, cellsPresence, generatedContent);
     }
     
     public static T[,] GetValuesMatrix<T>(int length, int width, T value)
@@ -90,9 +98,9 @@ public class ObjectCreationUtility
             
         var boardConfig = new BoardConfig(contentSpanwers, cellsGenerator, CellType.Square);
 
-        var unitsConfig = new UnitsConfig(new KnightConfig(1, 2));
+        var unitsConfig = new PlaceablesConfig(new KnightConfig(1, 2));
 
-        var placementListProvider = new CommonPlacementListProvider(new List<PlacementType>()
+        var placementListProvider = new CommonDecksList(new List<PlacementType>
         {
             PlacementType.Knight
         });

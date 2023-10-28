@@ -1,15 +1,16 @@
-﻿using castledice_game_server.GameDataSaver;
+﻿using castledice_game_server.GameController.GameInitialization.GameCreation;
+using castledice_game_server.GameDataSaver;
 using castledice_game_server.NetworkManager;
 
-namespace castledice_game_server.GameController;
+namespace castledice_game_server.GameController.GameInitialization;
 
 public class GameInitializationController : IGameInitializationController
 {
-    private IGameSavingService _gameSavingService;
-    private ActiveGamesCollection _activeGamesCollection;
-    private IGameStartDataSender _gameStartDataSender;
-    private IGameCreator _gameCreator;
-    private IGameStartDataCreator _gameStartDataCreator;
+    private readonly IGameSavingService _gameSavingService;
+    private readonly ActiveGamesCollection _activeGamesCollection;
+    private readonly IGameStartDataSender _gameStartDataSender;
+    private readonly IGameCreator _gameCreator;
+    private readonly IGameStartDataCreator _gameStartDataCreator;
 
     public GameInitializationController(IGameSavingService gameSavingService, ActiveGamesCollection activeGamesCollection, IGameStartDataSender gameStartDataSender, IGameCreator gameCreator, IGameStartDataCreator gameStartDataCreator)
     {
