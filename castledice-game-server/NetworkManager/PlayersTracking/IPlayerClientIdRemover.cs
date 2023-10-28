@@ -2,5 +2,5 @@
 
 public interface IPlayerClientIdRemover
 {
-    void RemoveClientIdForPlayer(int playerId);
+    bool RemoveClientIdForPlayer(int playerId);
 }
