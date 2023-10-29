@@ -75,11 +75,16 @@ public class ObjectCreationUtility
 
         return matrix;
     }
-    
+
     public static Game GetGame()
     {
         var firstPlayer = new Player(new PlayerActionPoints(), 1);
         var secondPlayer = new Player(new PlayerActionPoints(), 2);
+        return GetGame(firstPlayer, secondPlayer);
+    }
+    
+    public static Game GetGame(Player firstPlayer, Player secondPlayer)
+    {
         var players = new List<Player>()
         {
             firstPlayer,
