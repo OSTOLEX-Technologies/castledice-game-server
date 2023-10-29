@@ -15,6 +15,9 @@ public class TreesSpawnerProvider : ITreesSpawnerProvider
 
     public RandomTreesSpawner GetTreesSpawner()
     {
-        throw new NotImplementedException();
+        var config = _treesGenerationConfigProvider.GetTreesGenerationConfig();
+        var treesFactory = _treesFactoryProvider.GetTreesFactory();
+        var treesSpawner = new RandomTreesSpawner(config.MinTreesCount, config.MaxTreesCount, config.MinDistanceBetweenTrees, treesFactory);
+        return treesSpawner;
     }
 }

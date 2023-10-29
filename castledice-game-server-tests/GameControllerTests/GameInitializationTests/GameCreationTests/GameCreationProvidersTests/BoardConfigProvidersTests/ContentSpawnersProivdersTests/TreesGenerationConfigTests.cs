@@ -14,8 +14,8 @@ public class TreesGenerationConfigTests
     {
         var config = new TreesGenerationConfig(maxTreesAmount, minTreesAmount, minDistanceBetweenTrees);
         
-        Assert.Equal(minTreesAmount, config.MinTreesAmount);
-        Assert.Equal(maxTreesAmount, config.MaxTreesAmount);
+        Assert.Equal(minTreesAmount, config.MinTreesCount);
+        Assert.Equal(maxTreesAmount, config.MaxTreesCount);
         Assert.Equal(minDistanceBetweenTrees, config.MinDistanceBetweenTrees);
     }
 }

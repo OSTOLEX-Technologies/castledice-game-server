@@ -2,14 +2,14 @@
 
 public class TreesGenerationConfig
 {
-    public int MaxTreesAmount { get; }
-    public int MinTreesAmount { get; }
+    public int MaxTreesCount { get; }
+    public int MinTreesCount { get; }
     public int MinDistanceBetweenTrees { get; }
 
-    public TreesGenerationConfig(int maxTreesAmount, int minTreesAmount, int minDistanceBetweenTrees)
+    public TreesGenerationConfig(int maxTreesCount, int minTreesCount, int minDistanceBetweenTrees)
     {
-        MaxTreesAmount = maxTreesAmount;
-        MinTreesAmount = minTreesAmount;
+        MaxTreesCount = maxTreesCount;
+        MinTreesCount = minTreesCount;
         MinDistanceBetweenTrees = minDistanceBetweenTrees;
     }
 }

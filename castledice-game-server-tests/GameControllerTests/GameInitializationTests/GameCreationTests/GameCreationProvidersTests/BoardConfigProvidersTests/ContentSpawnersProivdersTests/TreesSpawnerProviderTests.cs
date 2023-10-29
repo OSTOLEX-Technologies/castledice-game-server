@@ -1,5 +1,4 @@
 ﻿using castledice_game_logic.GameObjects.Factories;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders.ContentSpawnersProviders;
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders.ContentSpawnersProviders.TreesSpawning;
 using Moq;
 
@@ -7,16 +6,14 @@ namespace castledice_game_server_tests.GameControllerTests.GameInitializationTes
 
 public class TreesSpawnerProviderTests
 {
-    private readonly Mock<ITreesFactoryProvider> _treesFactoryProviderMock = new();
-    private readonly Mock<ITreesGenerationConfigProvider> _treesGenerationConfigProviderMock = new();
-    
     [Fact]
     public void ReturnedTreesSpawner_ShouldHaveFactory_FromGivenProvider()
     {
         var expectedFactory = new Mock<ITreesFactory>().Object;
-        _treesFactoryProviderMock.Setup(provider => provider.GetTreesFactory())
+        var factoryProviderMock = GetTreesFactoryProviderMock();
+        factoryProviderMock.Setup(provider => provider.GetTreesFactory())
             .Returns(expectedFactory);
-        var treesSpawnerProvider = new TreesSpawnerProvider(_treesGenerationConfigProviderMock.Object, _treesFactoryProviderMock.Object);
+        var treesSpawnerProvider = new TreesSpawnerProvider(GetTreesGenerationConfigProviderMock().Object, factoryProviderMock.Object);
         
         var treesSpawner = treesSpawnerProvider.GetTreesSpawner();
         
@@ -30,10 +27,11 @@ public class TreesSpawnerProviderTests
     public void ReturnedTreesSpawner_ShouldHavePropertiesValues_EqualToConfigFromGivenGenerationConfigProvider(
         int maxTreesCount, int minTreesCount, int minDistanceBetweenTrees)
     {
-        var config = new TreesGenerationConfig(maxTreesCount, maxTreesCount, minDistanceBetweenTrees);
-        _treesGenerationConfigProviderMock.Setup(provider => provider.GetTreesGenerationConfig())
+        var config = new TreesGenerationConfig(maxTreesCount, minTreesCount, minDistanceBetweenTrees);
+        var configProviderMock = GetTreesGenerationConfigProviderMock();
+        configProviderMock.Setup(provider => provider.GetTreesGenerationConfig())
             .Returns(config);
-        var treesSpawnerProvider = new TreesSpawnerProvider(_treesGenerationConfigProviderMock.Object, _treesFactoryProviderMock.Object);
+        var treesSpawnerProvider = new TreesSpawnerProvider(configProviderMock.Object, GetTreesFactoryProviderMock().Object);
         
         var treesSpawner = treesSpawnerProvider.GetTreesSpawner();
         
@@ -42,4 +40,19 @@ public class TreesSpawnerProviderTests
         Assert.Equal(minDistanceBetweenTrees, treesSpawner.MinDistanceBetweenTrees);
     }
 
+    private static Mock<ITreesFactoryProvider> GetTreesFactoryProviderMock()
+    {
+        var mock = new Mock<ITreesFactoryProvider>();
+        mock.Setup(provider => provider.GetTreesFactory())
+            .Returns(new Mock<ITreesFactory>().Object);
+        return mock;
+    }
+    
+    private static Mock<ITreesGenerationConfigProvider> GetTreesGenerationConfigProviderMock()
+    {
+        var mock = new Mock<ITreesGenerationConfigProvider>();
+        mock.Setup(provider => provider.GetTreesGenerationConfig())
+            .Returns(new TreesGenerationConfig(2, 1, 3));
+        return mock;
+    }
 }
