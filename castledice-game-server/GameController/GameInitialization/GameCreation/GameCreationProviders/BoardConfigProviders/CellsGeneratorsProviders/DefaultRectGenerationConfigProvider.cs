@@ -13,6 +13,6 @@ public class DefaultRectGenerationConfigProvider : IRectGenerationConfigProvider
 
     public RectGenerationConfig GetRectGenerationConfig()
     {
-        throw new NotImplementedException();
+        return new RectGenerationConfig(_boardWidth, _boardLength);
     }
 }

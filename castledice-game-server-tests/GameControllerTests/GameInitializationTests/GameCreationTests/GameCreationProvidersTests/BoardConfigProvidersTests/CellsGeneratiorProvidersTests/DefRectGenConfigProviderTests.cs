@@ -15,7 +15,7 @@ public class DefRectGenConfigProviderTests
     public void GetRectGenerationConfig_ShouldReturnConfig_WithValuesFromProviderConstructor(int boardLength,
         int boardWidth)
     {
-        var configProvider = new DefaultRectGenerationConfigProvider(boardLength, boardWidth);
+        var configProvider = new DefaultRectGenerationConfigProvider(boardWidth, boardLength);
         
         var config = configProvider.GetRectGenerationConfig();
         
