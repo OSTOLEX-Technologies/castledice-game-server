@@ -1,5 +1,6 @@
 ﻿using castledice_game_logic;
 using castledice_game_logic.BoardGeneration.ContentGeneration;
+using castledice_game_logic.Math;
 
 namespace castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders.ContentSpawnersProviders.CastlesSpawning;
 
@@ -24,6 +25,14 @@ public class DuelCastlesSpawnerProvider : ICastlesSpawnerProvider
     public CastlesSpawner GetCastlesSpawner(List<Player> players)
     {
         if (players.Count != 2) throw new ArgumentException("Duel castles spawner accepts only two players.");
-        throw new NotImplementedException();
+        var factory = _factoryProvider.GetCastlesFactory();
+        var firstPlayerPosition = _positionsProvider.GetFirstCastlePosition();
+        var secondPlayerPosition = _positionsProvider.GetSecondCastlePosition();
+        var playersToCastlePositions = new Dictionary<Player, Vector2Int>
+        {
+            {players[0], firstPlayerPosition},
+            {players[1], secondPlayerPosition}
+        };
+        return new CastlesSpawner(playersToCastlePositions, factory);
     }
 }
