@@ -152,7 +152,7 @@ public class GameCreatorTests
         
         creator.CreateGame(new List<int>());
         
-        providerMock.Verify(x => x.GetPlayersDecksList(It.IsAny<List<Player>>()), Times.Once);
+        providerMock.Verify(x => x.GetPlayersDecksList(It.IsAny<List<int>>()), Times.Once);
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public class GameCreatorTests
         
         creator.CreateGame(expectedIdsList);
         
-        playersDecksProviderMock.Verify(x => x.GetPlayersDecksList(It.IsAny<List<Player>>()), Times.Once);
+        playersDecksProviderMock.Verify(x => x.GetPlayersDecksList(expectedIdsList), Times.Once);
     }
     
     [Fact]
@@ -175,7 +175,7 @@ public class GameCreatorTests
     {
         var expectedPlayersDecks = new Mock<IDecksList>().Object;
         var playersDecksProviderMock = new Mock<IPlayersDecksProvider>();
-        playersDecksProviderMock.Setup(x => x.GetPlayersDecksList(It.IsAny<List<Player>>())).Returns(expectedPlayersDecks);
+        playersDecksProviderMock.Setup(x => x.GetPlayersDecksList(It.IsAny<List<int>>())).Returns(expectedPlayersDecks);
         var wrapperMock = new Mock<IGameConstructorWrapper>();
         var creator = new GameCreatorBuilder
         {

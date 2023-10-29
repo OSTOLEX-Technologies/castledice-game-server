@@ -28,7 +28,7 @@ public class GameCreator : IGameCreator
         var players = _playersListProvider.GetPlayersList(playersIds);
         var boardConfig = _boardConfigProvider.GetBoardConfig();
         var placeablesConfig = _placeablesConfigProvider.GetPlaceablesConfig();
-        var decksList = _playersDecksProvider.GetPlayersDecksList(players);
+        var decksList = _playersDecksProvider.GetPlayersDecksList(playersIds);
         return _gameConstructorWrapper.ConstructGame(players, boardConfig, placeablesConfig, decksList);
     }
 }
