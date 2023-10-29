@@ -3,6 +3,7 @@ using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.GameObjects;
 using castledice_game_server.GameController.GameInitialization.GameCreation;
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders;
+using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlayersListProviders;
 using Moq;
 using static castledice_game_server_tests.ObjectCreationUtility;
 
