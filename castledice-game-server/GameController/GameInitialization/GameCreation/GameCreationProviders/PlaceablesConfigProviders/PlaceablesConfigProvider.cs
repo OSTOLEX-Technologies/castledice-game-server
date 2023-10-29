@@ -4,6 +4,13 @@ namespace castledice_game_server.GameController.GameInitialization.GameCreation.
 
 public class PlaceablesConfigProvider : IPlaceablesConfigProvider
 {
+    private readonly IKnightConfigProvider _knightConfigProvider;
+
+    public PlaceablesConfigProvider(IKnightConfigProvider knightConfigProvider)
+    {
+        _knightConfigProvider = knightConfigProvider;
+    }
+
     public PlaceablesConfig GetPlaceablesConfig()
     {
         throw new NotImplementedException();
