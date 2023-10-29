@@ -79,16 +79,19 @@ public class GameStartDataCreatorTests
         Assert.Same(expectedData, gameStartData.Decks);
     }
 
-    [Fact]
-    public void CreateGameStartData_ShouldCreateGameStartDataWithPlayersIdsList_FromGivenGame()
+    [Theory]
+    [InlineData(1, 2)]
+    [InlineData(2, 1)]
+    [InlineData(13, 15)]
+    public void CreateGameStartData_ShouldCreateGameStartDataWithPlayersIdsList_FromGivenGame(int firstPlayerId, int secondPlayerId)
     {
-        var game = GetGame();
+        var game = GetGame(GetPlayer(firstPlayerId), GetPlayer(secondPlayerId));
         var playersIds = game.GetAllPlayersIds();
         var gameStartDataCreator = new GameStartDataCreatorBuilder().Build();
         
         var gameStartData = gameStartDataCreator.CreateGameStartData(game);
         
-        Assert.Same(playersIds, gameStartData.PlayersIds);
+        Assert.Equal(playersIds, gameStartData.PlayersIds);
     }
 
     private class GameStartDataCreatorBuilder
