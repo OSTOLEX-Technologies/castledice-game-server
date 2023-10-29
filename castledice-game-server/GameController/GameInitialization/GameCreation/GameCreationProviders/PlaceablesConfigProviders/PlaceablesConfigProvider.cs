@@ -13,6 +13,7 @@ public class PlaceablesConfigProvider : IPlaceablesConfigProvider
 
     public PlaceablesConfig GetPlaceablesConfig()
     {
-        throw new NotImplementedException();
+        var knightConfig = _knightConfigProvider.GetKnightConfig();
+        return new PlaceablesConfig(knightConfig);
     }
 }
