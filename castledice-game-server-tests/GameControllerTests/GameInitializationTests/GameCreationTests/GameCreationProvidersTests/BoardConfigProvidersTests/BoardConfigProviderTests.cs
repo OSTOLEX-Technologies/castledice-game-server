@@ -33,6 +33,17 @@ public class BoardConfigProviderTests
         
         Assert.Same(expectedList, boardConfig.ContentSpawners);
     }
+
+    [Fact]
+    public void GetBoardConfig_ShouldPassGivenPlayersList_ToGivenContentSpawnersProvider()
+    {
+        var playersList = new List<Player>();
+        var boardConfigProvider = new BoardConfigProvider(_cellsGeneratorProviderMock.Object, _contentSpawnersListProviderMock.Object);
+        
+        boardConfigProvider.GetBoardConfig(playersList);
+        
+        _contentSpawnersListProviderMock.Verify(x => x.GetContentSpawners(playersList), Times.Once);
+    }
     
     [Fact]
     public void GetBoardConfig_ShouldReturnBoardConfig_WithCellsGeneratorFromGeneratorProvider()

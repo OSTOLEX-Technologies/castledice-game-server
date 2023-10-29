@@ -17,6 +17,9 @@ public class BoardConfigProvider : IBoardConfigProvider
 
     public BoardConfig GetBoardConfig(List<Player> players)
     {
-        throw new NotImplementedException();
+        var cellType = CellType.Square;
+        var cellsGenerator = _cellsGeneratorProvider.GetCellsGenerator();
+        var contentSpawners = _contentSpawnersListProvider.GetContentSpawners(players);
+        return new BoardConfig(contentSpawners, cellsGenerator, cellType);
     }
 }
