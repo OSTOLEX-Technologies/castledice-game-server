@@ -24,6 +24,19 @@ public class ContentSpawnerListProviderTests
         
         Assert.Contains(expectedSpawner, contentSpawners);
     }
+    
+    [Fact]
+    public void ListFromGetContentSpawners_ShouldContainSpawner_FromTreesSpawnerProvider()
+    {
+        var expectedSpawner = new RandomTreesSpawner(1, 2, 3, new Mock<ITreesFactory>().Object);
+        _treesSpawnerProviderMock.Setup(provider => provider.GetTreesSpawner())
+            .Returns(expectedSpawner);
+        var contentSpawnersListProvider = new ContentSpawnersListProvider(_castlesSpawnerProviderMock.Object, _treesSpawnerProviderMock.Object);
+        
+        var contentSpawners = contentSpawnersListProvider.GetContentSpawners(It.IsAny<List<Player>>());
+        
+        Assert.Contains(expectedSpawner, contentSpawners);
+    }
 
     [Fact]
     public void GetContentSpawners_ShouldPassGivenPlayersList_ToGivenCastelsSpawnerProvider()
@@ -46,18 +59,5 @@ public class ContentSpawnerListProviderTests
         contentSpawnersListProvider.GetContentSpawners(It.IsAny<List<Player>>());
         
         _castlesSpawnerProviderMock.Verify(provider => provider.GetCastlesSpawner(It.IsAny<List<Player>>()), Times.Once);
-    }
-    
-    [Fact]
-    public void ListFromGetContentSpawners_ShouldContainSpawner_FromTreesSpawnerProvider()
-    {
-        var expectedSpawner = new RandomTreesSpawner(1, 2, 3, new Mock<ITreesFactory>().Object);
-        _treesSpawnerProviderMock.Setup(provider => provider.GetTreesSpawner())
-            .Returns(expectedSpawner);
-        var contentSpawnersListProvider = new ContentSpawnersListProvider(_castlesSpawnerProviderMock.Object, _treesSpawnerProviderMock.Object);
-        
-        var contentSpawners = contentSpawnersListProvider.GetContentSpawners(It.IsAny<List<Player>>());
-        
-        Assert.Contains(expectedSpawner, contentSpawners);
     }
 }

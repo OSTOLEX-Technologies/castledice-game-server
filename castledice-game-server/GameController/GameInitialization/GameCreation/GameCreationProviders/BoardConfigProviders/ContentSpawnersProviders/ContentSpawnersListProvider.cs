@@ -18,7 +18,9 @@ public class ContentSpawnersListProvider : IContentSpawnersListProvider
     {
         var contentSpawners = new List<IContentSpawner>();
         var castlesSpawner = _castlesSpawnerProvider.GetCastlesSpawner(players);
+        var treesSpawner = _treesSpawnerProvider.GetTreesSpawner();
         contentSpawners.Add(castlesSpawner);
+        contentSpawners.Add(treesSpawner);
         return contentSpawners;
     }
 }
