@@ -3,7 +3,7 @@ using castledice_game_server_tests.TestImplementations;
 using castledice_game_server.NetworkManager;
 using castledice_riptide_dto_adapters.Extensions;
 
-namespace castledice_game_server_tests;
+namespace castledice_game_server_tests.NetworkManagerTests;
 
 public class RequestGameRetranslatorTests
 {

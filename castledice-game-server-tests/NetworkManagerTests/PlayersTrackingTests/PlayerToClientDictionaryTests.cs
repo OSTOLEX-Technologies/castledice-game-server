@@ -1,6 +1,6 @@
 ﻿using castledice_game_server.NetworkManager.PlayersTracking;
 
-namespace castledice_game_server_tests.PlayersTrackingTests;
+namespace castledice_game_server_tests.NetworkManagerTests.PlayersTrackingTests;
 
 public class PlayerToClientDictionaryTests
 {

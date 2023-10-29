@@ -1,7 +1,7 @@
 ﻿using castledice_game_logic;
 using castledice_game_logic.GameObjects;
 
-namespace castledice_game_server.GameController.GameInitialization.GameCreation;
+namespace castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders;
 
 public interface IPlayersDecksProvider
 {

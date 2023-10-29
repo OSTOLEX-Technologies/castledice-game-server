@@ -2,7 +2,7 @@
 using castledice_game_server.NetworkManager.PlayersTracking;
 using Moq;
 
-namespace castledice_game_server_tests.PlayerDisconnectionTests;
+namespace castledice_game_server_tests.NetworkManagerTests.PlayerDisconnectionTests;
 
 public class PlayerDisconnecterTests
 {

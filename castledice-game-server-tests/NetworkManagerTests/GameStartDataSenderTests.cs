@@ -7,7 +7,7 @@ using Moq;
 using Riptide;
 using static castledice_game_server_tests.ObjectCreationUtility;
 
-namespace castledice_game_server_tests;
+namespace castledice_game_server_tests.NetworkManagerTests;
 
 public class GameStartDataSenderTests
 {

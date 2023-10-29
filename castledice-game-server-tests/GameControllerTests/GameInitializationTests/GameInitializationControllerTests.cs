@@ -5,10 +5,10 @@ using castledice_game_server.GameController.GameInitialization;
 using castledice_game_server.GameController.GameInitialization.GameCreation;
 using castledice_game_server.GameDataSaver;
 using castledice_game_server.NetworkManager;
-using static castledice_game_server_tests.ObjectCreationUtility;
 using Moq;
+using static castledice_game_server_tests.ObjectCreationUtility;
 
-namespace castledice_game_server_tests;
+namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests;
 
 public class GameInitializationControllerTests
 {

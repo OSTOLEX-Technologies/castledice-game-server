@@ -2,10 +2,11 @@
 using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.GameObjects;
 using castledice_game_server.GameController.GameInitialization.GameCreation;
-using static castledice_game_server_tests.ObjectCreationUtility;
+using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders;
 using Moq;
+using static castledice_game_server_tests.ObjectCreationUtility;
 
-namespace castledice_game_server_tests.GameCreationTests;
+namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameCreationTests;
 
 public class GameCreatorTests
 {

@@ -1,12 +1,11 @@
 ﻿using casltedice_events_logic.ClientToServer;
 using castledice_game_server.Auth;
-using castledice_game_server.GameController.GameInitialization.GameCreation;
 using castledice_game_server.NetworkManager;
 using castledice_game_server.NetworkManager.PlayerDisconnection;
 using castledice_game_server.NetworkManager.PlayersTracking;
 using Moq;
 
-namespace castledice_game_server_tests;
+namespace castledice_game_server_tests.NetworkManagerTests;
 
 public class PlayerInitializerTests
 {
