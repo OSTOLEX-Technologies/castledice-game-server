@@ -13,6 +13,6 @@ public class DefaultDeckProvider : IPlayerDeckProvider
 
     public List<PlacementType> GetDeckForPlayer(int playerId)
     {
-        throw new NotImplementedException();
+        return _defaultDeck;
     }
 }
