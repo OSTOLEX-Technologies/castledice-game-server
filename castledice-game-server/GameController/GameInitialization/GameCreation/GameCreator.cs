@@ -1,6 +1,7 @@
 ﻿using castledice_game_logic;
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders;
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlaceablesConfigProviders;
+using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlayersDecksListsProviders;
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlayersListProviders;
 
 namespace castledice_game_server.GameController.GameInitialization.GameCreation;
