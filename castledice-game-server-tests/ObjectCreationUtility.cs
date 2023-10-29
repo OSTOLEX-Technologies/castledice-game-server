@@ -10,6 +10,7 @@ using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.GameObjects;
 using castledice_game_logic.GameObjects.Configs;
 using castledice_game_logic.GameObjects.Factories;
+using castledice_game_logic.GameObjects.Factories.Castles;
 using castledice_game_logic.Math;
 
 namespace castledice_game_server_tests;
