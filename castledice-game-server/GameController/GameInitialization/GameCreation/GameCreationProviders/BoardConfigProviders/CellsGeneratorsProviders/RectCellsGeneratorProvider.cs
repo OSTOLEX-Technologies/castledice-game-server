@@ -13,6 +13,7 @@ public class RectCellsGeneratorProvider : ICellsGeneratorProvider
 
     public ICellsGenerator GetCellsGenerator()
     {
-        throw new NotImplementedException();
+        var config = _rectGenerationConfigProvider.GetRectGenerationConfig();
+        return new RectCellsGenerator(config.BoardLength, config.BoardWidth);
     }
 }
