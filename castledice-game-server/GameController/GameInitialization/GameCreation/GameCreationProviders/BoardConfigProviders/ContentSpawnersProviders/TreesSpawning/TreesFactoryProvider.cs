@@ -1,4 +1,5 @@
 ﻿using castledice_game_logic.GameObjects.Factories;
+using castledice_game_logic.GameObjects.Factories.Trees;
 
 namespace castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders.ContentSpawnersProviders.TreesSpawning;
 
@@ -13,6 +14,7 @@ public class TreesFactoryProvider : ITreesFactoryProvider
     
     public ITreesFactory GetTreesFactory()
     {
-        throw new NotImplementedException();
+        var config = _treeConfigProvider.GetTreeConfig();
+        return new TreesFactory(config);
     }
 }
