@@ -26,7 +26,7 @@ public class GameCreator : IGameCreator
     public Game CreateGame(List<int> playersIds)
     {
         var players = _playersListProvider.GetPlayersList(playersIds);
-        var boardConfig = _boardConfigProvider.GetBoardConfig();
+        var boardConfig = _boardConfigProvider.GetBoardConfig(players);
         var placeablesConfig = _placeablesConfigProvider.GetPlaceablesConfig();
         var decksList = _playersDecksProvider.GetPlayersDecksList(playersIds);
         return _gameConstructorWrapper.ConstructGame(players, boardConfig, placeablesConfig, decksList);

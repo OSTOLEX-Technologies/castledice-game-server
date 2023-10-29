@@ -88,7 +88,25 @@ public class GameCreatorTests
         
         creator.CreateGame(new List<int>());
         
-        providerMock.Verify(x => x.GetBoardConfig(), Times.Once);
+        providerMock.Verify(x => x.GetBoardConfig(It.IsAny<List<Player>>()), Times.Once);
+    }
+
+    [Fact]
+    public void CreateGame_ShouldPassPlayersListFromPlayersListProvider_ToGivenBoardConfigProvider()
+    {
+        var playersList = new List<Player>();
+        var playersListProviderMock = new Mock<IPlayersListProvider>();
+        playersListProviderMock.Setup(x => x.GetPlayersList(It.IsAny<List<int>>())).Returns(playersList);
+        var boardConfigProviderMock = new Mock<IBoardConfigProvider>();
+        var creator = new GameCreatorBuilder
+        {
+            PlayersListProvider = playersListProviderMock.Object,
+            BoardConfigProvider = boardConfigProviderMock.Object
+        }.Build();
+        
+        creator.CreateGame(new List<int>());
+        
+        boardConfigProviderMock.Verify(x => x.GetBoardConfig(playersList), Times.Once);
     }
     
     [Fact]
@@ -96,7 +114,7 @@ public class GameCreatorTests
     {
         var expectedBoardConfig = GetBoardConfig();
         var boardConfigProviderMock = new Mock<IBoardConfigProvider>();
-        boardConfigProviderMock.Setup(x => x.GetBoardConfig()).Returns(expectedBoardConfig);
+        boardConfigProviderMock.Setup(x => x.GetBoardConfig(It.IsAny<List<Player>>())).Returns(expectedBoardConfig);
         var wrapperMock = new Mock<IGameConstructorWrapper>();
         var creator = new GameCreatorBuilder
         {
