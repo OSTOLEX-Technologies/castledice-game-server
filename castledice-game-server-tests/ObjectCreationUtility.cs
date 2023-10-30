@@ -10,6 +10,7 @@ using castledice_game_logic.GameObjects;
 using castledice_game_logic.GameObjects.Configs;
 using castledice_game_logic.GameObjects.Factories.Castles;
 using castledice_game_logic.Math;
+using CastleGO = castledice_game_logic.GameObjects.Castle;
 
 namespace castledice_game_server_tests;
 
@@ -164,5 +165,20 @@ public class ObjectCreationUtility
     {
         var unitsConfig = new PlaceablesConfig(new KnightConfig(1, 2));
         return unitsConfig;
+    }
+    
+    public static CastleGO GetCastle(Player player, int durability = 3, int maxDurability = 3, int maxFreeDurability = 1, int captureHitCost = 1)
+    {
+        return new CastleGO(player, durability, maxDurability, maxFreeDurability, captureHitCost);
+    }
+
+    public static Knight GetKnight(Player player, int health = 3, int placementCost = 1)
+    {
+        return new Knight(player, placementCost, health);
+    }
+
+    public static Tree GetTree(int removeCost = 1, bool canBeRemoved = false)
+    {
+        return new Tree(removeCost, canBeRemoved);
     }
 }
