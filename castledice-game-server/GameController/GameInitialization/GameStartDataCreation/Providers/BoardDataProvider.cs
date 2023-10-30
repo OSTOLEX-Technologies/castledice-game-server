@@ -16,6 +16,11 @@ public class BoardDataProvider : IBoardDataProvider
 
     public BoardData GetBoardData(Board board)
     {
-        throw new NotImplementedException();
+        var boardLength = board.GetLength(0);
+        var boardWidth = board.GetLength(1);
+        var cellType = board.GetCellType();
+        var cellsPresence = _cellsPresenceMatrixProvider.GetCellsPresenceMatrix(board);
+        var contentDataList = _contentDataListProvider.GetContentDataList(board);
+        return new BoardData(boardLength, boardWidth, cellType, cellsPresence, contentDataList);
     }
 }

@@ -129,6 +129,19 @@ public class ObjectCreationUtility
         return GetBoardConfig(playersToCastlesPositions);
     }
     
+    public static Board GetFullBoard(int length, int width)
+    {
+        var board = new Board(CellType.Square);
+        for (int i = 0; i < length; i++)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                board.AddCell(i, j);
+            }
+        }
+        return board;
+    }
+    
     public static BoardConfig GetBoardConfig(Dictionary<Player, Vector2Int> playersToCastlesPositions)
     {
         var castleConfig = new CastleConfig(3, 1, 1);
