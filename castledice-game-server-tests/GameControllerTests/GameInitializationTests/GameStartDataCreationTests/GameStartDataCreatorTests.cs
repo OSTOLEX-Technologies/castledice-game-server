@@ -2,6 +2,7 @@
 using castledice_game_data_logic.ConfigsData;
 using castledice_game_logic;
 using castledice_game_logic.GameConfiguration;
+using castledice_game_logic.GameObjects;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
 using static castledice_game_server_tests.ObjectCreationUtility;
@@ -67,7 +68,7 @@ public class GameStartDataCreatorTests
     {
         var provider = new Mock<IDecksDataProvider>();
         var expectedData = new List<PlayerDeckData>();
-        provider.Setup(x => x.GetPlayersDecksData(It.IsAny<Game>())).Returns(expectedData);
+        provider.Setup(x => x.GetPlayersDecksData(It.IsAny<IDecksList>(), It.IsAny<List<int>>())).Returns(expectedData);
         var gameStartDataCreator = new GameStartDataCreatorBuilder
         {
             DecksDataProvider = provider.Object
