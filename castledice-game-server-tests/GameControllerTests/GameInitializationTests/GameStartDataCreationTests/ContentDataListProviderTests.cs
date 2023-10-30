@@ -23,7 +23,7 @@ public class ContentDataListProviderTests
         
         foreach (var content in boardContent)
         {
-            dataProviderMock.Verify(provider => provider.GetContentData(content), Times.Once);
+            dataProviderMock.Verify(provider => provider.GetContentData(content, It.IsAny<Vector2Int>()), Times.Once);
         }
     }
 
@@ -77,7 +77,7 @@ public class ContentDataListProviderTests
 
     [Theory]
     [MemberData(nameof(ContentDataProviderTestCases))]
-    public void GetContentDataList_ShouldReturnListOfContentData_ObtainedFromGivenProvider(Board board, IContentDataProvider provider, List<ContentData> expectedList)
+    public void GetContentDataList_ShouldReturnListOfAppropriateContentData(Board board, IContentDataProvider provider, List<ContentData> expectedList)
     {
         var contentDataListProvider = new ContentDataListProvider(provider);
         
@@ -106,8 +106,8 @@ public class ContentDataListProviderTests
         var firstCastleData = new CastleData(new Vector2Int(0, 0), 1, 1, 3, 3, 1);
         var secondCastleData = new CastleData(new Vector2Int(4, 4), 1, 1, 3, 3, 2);
         var providerMock = new Mock<IContentDataProvider>();
-        providerMock.Setup(provider => provider.GetContentData(firstCastle)).Returns(firstCastleData);
-        providerMock.Setup(provider => provider.GetContentData(secondCastle)).Returns(secondCastleData);
+        providerMock.Setup(provider => provider.GetContentData(firstCastle, new Vector2Int(0, 0))).Returns(firstCastleData);
+        providerMock.Setup(provider => provider.GetContentData(secondCastle, new Vector2Int(4, 4))).Returns(secondCastleData);
         return new object[]
         {
             board,
@@ -130,8 +130,8 @@ public class ContentDataListProviderTests
         var treeData = new TreeData(new Vector2Int(0, 0), 3, true);
         var knightData = new KnightData(new Vector2Int(4, 4), 3, 3, 1);
         var providerMock = new Mock<IContentDataProvider>();
-        providerMock.Setup(provider => provider.GetContentData(tree)).Returns(treeData);
-        providerMock.Setup(provider => provider.GetContentData(knight)).Returns(knightData);
+        providerMock.Setup(provider => provider.GetContentData(tree, new Vector2Int(0, 0))).Returns(treeData);
+        providerMock.Setup(provider => provider.GetContentData(knight, new Vector2Int(4, 4))).Returns(knightData);
         return new object[]
         {
             board,

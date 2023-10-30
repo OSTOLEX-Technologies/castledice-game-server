@@ -19,7 +19,7 @@ public class ContentDataListProvider : IContentDataListProvider
         {
             foreach (var content in cell.GetContent())
             {
-                contentData.Add(_contentDataProvider.GetContentData(content));
+                contentData.Add(_contentDataProvider.GetContentData(content, cell.Position));
             }
         }
         return contentData;
