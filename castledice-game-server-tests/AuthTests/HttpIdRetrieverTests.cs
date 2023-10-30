@@ -45,7 +45,7 @@ public class HttpIdRetrieverTests
     
     private static void SetUpMockMessageSender(Mock<IHttpMessageSender> mockMessageSender, string responseStr)
     {
-        var responseString = new StringContent("""{"id": 1}""");
+        var responseString = new StringContent(responseStr);
         var response = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK,
