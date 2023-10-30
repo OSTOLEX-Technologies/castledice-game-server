@@ -1,8 +1,7 @@
 ﻿using castledice_game_data_logic;
-using castledice_game_data_logic.Content.Placeable;
+using castledice_game_data_logic.ConfigsData;
 using castledice_game_logic;
 using castledice_game_logic.GameConfiguration;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlaceablesConfigProviders;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
 using static castledice_game_server_tests.ObjectCreationUtility;
