@@ -1,32 +1,20 @@
 ﻿using casltedice_events_logic.ClientToServer;
-using castledice_game_server.Auth;
-using castledice_game_server.NetworkManager.PlayerDisconnection;
-using castledice_game_server.NetworkManager.PlayersTracking;
+using castledice_game_server.GameController.PlayerInitialization;
+using castledice_game_server.NetworkManager.DTOAccepters;
 
 namespace castledice_game_server.NetworkManager;
 
-public class PlayerInitializer
+public class PlayerInitializer : IInitializePlayerDTOAccepter
 {
-    private readonly IIdRetriever _idRetriever;
-    private readonly IPlayerClientIdSaver _playerClientIdSaver;
-    private readonly IPlayerClientIdProvider _playerClientIdProvider;
-    private readonly IPlayerDisconnecter _playerDisconnecter;
+    private readonly IPlayerInitializationController _controller;
 
-    public PlayerInitializer(IIdRetriever idRetriever, IPlayerClientIdSaver playerClientIdSaver, IPlayerClientIdProvider playerClientIdProvider, IPlayerDisconnecter playerDisconnecter)
+    public PlayerInitializer(IPlayerInitializationController controller)
     {
-        _idRetriever = idRetriever;
-        _playerClientIdSaver = playerClientIdSaver;
-        _playerClientIdProvider = playerClientIdProvider;
-        _playerDisconnecter = playerDisconnecter;
+        _controller = controller;
     }
 
-    public void InitializePlayer(InitializePlayerDTO dto, ushort clientId)
+    public void AcceptInitializePlayerDTO(InitializePlayerDTO dto, ushort clientId)
     {
-        var playerId = _idRetriever.RetrievePlayerId(dto.VerificationKey);
-        if (_playerClientIdProvider.PlayerHasClientId(playerId))
-        {
-            _playerDisconnecter.DisconnectPlayerWithId(playerId);
-        }
-        _playerClientIdSaver.SaveClientIdForPlayer(playerId, clientId);
+        _controller.InitializePlayerAsync(dto.VerificationKey, clientId);
     }
 }
