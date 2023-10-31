@@ -43,6 +43,16 @@ public class HttpIdRetrieverTests
         Assert.Equal(expectedId, actualId);
     }
     
+    [Fact]
+    public async void RetrievePlayerIdAsync_ShouldThrowArgumentException_IfResponseDoesNotContainIdField()
+    {
+        var mockMessageSender = new Mock<IHttpMessageSender>();
+        SetUpMockMessageSender(mockMessageSender, """{}""");
+        var retriever = new HttpIdRetriever("https://auth-service.com/api/players/me", mockMessageSender.Object);
+        
+        await Assert.ThrowsAsync<InvalidOperationException>(async () => await retriever.RetrievePlayerIdAsync("sometoken"));
+    }
+    
     private static void SetUpMockMessageSender(Mock<IHttpMessageSender> mockMessageSender, string responseStr)
     {
         var responseString = new StringContent(responseStr);
