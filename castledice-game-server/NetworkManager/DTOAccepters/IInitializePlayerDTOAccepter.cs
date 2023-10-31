@@ -4,5 +4,5 @@ namespace castledice_game_server.NetworkManager.DTOAccepters;
 
 public interface IInitializePlayerDTOAccepter
 {
-    void AcceptInitializePlayerDTO(InitializePlayerDTO dto, ushort clientId);
+    Task AcceptInitializePlayerDTOAsync(InitializePlayerDTO dto, ushort clientId);
 }

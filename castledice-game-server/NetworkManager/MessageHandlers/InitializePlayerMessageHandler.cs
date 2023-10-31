@@ -17,6 +17,6 @@ public static class InitializePlayerMessageHandler
     [MessageHandler((ushort)ClientToServerMessageType.InitializePlayer)]
     public static void HandleInitializePlayerMessage(ushort fromClientId, Message message)
     {
-        _dtoAccepter.AcceptInitializePlayerDTO(message.GetInitializePlayerDTO(), fromClientId);
+        Task.Run(() => _dtoAccepter.AcceptInitializePlayerDTOAsync(message.GetInitializePlayerDTO(), fromClientId));
     }
 }

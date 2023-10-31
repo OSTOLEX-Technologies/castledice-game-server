@@ -8,16 +8,16 @@ namespace castledice_game_server_tests.NetworkManagerTests;
 public class GameInitializerTests
 {
     [Fact]
-    public void AcceptMatchFoundDTO_ShouldPassPlayersIdsFromDTO_ToController()
+    public async void AcceptMatchFoundDTOAsync_ShouldPassPlayersIdsFromDTO_ToController()
     {
         var playersIdsToPass = new List<int>{ 3, 4 };
         var matchFoundDTO = new MatchFoundDTO(playersIdsToPass);
         var controllerMock = new Mock<IGameInitializationController>();
         controllerMock.Setup(controller => controller.InitializeGameAsync(playersIdsToPass))
-            .Returns(Task.CompletedTask);
+            .Returns(Task.CompletedTask).Verifiable();
         var gameInitializer = new GameInitializer(controllerMock.Object);
         
-        gameInitializer.AcceptMatchFoundDTO(matchFoundDTO);
+        await gameInitializer.AcceptMatchFoundDTOAsync(matchFoundDTO);
         
         controllerMock.Verify(controller => controller.InitializeGameAsync(playersIdsToPass), Times.Once);
     }

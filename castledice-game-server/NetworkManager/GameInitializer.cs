@@ -1,5 +1,4 @@
 ﻿using casltedice_events_logic.ServerToClient;
-using castledice_game_server.GameController;
 using castledice_game_server.GameController.GameInitialization;
 using castledice_game_server.NetworkManager.DTOAccepters;
 
@@ -14,8 +13,8 @@ public class GameInitializer : IMatchFoundDTOAccepter
         _gameInitializationController = gameInitializationController;
     }
 
-    public void AcceptMatchFoundDTO(MatchFoundDTO matchFoundDTO)
+    public async Task AcceptMatchFoundDTOAsync(MatchFoundDTO matchFoundDTO)
     {
-        Task.Run(() => _gameInitializationController.InitializeGameAsync(matchFoundDTO.PlayerIds));
+        await _gameInitializationController.InitializeGameAsync(matchFoundDTO.PlayerIds);
     }
 }

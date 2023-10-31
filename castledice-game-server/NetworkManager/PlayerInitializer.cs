@@ -13,8 +13,8 @@ public class PlayerInitializer : IInitializePlayerDTOAccepter
         _controller = controller;
     }
 
-    public void AcceptInitializePlayerDTO(InitializePlayerDTO dto, ushort clientId)
+    public async Task AcceptInitializePlayerDTOAsync(InitializePlayerDTO dto, ushort clientId)
     {
-        Task.Run(() => _controller.InitializePlayerAsync(dto.VerificationKey, clientId));
+        await _controller.InitializePlayerAsync(dto.VerificationKey, clientId);
     }
 }
