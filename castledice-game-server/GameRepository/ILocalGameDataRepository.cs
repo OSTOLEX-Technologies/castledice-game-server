@@ -5,6 +5,6 @@ namespace castledice_game_server.GameRepository;
 public interface ILocalGameDataRepository
 {
     void AddGameData(GameData data);
-    void GetGameData(int id);
+    GameData GetGameData(int id);
     bool RemoveGameData(int id);
 }

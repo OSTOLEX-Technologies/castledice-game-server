@@ -1,11 +1,11 @@
 ﻿using System.Globalization;
+using System.Net;
 using castledice_game_data_logic;
-using castledice_game_logic;
+using castledice_game_server.Exceptions;
 using castledice_game_server.GameRepository;
 using castledice_game_server.GameService;
 using static castledice_game_server_tests.ObjectCreationUtility;
 using Moq;
-
 namespace castledice_game_server_tests.GameServiceTests;
 
 public class HttpGameSavingServiceTests
@@ -64,7 +64,7 @@ public class HttpGameSavingServiceTests
     }
 
     [Fact]
-    public async void SaveGameStartAsync_ShouldWrapHttpRequestException_IfCaughtOne()
+    public async void SaveGameStartAsync_ShouldWrapHttpRequestExceptionIntoGameNotSavedException_IfCaughtOne()
     {
         var exception = new HttpRequestException();
         var dataSenderMock = new Mock<IHttpGameDataRepository>();
@@ -74,30 +74,148 @@ public class HttpGameSavingServiceTests
         
         var result = await Record.ExceptionAsync(() => service.SaveGameStartAsync(GetGameStartData()));
         
+        Assert.IsType<GameNotSavedException>(result);
+        Assert.Same(exception, result.InnerException);
+    }
+
+    [Fact]
+    public async void SaveGameStartAsync_ShouldAddGameDataFromResponse_ToLocalRepository()
+    {
+        var gameData = new GameData(1, "aaa", DateTime.Now, new List<int>());
+        var dataSenderMock = GetHttpRepositoryMock();
+        dataSenderMock.Setup(x => x.PostGameDataAsync(It.IsAny<GameData>())).ReturnsAsync(gameData);
+        var localRepositoryMock = GetLocalRepositoryMock();
+        var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
+            GetJsonConverterMock().Object, localRepositoryMock.Object);
+        
+        await service.SaveGameStartAsync(GetGameStartData());
+        
+        localRepositoryMock.Verify(x => x.AddGameData(gameData), Times.Once);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    public async void SaveGameEndAsync_ShouldRetrieveGameDataFromHttpRepository_WithGetRequest(int gameId)
+    {
+        var gameData = new GameData(gameId, "aaa", DateTime.Now, new List<int>());
+        var dataSenderMock = GetHttpRepositoryMock();
+        dataSenderMock.Setup(x => x.GetGameDataAsync(gameId)).ReturnsAsync(gameData);
+        var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
+            GetJsonConverterMock().Object, GetLocalRepositoryMock().Object);
+        
+        await service.SaveGameEndAsync(gameId, 0, "history");
+        
+        dataSenderMock.Verify(x => x.GetGameDataAsync(gameId), Times.Once);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    public async void SaveGameEndAsync_ShouldRetrieveGameDataFromLocalRepository_IfHttpRepositoryThrewAndHttpException(
+        int gameId)
+    {
+        var gameData = new GameData(gameId, "aaa", DateTime.Now, new List<int>());
+        var dataSenderMock = GetHttpRepositoryMock();
+        dataSenderMock.Setup(x => x.GetGameDataAsync(gameId)).ThrowsAsync(new HttpRequestException());
+        var localRepositoryMock = GetLocalRepositoryMock();
+        localRepositoryMock.Setup(x => x.GetGameData(gameId)).Returns(gameData);
+        var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
+            GetJsonConverterMock().Object, localRepositoryMock.Object);
+        
+        await service.SaveGameEndAsync(gameId, 0, "history");
+        
+        localRepositoryMock.Verify(x => x.GetGameData(gameId), Times.Once);
+    }
+
+    [Fact]
+    public async void SaveGameEndAsync_ShouldWrappGameDataNotFoundExceptionFromLocalRepository_ToGameNotSavedException()
+    {
+        var exception = new GameDataNotFoundException();
+        var dataSenderMock = GetHttpRepositoryMock();
+        dataSenderMock.Setup(x => x.GetGameDataAsync(It.IsAny<int>())).ThrowsAsync(new HttpRequestException());
+        var localRepositoryMock = GetLocalRepositoryMock();
+        localRepositoryMock.Setup(x => x.GetGameData(It.IsAny<int>())).Throws(exception);
+        var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
+            GetJsonConverterMock().Object, localRepositoryMock.Object);
+        
+        var result = await Record.ExceptionAsync(() => service.SaveGameEndAsync(1, 0, "history"));
+        
+        Assert.IsType<GameNotSavedException>(result);
         Assert.Same(exception, result.InnerException);
     }
 
     [Theory]
-    [InlineData("someconfig", "2/27/2023 2:06:49")]
-    [InlineData("someotherconfig", "2/15/2022 2:06:50")]
-    [InlineData("someotherotherconfig", "3/29/2023 2:06:51")]
-    public async void SaveGameStartAsync_ShouldAddAppropriateGameDataToLocalRepository(string expectedConfig, string expectedDateTimeStr)
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    public async void SaveGameEndAsync_ShouldPutGameDataToHttpRepository_WithGivenWinnerId(int winnerId)
     {
-        var expectedDateTime = DateTime.Parse(expectedDateTimeStr, CultureInfo.InvariantCulture);
-        var gameStartData = GetGameStartData();
-        var expectedPlayers = gameStartData.PlayersIds;
-        var converterMock = GetJsonConverterMock();
-        converterMock.Setup(x => x.GetJson(gameStartData)).Returns(expectedConfig);
+        var gameData = new GameData(1, "aaa", DateTime.Now, new List<int>());
+        var dataSenderMock = GetHttpRepositoryMock();
+        dataSenderMock.Setup(x => x.GetGameDataAsync(It.IsAny<int>())).ReturnsAsync(gameData);
+        var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
+            GetJsonConverterMock().Object, GetLocalRepositoryMock().Object);
+        
+        await service.SaveGameEndAsync(1, winnerId, "history");
+        
+        dataSenderMock.Verify(x => x.PutGameDataAsync(It.Is<GameData>(g => g.WinnerId == winnerId)), Times.Once);
+    }
+
+    [Theory]
+    [InlineData("somehistory")]
+    [InlineData("interestinghistory")]
+    [InlineData("someotherhistory")]
+    public async void SaveGameEndAsync_ShouldPutGameDataToHttpRepository_WithGivenHistory(string history)
+    {
+        var gameData = new GameData(1, "aaa", DateTime.Now, new List<int>());
+        var dataSenderMock = GetHttpRepositoryMock();
+        dataSenderMock.Setup(x => x.GetGameDataAsync(It.IsAny<int>())).ReturnsAsync(gameData);
+        var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
+            GetJsonConverterMock().Object, GetLocalRepositoryMock().Object);
+        
+        await service.SaveGameEndAsync(1, 0, history);
+        
+        dataSenderMock.Verify(x => x.PutGameDataAsync(It.Is<GameData>(g => g.History == history)), Times.Once);
+    }
+
+    [Theory]
+    [InlineData("2/27/2023 2:06:49")]
+    [InlineData("2/15/2022 2:06:50")]
+    [InlineData("3/29/2023 2:06:51")]
+    public async void SaveGameEndAsync_ShouldPutGameDatToHttpRepository_WithGameEndTimeFromGivenProvider(string timeStr)
+    {
+        var expectedTime = DateTime.Parse(timeStr, CultureInfo.InvariantCulture);
+        var gameData = new GameData(1, "aaa", DateTime.Now, new List<int>());
+        var dataSenderMock = GetHttpRepositoryMock();
+        dataSenderMock.Setup(x => x.GetGameDataAsync(It.IsAny<int>())).ReturnsAsync(gameData);
         var timeProviderMock = GetTimeProviderMock();
-        timeProviderMock.Setup(x => x.GetCurrentTime()).Returns(expectedDateTime);
-        var localRepositoryMock = GetLocalRepositoryMock();
-        var service = new HttpGameSavingService(GetHttpRepositoryMock().Object, timeProviderMock.Object,
-            converterMock.Object, localRepositoryMock.Object);
-        Predicate<GameData> gameDataIsAppropriate = gameData => gameData.Config == expectedConfig && gameData.GameStartedTime == expectedDateTime && gameData.Players.Equals(expectedPlayers);
+        timeProviderMock.Setup(x => x.GetCurrentTime()).Returns(expectedTime);
+        var service = new HttpGameSavingService(dataSenderMock.Object, timeProviderMock.Object,
+            GetJsonConverterMock().Object, GetLocalRepositoryMock().Object);
         
-        await service.SaveGameStartAsync(gameStartData);
+        await service.SaveGameEndAsync(1, 0, "history");
         
-        localRepositoryMock.Verify(x => x.AddGameData(It.Is<GameData>(g => gameDataIsAppropriate(g))), Times.Once);
+        dataSenderMock.Verify(x => x.PutGameDataAsync(It.Is<GameData>(g => g.GameEndedTime == expectedTime)), Times.Once);
+    }
+
+    [Fact]
+    public async void SaveGameEndAsync_ShouldWrapHttpExceptionFromPutRequest_IntoGameNotSavedException()
+    {
+        var exception = new HttpRequestException();
+        var dataSenderMock = GetHttpRepositoryMock();
+        dataSenderMock.Setup(x => x.GetGameDataAsync(It.IsAny<int>()))
+            .ReturnsAsync(new GameData(0, "a", DateTime.Now, new List<int>()));
+        dataSenderMock.Setup(x => x.PutGameDataAsync(It.IsAny<GameData>())).ThrowsAsync(exception);
+        var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
+            GetJsonConverterMock().Object, GetLocalRepositoryMock().Object);
+        
+        var result = await Record.ExceptionAsync(() => service.SaveGameEndAsync(1, 0, "history"));
+        
+        Assert.IsType<GameNotSavedException>(result);
+        Assert.Same(exception, result.InnerException);
     }
 
     private static Mock<IHttpGameDataRepository> GetHttpRepositoryMock(int returnedId = 1)

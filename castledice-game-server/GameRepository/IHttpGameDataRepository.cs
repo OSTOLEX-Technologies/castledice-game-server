@@ -6,5 +6,5 @@ public interface IHttpGameDataRepository
 {
     Task<GameData> PostGameDataAsync(GameData data);
     Task<GameData> GetGameDataAsync(int gameId);
-    Task<GameData> PugGameDataAsync(GameData data);
+    Task<GameData> PutGameDataAsync(GameData data);
 }
