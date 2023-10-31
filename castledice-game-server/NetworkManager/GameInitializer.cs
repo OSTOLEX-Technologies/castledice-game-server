@@ -7,7 +7,7 @@ namespace castledice_game_server.NetworkManager;
 
 public class GameInitializer : IMatchFoundDTOAccepter
 {
-    private IGameInitializationController _gameInitializationController;
+    private readonly IGameInitializationController _gameInitializationController;
 
     public GameInitializer(IGameInitializationController gameInitializationController)
     {
@@ -16,6 +16,6 @@ public class GameInitializer : IMatchFoundDTOAccepter
 
     public void AcceptMatchFoundDTO(MatchFoundDTO matchFoundDTO)
     {
-        _gameInitializationController.InitializeGameAsync(matchFoundDTO.PlayerIds);
+        Task.Run(() => _gameInitializationController.InitializeGameAsync(matchFoundDTO.PlayerIds));
     }
 }

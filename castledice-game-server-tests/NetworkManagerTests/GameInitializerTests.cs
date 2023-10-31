@@ -13,6 +13,8 @@ public class GameInitializerTests
         var playersIdsToPass = new List<int>{ 3, 4 };
         var matchFoundDTO = new MatchFoundDTO(playersIdsToPass);
         var controllerMock = new Mock<IGameInitializationController>();
+        controllerMock.Setup(controller => controller.InitializeGameAsync(playersIdsToPass))
+            .Returns(Task.CompletedTask);
         var gameInitializer = new GameInitializer(controllerMock.Object);
         
         gameInitializer.AcceptMatchFoundDTO(matchFoundDTO);
