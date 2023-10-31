@@ -8,12 +8,12 @@ namespace castledice_game_server.GameController.GameInitialization;
 public class GameInitializationController : IGameInitializationController
 {
     private readonly IGameSavingService _gameSavingService;
-    private readonly ActiveGamesCollection _activeGamesCollection;
+    private readonly IGamesCollection _activeGamesCollection;
     private readonly IGameStartDataSender _gameStartDataSender;
     private readonly IGameCreator _gameCreator;
     private readonly IGameStartDataCreator _gameStartDataCreator;
 
-    public GameInitializationController(IGameSavingService gameSavingService, ActiveGamesCollection activeGamesCollection, IGameStartDataSender gameStartDataSender, IGameCreator gameCreator, IGameStartDataCreator gameStartDataCreator)
+    public GameInitializationController(IGameSavingService gameSavingService, IGamesCollection activeGamesCollection, IGameStartDataSender gameStartDataSender, IGameCreator gameCreator, IGameStartDataCreator gameStartDataCreator)
     {
         _gameSavingService = gameSavingService;
         _activeGamesCollection = activeGamesCollection;
@@ -22,12 +22,12 @@ public class GameInitializationController : IGameInitializationController
         _gameStartDataCreator = gameStartDataCreator;
     }
 
-    public void InitializeGame(List<int> playersIds)
+    public async Task InitializeGameAsync(List<int> playersIds)
     {
-        var game = _gameCreator.CreateGame(playersIds);
-        _activeGamesCollection.ActiveGames.Add(game);
-        _gameSavingService.SaveGameStart(game);
-        var gameStartData = _gameStartDataCreator.CreateGameStartData(game);
-        _gameStartDataSender.SendGameStartData(gameStartData);
+        // var game = _gameCreator.CreateGame(playersIds);
+        // _activeGamesCollection.ActiveGames.Add(game);
+        // _gameSavingService.SaveGameStartAsync(game);
+        // var gameStartData = _gameStartDataCreator.CreateGameStartData(game);
+        // _gameStartDataSender.SendGameStartData(gameStartData);
     }
 }

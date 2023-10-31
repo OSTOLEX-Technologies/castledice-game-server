@@ -17,6 +17,6 @@ public class GameInitializerTests
         
         gameInitializer.AcceptMatchFoundDTO(matchFoundDTO);
         
-        controllerMock.Verify(controller => controller.InitializeGame(playersIdsToPass), Times.Once);
+        controllerMock.Verify(controller => controller.InitializeGameAsync(playersIdsToPass), Times.Once);
     }
 }

@@ -2,5 +2,5 @@
 
 public interface IGameInitializationController
 {
-    void InitializeGame(List<int> playersIds);
+    Task InitializeGameAsync(List<int> playersIds);
 }

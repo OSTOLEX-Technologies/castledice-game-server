@@ -16,6 +16,6 @@ public class GameInitializer : IMatchFoundDTOAccepter
 
     public void AcceptMatchFoundDTO(MatchFoundDTO matchFoundDTO)
     {
-        _gameInitializationController.InitializeGame(matchFoundDTO.PlayerIds);
+        _gameInitializationController.InitializeGameAsync(matchFoundDTO.PlayerIds);
     }
 }
