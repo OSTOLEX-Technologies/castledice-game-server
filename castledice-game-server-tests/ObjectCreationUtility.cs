@@ -46,6 +46,16 @@ public class ObjectCreationUtility
         var cellsPresence = GetValuesMatrix(10, 10, true);
         return GetBoardData(cellsPresence, cellType);
     }
+
+    public static GameData GetGameData(int id = 1, string config = "someconfig", DateTime startTime = default)
+    {
+        return GetGameData(new List<int> { 1, 2 }, id, config, startTime);
+    }
+    
+    public static GameData GetGameData(List<int> playersIds, int id = 1, string config = "someconfig", DateTime startTime = default)
+    {
+        return new GameData(1, "someconfig", DateTime.Now, new List<int>{1, 2});
+    }
         
     public static BoardData GetBoardData(bool[,] cellsPresence, CellType cellType = CellType.Square)
     {
