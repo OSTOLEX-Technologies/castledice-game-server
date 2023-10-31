@@ -53,6 +53,7 @@ public class HttpGameSavingService : IGameSavingService
         try
         {
             await _dataRepository.PutGameDataAsync(gameData);
+            _localGameDataRepository.RemoveGameData(gameData.Id);
         }
         catch (HttpRequestException e)
         {

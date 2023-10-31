@@ -218,6 +218,21 @@ public class HttpGameSavingServiceTests
         Assert.Same(exception, result.InnerException);
     }
 
+    [Fact]
+    public async void SaveGameEndAsync_ShouldRemoveGameDataFromLocalRepository_IfItWasSavedToHttpRepository()
+    {
+        var gameData = new GameData(1, "aaa", DateTime.Now, new List<int>());
+        var dataSenderMock = GetHttpRepositoryMock();
+        dataSenderMock.Setup(x => x.GetGameDataAsync(It.IsAny<int>())).ReturnsAsync(gameData);
+        var localRepositoryMock = GetLocalRepositoryMock();
+        var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
+            GetJsonConverterMock().Object, localRepositoryMock.Object);
+        
+        await service.SaveGameEndAsync(1, 0, "history");
+        
+        localRepositoryMock.Verify(x => x.RemoveGameData(1), Times.Once);
+    }
+
     private static Mock<IHttpGameDataRepository> GetHttpRepositoryMock(int returnedId = 1)
     {
         var mock = new Mock<IHttpGameDataRepository>();
