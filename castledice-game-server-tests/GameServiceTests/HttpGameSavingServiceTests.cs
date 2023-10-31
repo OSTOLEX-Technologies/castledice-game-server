@@ -62,7 +62,7 @@ public class HttpGameSavingServiceTests
     }
 
     [Fact]
-    public async void SaveGameStartAsync_ShouldSendGameData_WithGetHttpMethod()
+    public async void SaveGameStartAsync_ShouldSendGameData_WithPostHttpMethod()
     {
         var dataSenderMock = GetDataSenderMock();
         var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
@@ -70,7 +70,7 @@ public class HttpGameSavingServiceTests
         
         await service.SaveGameStartAsync(GetGameStartData());
         
-        dataSenderMock.Verify(x => x.SendGameDataAsync(It.IsAny<GameData>(), HttpMethod.Get), Times.Once);
+        dataSenderMock.Verify(x => x.SendGameDataAsync(It.IsAny<GameData>(), HttpMethod.Post), Times.Once);
     }
 
 private static Mock<IHttpGameDataSender> GetDataSenderMock(int returnedId = 1)

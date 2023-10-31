@@ -17,7 +17,11 @@ public class HttpGameSavingService : IGameSavingService
 
     public async Task<int> SaveGameStartAsync(GameStartData gameStartData)
     {
-        throw new NotImplementedException();
+        var config = _gameStartDataJsonConverter.GetJson(gameStartData);
+        var startTime = _currentTimeProvider.GetCurrentTime();
+        var gameData = new GameData(0, config, startTime, gameStartData.PlayersIds);
+        var responseData = await _dataSender.SendGameDataAsync(gameData, HttpMethod.Post);
+        return responseData.Id;
     }
 
     public async Task SaveGameEndAsync(int gameId, int winnerId, string history)
