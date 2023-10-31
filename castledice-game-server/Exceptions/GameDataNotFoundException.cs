@@ -2,5 +2,11 @@
 
 public class GameDataNotFoundException : Exception
 {
-    
+    public GameDataNotFoundException()
+    {
+    }
+
+    public GameDataNotFoundException(string? message) : base(message)
+    {
+    }
 }
