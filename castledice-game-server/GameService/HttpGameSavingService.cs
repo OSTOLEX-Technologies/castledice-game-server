@@ -1,27 +1,38 @@
 ﻿using castledice_game_data_logic;
+using castledice_game_server.GameRepository;
 
 namespace castledice_game_server.GameService;
 
 public class HttpGameSavingService : IGameSavingService
 {
-    private readonly IHttpGameDataSender _dataSender;
+    private readonly IHttpGameDataRepository _dataRepository;
     private readonly ICurrentTimeProvider _currentTimeProvider;
     private readonly IGameStartDataJsonConverter _gameStartDataJsonConverter;
+    private readonly ILocalGameDataRepository _localGameDataRepository;
 
-    public HttpGameSavingService(IHttpGameDataSender dataSender, ICurrentTimeProvider currentTimeProvider, IGameStartDataJsonConverter gameStartDataJsonConverter)
+    public HttpGameSavingService(IHttpGameDataRepository dataRepository, ICurrentTimeProvider currentTimeProvider, IGameStartDataJsonConverter gameStartDataJsonConverter, ILocalGameDataRepository localGameDataRepository)
     {
-        _dataSender = dataSender;
+        _dataRepository = dataRepository;
         _currentTimeProvider = currentTimeProvider;
         _gameStartDataJsonConverter = gameStartDataJsonConverter;
+        _localGameDataRepository = localGameDataRepository;
     }
 
     public async Task<int> SaveGameStartAsync(GameStartData gameStartData)
     {
-        var config = _gameStartDataJsonConverter.GetJson(gameStartData);
-        var startTime = _currentTimeProvider.GetCurrentTime();
-        var gameData = new GameData(0, config, startTime, gameStartData.PlayersIds);
-        var responseData = await _dataSender.SendGameDataAsync(gameData, HttpMethod.Post);
-        return responseData.Id;
+        try
+        {
+            var config = _gameStartDataJsonConverter.GetJson(gameStartData);
+            var startTime = _currentTimeProvider.GetCurrentTime();
+            var gameData = new GameData(0, config, startTime, gameStartData.PlayersIds);
+            _localGameDataRepository.AddGameData(gameData);
+            var responseData = await _dataRepository.PostGameDataAsync(gameData);
+            return responseData.Id;
+        }
+        catch (HttpRequestException e)
+        {
+            throw new HttpRequestException("Could not save game start data.", e);
+        }
     }
 
     public async Task SaveGameEndAsync(int gameId, int winnerId, string history)
