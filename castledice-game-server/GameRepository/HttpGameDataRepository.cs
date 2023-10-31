@@ -33,19 +33,28 @@ public class HttpGameDataRepository : IHttpGameDataRepository
         var data = JObject.Parse(responseBody); //Parsing response body
         if (data.TryGetValue("game", out var gameToken))
         {
-            var gameData = JsonConvert.DeserializeObject<GameData>(gameToken.ToString());
-            if (gameData is null)
-            {
-                throw new InvalidOperationException("Cannot deserialize game data from response body");
-            }
-            return gameData;
+            return GetGameDataFromJson(gameToken.ToString());
         }
         throw new InvalidOperationException("Response body does not contain game field");
     }
 
     public async Task<GameData> GetGameDataAsync(int gameId)
     {
-        throw new NotImplementedException();
+        using var requestMessage = new HttpRequestMessage(HttpMethod.Get, _storageUrl + "/game/" + gameId);
+        using var response = await _httpMessageSender.SendAsync(requestMessage);
+        response.EnsureSuccessStatusCode();
+        var responseBody = await response.Content.ReadAsStringAsync();
+        return GetGameDataFromJson(responseBody);
+    }
+
+    private static GameData GetGameDataFromJson(string json)
+    {
+        var gameData = JsonConvert.DeserializeObject<GameData>(json);
+        if (gameData is null || gameData.Players is null || gameData.Config is null)
+        {
+            throw new InvalidOperationException("Cannot deserialize game data from given json: " + json);
+        }
+        return gameData;
     }
 
     public async Task<GameData> PutGameDataAsync(GameData data)

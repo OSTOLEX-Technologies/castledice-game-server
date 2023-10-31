@@ -27,7 +27,7 @@ public class HttpIdRetriever : IIdRetriever
     
     private int GetIdFromJson(string json)
     {
-        var data = JObject.Parse(json); //Parsing response body
+        var data = JObject.Parse(json);
         if (data.TryGetValue("id", out var idToken))
         {
             return idToken.Value<int>();
