@@ -1,4 +1,5 @@
 ﻿using castledice_game_server.Auth;
+using castledice_game_server.Logging;
 using castledice_game_server.NetworkManager.PlayerDisconnection;
 using castledice_game_server.NetworkManager.PlayersTracking;
 
@@ -10,13 +11,15 @@ public class PlayerInitializationController : IPlayerInitializationController
     private readonly IPlayerClientIdSaver _playerClientIdSaver;
     private readonly IPlayerClientIdProvider _playerClientIdProvider;
     private readonly IPlayerDisconnecter _playerDisconnecter;
+    private readonly ILogger _logger;
 
-    public PlayerInitializationController(IIdRetriever idRetriever, IPlayerClientIdSaver playerClientIdSaver, IPlayerClientIdProvider playerClientIdProvider, IPlayerDisconnecter playerDisconnecter)
+    public PlayerInitializationController(IIdRetriever idRetriever, IPlayerClientIdSaver playerClientIdSaver, IPlayerClientIdProvider playerClientIdProvider, IPlayerDisconnecter playerDisconnecter, ILogger logger)
     {
         _idRetriever = idRetriever;
         _playerClientIdSaver = playerClientIdSaver;
         _playerClientIdProvider = playerClientIdProvider;
         _playerDisconnecter = playerDisconnecter;
+        _logger = logger;
     }
 
     public async Task InitializePlayerAsync(string playerToken, ushort clientId)
@@ -32,7 +35,7 @@ public class PlayerInitializationController : IPlayerInitializationController
         }
         catch (Exception e)
         {
-            //TODO: Add exception logging here
+            _logger.Error(e.Message);
         }
     }
 }

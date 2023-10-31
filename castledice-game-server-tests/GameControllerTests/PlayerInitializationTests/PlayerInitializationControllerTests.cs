@@ -1,5 +1,6 @@
 ﻿using castledice_game_server.Auth;
 using castledice_game_server.GameController.PlayerInitialization;
+using castledice_game_server.Logging;
 using castledice_game_server.NetworkManager.PlayerDisconnection;
 using castledice_game_server.NetworkManager.PlayersTracking;
 using Moq;
@@ -91,16 +92,37 @@ public class PlayerInitializationControllerTests
         clientIdSaverMock.Verify(saver => saver.SaveClientIdForPlayer(playerId, clientId), Times.Once);
     }
 
+    [Theory]
+    [InlineData("some message")]
+    [InlineData("another message")]
+    [InlineData("yet another message")]
+    public async void InitializePlayerAsync_ShouldLogThrownExceptions(string message)
+    {
+        var retrieverMock = new Mock<IIdRetriever>();
+        retrieverMock.Setup(retriever => retriever.RetrievePlayerIdAsync(It.IsAny<string>())).Throws(new Exception(message));
+        var loggerMock = new Mock<ILogger>();
+        var initializer = new PlayerInitializerBuilder
+        {
+            IdRetriever = retrieverMock.Object,
+            Logger = loggerMock.Object
+        }.Build();
+        
+        await initializer.InitializePlayerAsync("token", 0);
+        
+        loggerMock.Verify(logger => logger.Error(message), Times.Once);
+    }
+
     private class PlayerInitializerBuilder
     {
         public IIdRetriever IdRetriever { get; set; } = new Mock<IIdRetriever>().Object;
         public IPlayerClientIdSaver PlayerClientIdSaver { get; set; } = new Mock<IPlayerClientIdSaver>().Object;
         public IPlayerClientIdProvider PlayerClientIdProvider { get; set; } = new Mock<IPlayerClientIdProvider>().Object;
         public IPlayerDisconnecter PlayerDisconnecter { get; set; } = new Mock<IPlayerDisconnecter>().Object;
+        public ILogger Logger { get; set; } = new Mock<ILogger>().Object;
         
         public PlayerInitializationController Build()
         {
-            return new PlayerInitializationController(IdRetriever, PlayerClientIdSaver, PlayerClientIdProvider, PlayerDisconnecter);
+            return new PlayerInitializationController(IdRetriever, PlayerClientIdSaver, PlayerClientIdProvider, PlayerDisconnecter, Logger);
         }
     }
 

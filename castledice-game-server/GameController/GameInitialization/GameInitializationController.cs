@@ -1,6 +1,7 @@
 ﻿using castledice_game_server.GameController.GameInitialization.GameCreation;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation;
 using castledice_game_server.GameService;
+using castledice_game_server.Logging;
 using castledice_game_server.NetworkManager;
 
 namespace castledice_game_server.GameController.GameInitialization;
@@ -12,14 +13,16 @@ public class GameInitializationController : IGameInitializationController
     private readonly IGameStartDataSender _gameStartDataSender;
     private readonly IGameCreator _gameCreator;
     private readonly IGameStartDataCreator _gameStartDataCreator;
+    private readonly ILogger _logger;
 
-    public GameInitializationController(IGameSavingService gameSavingService, IGamesCollection activeGamesCollection, IGameStartDataSender gameStartDataSender, IGameCreator gameCreator, IGameStartDataCreator gameStartDataCreator)
+    public GameInitializationController(IGameSavingService gameSavingService, IGamesCollection activeGamesCollection, IGameStartDataSender gameStartDataSender, IGameCreator gameCreator, IGameStartDataCreator gameStartDataCreator, ILogger logger)
     {
         _gameSavingService = gameSavingService;
         _activeGamesCollection = activeGamesCollection;
         _gameStartDataSender = gameStartDataSender;
         _gameCreator = gameCreator;
         _gameStartDataCreator = gameStartDataCreator;
+        _logger = logger;
     }
 
     public async Task InitializeGameAsync(List<int> playersIds)
@@ -34,7 +37,7 @@ public class GameInitializationController : IGameInitializationController
         }
         catch (Exception e)
         {
-            //TODO: Add errors logging.
+            _logger.Error(e.Message);
         }
     }
 }
