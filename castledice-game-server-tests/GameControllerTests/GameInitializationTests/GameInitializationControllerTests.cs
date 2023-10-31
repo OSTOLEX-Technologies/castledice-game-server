@@ -27,6 +27,40 @@ public class GameInitializationControllerTests
         
         gameCreatorMock.Verify(gc => gc.CreateGame(playersIds), Times.Once);
     }
+    
+    
+    [Fact]
+    public async void CreatedGame_ShouldBePassedToCreateGameStartData_OnGivenGameStartDataCreator()
+    {
+        var gameStartDataCreatorMock = GetGameStartDataCreatorMock();
+        var createdGame = GetGame();
+        var gameCreationController = new GameCreationControllerBuilder
+        {
+            GameCreator = GetGameCreatorMock(createdGame).Object,
+            GameStartDataCreator = gameStartDataCreatorMock.Object
+        }.Build();
+        
+        await gameCreationController.InitializeGameAsync(new List<int>{1, 2});
+        
+        gameStartDataCreatorMock.Verify(creator => creator.CreateGameStartData(createdGame), Times.Once);
+    }
+    
+    [Fact]
+    public async void CreatedGameStartData_ShouldBePassedToSaveGameStartAsync_OnGivenGameSavingService()
+    {
+        var gameSavingServiceMock = new Mock<IGameSavingService>();
+        var createdGameStartData = GetGameStartData();
+        var gameStartDataCreatorMock = GetGameStartDataCreatorMock(createdGameStartData);
+        var gameCreationController = new GameCreationControllerBuilder
+        {
+            GameSavingService = gameSavingServiceMock.Object,
+            GameStartDataCreator = gameStartDataCreatorMock.Object
+        }.Build();
+        
+        await gameCreationController.InitializeGameAsync(new List<int>{1, 2});
+        
+        gameSavingServiceMock.Verify(saver => saver.SaveGameStartAsync(createdGameStartData), Times.Once);
+    }
 
     [Theory]
     [InlineData(1)]
@@ -49,39 +83,6 @@ public class GameInitializationControllerTests
         await gameCreationController.InitializeGameAsync(new List<int>{1, 2});
         
         gamesCollectionMock.Verify(collection => collection.AddGame(gameId, gameToCreate), Times.Once);
-    }
-
-    [Fact]
-    public async void CreatedGame_ShouldBePassedToCreateGameStartData_OnGivenGameStartDataCreator()
-    {
-        var gameStartDataCreatorMock = GetGameStartDataCreatorMock();
-        var createdGame = GetGame();
-        var gameCreationController = new GameCreationControllerBuilder
-        {
-            GameCreator = GetGameCreatorMock(createdGame).Object,
-            GameStartDataCreator = gameStartDataCreatorMock.Object
-        }.Build();
-        
-        await gameCreationController.InitializeGameAsync(new List<int>{1, 2});
-        
-        gameStartDataCreatorMock.Verify(creator => creator.CreateGameStartData(createdGame), Times.Once);
-    }
-
-    [Fact]
-    public async void CreatedGameStartData_ShouldBePassedToSaveGameStartAsync_OnGivenGameSavingService()
-    {
-        var gameSavingServiceMock = new Mock<IGameSavingService>();
-        var createdGameStartData = GetGameStartData();
-        var gameStartDataCreatorMock = GetGameStartDataCreatorMock(createdGameStartData);
-        var gameCreationController = new GameCreationControllerBuilder
-        {
-            GameSavingService = gameSavingServiceMock.Object,
-            GameStartDataCreator = gameStartDataCreatorMock.Object
-        }.Build();
-        
-        await gameCreationController.InitializeGameAsync(new List<int>{1, 2});
-        
-        gameSavingServiceMock.Verify(saver => saver.SaveGameStartAsync(createdGameStartData), Times.Once);
     }
     
     [Fact]
