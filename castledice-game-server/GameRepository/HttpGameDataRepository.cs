@@ -46,6 +46,16 @@ public class HttpGameDataRepository : IHttpGameDataRepository
         var responseBody = await response.Content.ReadAsStringAsync();
         return GetGameDataFromJson(responseBody);
     }
+    
+    public async Task<GameData> PutGameDataAsync(GameData data)
+    {
+        using var requestMessage = new HttpRequestMessage(HttpMethod.Put, _storageUrl + "/game/" + data.Id);
+        requestMessage.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+        using var response = await _httpMessageSender.SendAsync(requestMessage);
+        response.EnsureSuccessStatusCode();
+        var responseBody = await response.Content.ReadAsStringAsync();
+        return GetGameDataFromJson(responseBody);
+    }
 
     private static GameData GetGameDataFromJson(string json)
     {
@@ -55,10 +65,5 @@ public class HttpGameDataRepository : IHttpGameDataRepository
             throw new InvalidOperationException("Cannot deserialize game data from given json: " + json);
         }
         return gameData;
-    }
-
-    public async Task<GameData> PutGameDataAsync(GameData data)
-    {
-        throw new NotImplementedException();
     }
 }
