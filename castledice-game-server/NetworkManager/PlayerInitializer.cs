@@ -15,6 +15,6 @@ public class PlayerInitializer : IInitializePlayerDTOAccepter
 
     public void AcceptInitializePlayerDTO(InitializePlayerDTO dto, ushort clientId)
     {
-        _controller.InitializePlayerAsync(dto.VerificationKey, clientId);
+        Task.Run(() => _controller.InitializePlayerAsync(dto.VerificationKey, clientId));
     }
 }

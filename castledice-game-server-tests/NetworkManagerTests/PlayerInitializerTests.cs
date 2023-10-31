@@ -14,6 +14,8 @@ public class PlayerInitializerTests
     public void AcceptInitializePlayerDTO_ShouldPassPlayerTokenFromDTOAndClientId_ToGivenController(string playerToken, ushort clientId)
     {
         var controllerMock = new Mock<IPlayerInitializationController>();
+        controllerMock.Setup(controller => controller.InitializePlayerAsync(playerToken, clientId))
+            .Returns(Task.CompletedTask);
         var initializer = new PlayerInitializer(controllerMock.Object);
         var dto = new InitializePlayerDTO(playerToken);
         
