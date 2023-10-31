@@ -24,10 +24,17 @@ public class GameInitializationController : IGameInitializationController
 
     public async Task InitializeGameAsync(List<int> playersIds)
     {
-        var game = _gameCreator.CreateGame(playersIds);
-        var gameStartData = _gameStartDataCreator.CreateGameStartData(game);
-        var gameId = await _gameSavingService.SaveGameStartAsync(gameStartData);
-        _activeGamesCollection.AddGame(gameId, game);
-        _gameStartDataSender.SendGameStartData(gameStartData);
+        try
+        {
+            var game = _gameCreator.CreateGame(playersIds);
+            var gameStartData = _gameStartDataCreator.CreateGameStartData(game);
+            var gameId = await _gameSavingService.SaveGameStartAsync(gameStartData);
+            _activeGamesCollection.AddGame(gameId, game);
+            _gameStartDataSender.SendGameStartData(gameStartData);
+        }
+        catch (Exception e)
+        {
+            //TODO: Add errors logging.
+        }
     }
 }
