@@ -75,4 +75,19 @@ public class GameStartDataSenderTests
 
         Assert.Equal(expectedDTO, sentDTO);
     }
+
+    [Fact]
+    public void SendGameStartData_ShouldSendMessage_WithCreateGameMessageId()
+    {
+        var gameStartData = GetGameStartData(1, 2);
+        var messageSender = new TestMessageSenderById();
+        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        var gameStartDataSender = new GameStartDataSender(messageSender, clientIdProviderMock.Object);
+        
+        gameStartDataSender.SendGameStartData(gameStartData);
+        var sentMessage = messageSender.SentMessage;
+        var messageId = sentMessage.GetUShort();
+        
+        Assert.Equal((ushort)ServerToClientMessageType.CreateGame, messageId);
+    }
 }

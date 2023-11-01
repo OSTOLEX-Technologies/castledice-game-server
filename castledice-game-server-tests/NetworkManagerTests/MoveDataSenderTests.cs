@@ -48,4 +48,19 @@ public class MoveDataSenderTests
         
         Assert.Equal(expectedDTO, sentDTO);
     }
+
+    [Fact]
+    public void SendDataToPlayer_ShouldSendMessage_WithMakeMoveMessageId()
+    {
+        var messageSender = new TestMessageSenderById();
+        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        var moveDataSender = new MoveDataSender(messageSender, clientIdProviderMock.Object);
+        var moveData = new Mock<MoveData>(1, new Vector2Int(1, 1)).Object;
+        
+        moveDataSender.SendDataToPlayer(moveData, 1);
+        var sentMessage = messageSender.SentMessage;
+        var messageId = sentMessage.GetUShort();
+        
+        Assert.Equal((ushort)ServerToClientMessageType.MakeMove, messageId);
+    }
 }
