@@ -1,5 +1,8 @@
-﻿using castledice_game_server.GameController.Moves;
+﻿using casltedice_events_logic.ServerToClient;
+using castledice_game_server.GameController.Moves;
 using castledice_game_server.NetworkManager.PlayersTracking;
+using castledice_riptide_dto_adapters.Extensions;
+using Riptide;
 
 namespace castledice_game_server.NetworkManager;
 
@@ -16,6 +19,10 @@ public class MoveStatusSender : IMoveStatusSender
 
     public void SendMoveStatusToPlayer(bool isApproved, int playerId)
     {
-        throw new NotImplementedException();
+        var clientId = _playerClientIdProvider.GetClientIdForPlayer(playerId);
+        var message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientMessageType.ApproveMove);
+        var DTO = new ApproveMoveDTO(isApproved);
+        message.AddApproveMoveDTO(DTO);
+        _messageSender.Send(message, clientId);
     }
 }
