@@ -14,6 +14,6 @@ public class NegentropyGeneratorsFactory : INumberGeneratorsFactory
 
     public IRandomNumberGenerator GetGenerator()
     {
-        throw new NotImplementedException();
+        return new NegentropyRandomNumberGenerator(_config.MinInclusive, _config.MaxExclusive, _config.Precision);
     }
 }
