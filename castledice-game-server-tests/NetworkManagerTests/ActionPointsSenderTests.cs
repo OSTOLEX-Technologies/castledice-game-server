@@ -36,7 +36,7 @@ public class ActionPointsSenderTests
         var clientProviderMock = new Mock<IPlayerClientIdProvider>();
         var messageSender = new TestMessageSenderById();
         var actionPointsSender = new ActionPointsSender(messageSender, clientProviderMock.Object);
-        var expectedDTO = new GiveActionPointsDTO(amount, actionPointsAccepterId);
+        var expectedDTO = new GiveActionPointsDTO(actionPointsAccepterId, amount);
         
         actionPointsSender.SendActionPoints(amount, actionPointsAccepterId, messageAccepterId);
         var sentMessage = messageSender.SentMessage;
