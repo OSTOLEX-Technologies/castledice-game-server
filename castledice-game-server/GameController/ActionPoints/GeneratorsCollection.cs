@@ -4,7 +4,7 @@ namespace castledice_game_server.GameController.ActionPoints;
 
 public class GeneratorsCollection : INumberGeneratorsCollection
 {
-    private Dictionary<int, IRandomNumberGenerator> _generators = new();
+    private readonly Dictionary<int, IRandomNumberGenerator> _generators = new();
     private readonly INumberGeneratorsFactory _factory;
 
     public GeneratorsCollection(INumberGeneratorsFactory factory)
@@ -14,16 +14,24 @@ public class GeneratorsCollection : INumberGeneratorsCollection
 
     public void AddGeneratorForPlayer(int playerId)
     {
-        throw new NotImplementedException();
+        if (_generators.ContainsKey(playerId))
+        {
+            throw new ArgumentException($"Generator for player with id {playerId} already exists");
+        }
+        _generators.Add(playerId, _factory.GetGenerator());
     }
 
     public IRandomNumberGenerator GetGeneratorForPlayer(int playerId)
     {
-        throw new NotImplementedException();
+        if (!_generators.ContainsKey(playerId))
+        {
+            throw new ArgumentException($"Generator for player with id {playerId} does not exist");
+        }
+        return _generators[playerId];
     }
 
     public bool RemoveGeneratorForPlayer(int playerId)
     {
-        throw new NotImplementedException();
+        return _generators.Remove(playerId);
     }
 }
