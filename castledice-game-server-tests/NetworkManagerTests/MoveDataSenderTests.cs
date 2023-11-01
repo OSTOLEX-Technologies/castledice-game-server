@@ -16,7 +16,7 @@ public class MoveDataSenderTests
     [InlineData(1, 3)]
     [InlineData(2, 5)]
     [InlineData(13, 213)]
-    public void SendDataToPlayer_ShouldSendMoveData_ToAppropriateClientId(int playerId, ushort clientId)
+    public void SendDataToPlayer_ShouldSendMessage_ToAppropriateClientId(int playerId, ushort clientId)
     {
         var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
         clientIdProviderMock.Setup(provider => provider.GetClientIdForPlayer(playerId)).Returns(clientId);
