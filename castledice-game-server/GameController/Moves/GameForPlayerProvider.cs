@@ -1,4 +1,5 @@
 ﻿using castledice_game_logic;
+using castledice_game_server.Exceptions;
 
 namespace castledice_game_server.GameController.Moves;
 
@@ -13,6 +14,11 @@ public class GameForPlayerProvider : IGameForPlayerProvider
 
     public Game GetGame(int playerId)
     {
-        throw new NotImplementedException();
+        var game = _gamesCollection.FirstOrDefault(g => g.GetAllPlayersIds().Any(id => id == playerId));
+        if (game == null)
+        {
+            throw new GameNotFoundException("Game with given player id does not exists. Player id: " + playerId + ".");
+        }
+        return game;
     }
 }

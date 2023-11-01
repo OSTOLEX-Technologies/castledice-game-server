@@ -12,8 +12,10 @@ public class GameForPlayerProviderTests
     [Fact]
     public void GetGame_ShouldThrowGameNotFoundException_IfGameWithGivenPlayerIdDoesNotExists()
     {
-        var gamesCollection = new Mock<IGamesCollection>().Object;
-        var gameForPlayerProvider = new GameForPlayerProvider(gamesCollection);
+        var gamesCollectionMock = new Mock<IGamesCollection>();
+        var gamesList = new List<Game>() {  };
+        gamesCollectionMock.Setup(g => g.GetEnumerator()).Returns(gamesList.GetEnumerator());
+        var gameForPlayerProvider = new GameForPlayerProvider(gamesCollectionMock.Object);
         
         Assert.Throws<GameNotFoundException>(() => gameForPlayerProvider.GetGame(1));
     }
