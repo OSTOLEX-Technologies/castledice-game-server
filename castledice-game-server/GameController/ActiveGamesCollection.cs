@@ -28,6 +28,7 @@ public class ActiveGamesCollection : IGamesCollection
             throw new ArgumentException("Given game instance already exists");
         }
         _games.Add(gameId, game);
+        GameAdded?.Invoke(this, game);
     }
 
     public int GetGameId(Game game)
@@ -41,6 +42,12 @@ public class ActiveGamesCollection : IGamesCollection
 
     public bool RemoveGame(int gameId)
     {
+        if (!_games.ContainsKey(gameId)) return false;
+        var game = _games[gameId];
+        GameRemoved?.Invoke(this, game);
         return _games.Remove(gameId);
     }
+
+    public event EventHandler<Game>? GameAdded;
+    public event EventHandler<Game>? GameRemoved;
 }

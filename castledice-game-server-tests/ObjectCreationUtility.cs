@@ -126,7 +126,7 @@ public class ObjectCreationUtility
         });
             
         var game = new Game(players, boardConfig, unitsConfig, placementListProvider);
-
+        
         return game;
     }
 

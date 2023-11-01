@@ -1,4 +1,5 @@
-﻿using castledice_game_server.GameController;
+﻿using castledice_game_logic;
+using castledice_game_server.GameController;
 using static castledice_game_server_tests.ObjectCreationUtility;
 
 namespace castledice_game_server_tests.GameControllerTests;
@@ -33,6 +34,19 @@ public class ActiveGamesCollectionTests
         gamesCollection.AddGame(1, game);
 
         Assert.Contains(game, gamesCollection);
+    }
+    
+    [Fact]
+    public void AddGame_ShouldInvokeGameAddedEvent_AndPassAddedGameAsAnArgument()
+    {
+        var gamesCollection = new ActiveGamesCollection();
+        var game = GetGame();
+        Game? addedGame = null;
+        gamesCollection.GameAdded += (_, game) => addedGame = game;
+        
+        gamesCollection.AddGame(1, game);
+        
+        Assert.Same(game, addedGame);
     }
 
     [Fact]
@@ -100,5 +114,22 @@ public class ActiveGamesCollectionTests
         gamesCollection.RemoveGame(id);
         
         Assert.DoesNotContain(game, gamesCollection);
+    }
+    
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    public void RemoveGame_ShouldInvokeGameRemovedEvent_AndPassRemovedGameAsAnArgument(int id)
+    {
+        var gamesCollection = new ActiveGamesCollection();
+        var game = GetGame();
+        gamesCollection.AddGame(id, game);
+        Game? removedGame = null;
+        gamesCollection.GameRemoved += (_, game) => removedGame = game;
+        
+        gamesCollection.RemoveGame(id);
+        
+        Assert.Same(game, removedGame);
     }
 }
