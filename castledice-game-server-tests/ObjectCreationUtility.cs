@@ -10,12 +10,30 @@ using castledice_game_logic.GameObjects;
 using castledice_game_logic.GameObjects.Configs;
 using castledice_game_logic.GameObjects.Factories.Castles;
 using castledice_game_logic.Math;
+using Moq;
 using CastleGO = castledice_game_logic.GameObjects.Castle;
 
 namespace castledice_game_server_tests;
 
 public class ObjectCreationUtility
 {
+    public static Mock<Game> GetGameMock()
+    {
+        var player = GetPlayer(1);
+        var secondPlayer = GetPlayer(2);
+        var playersList = new List<Player> { player, secondPlayer };
+        var gameMock = new Mock<Game>(playersList, GetBoardConfig(new Dictionary<Player, Vector2Int>
+        {
+            {player, (0, 0)},
+            {secondPlayer, (9, 9)}
+        }), GetPlaceablesConfig(), new Mock<IDecksList>().Object);
+        gameMock.Setup(x => x.GetPlayer(It.IsAny<int>())).Returns(player);
+        gameMock.Setup(x => x.GetAllPlayers()).Returns(playersList);
+        gameMock.Setup(x => x.GetAllPlayersIds()).Returns(new List<int> { 1, 2 });
+        gameMock.Setup(g => g.GetCurrentPlayer()).Returns(GetPlayer(1));
+        return gameMock;
+    }
+    
     public static GameStartData GetGameStartData()
     {
         return GetGameStartData(1, 2);

@@ -181,22 +181,6 @@ public class MovesControllerTests
         return mock;
     }
 
-    private static Mock<Game> GetGameMock()
-    {
-        var player = GetPlayer(1);
-        var secondPlayer = GetPlayer(2);
-        var playersList = new List<Player> { player, secondPlayer };
-        var gameMock = new Mock<Game>(playersList, GetBoardConfig(new Dictionary<Player, Vector2Int>
-        {
-            {player, (0, 0)},
-            {secondPlayer, (9, 9)}
-        }), GetPlaceablesConfig(), new Mock<IDecksList>().Object);
-        gameMock.Setup(x => x.GetPlayer(It.IsAny<int>())).Returns(player);
-        gameMock.Setup(x => x.GetAllPlayers()).Returns(playersList);
-        gameMock.Setup(x => x.GetAllPlayersIds()).Returns(new List<int> { 1, 2 });
-        return gameMock;
-    }
-
     private static Mock<IDataToMoveConverterProvider> GetDataConverterProviderMock()
     {
         var mock = new Mock<IDataToMoveConverterProvider>();
