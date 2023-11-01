@@ -36,7 +36,7 @@ public class HttpGameSavingService : IGameSavingService
         }
     }
 
-    public async Task SaveGameEndAsync(int gameId, int winnerId, string history)
+    public async Task SaveGameEndAsync(int gameId, string history, int? winnerId = null)
     {
         GameData gameData;
         try

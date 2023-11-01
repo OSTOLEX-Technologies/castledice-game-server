@@ -20,7 +20,8 @@ public class HttpGameDataRepository : IHttpGameDataRepository
     public async Task<GameData> PostGameDataAsync(GameData data)
     {
         using var requestMessage = new HttpRequestMessage(HttpMethod.Post, _storageUrl + "/game");
-        requestMessage.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+        var dataJson = JsonConvert.SerializeObject(data);
+        requestMessage.Content = new StringContent(dataJson, Encoding.UTF8, "application/json");
         using var response = await _httpMessageSender.SendAsync(requestMessage);
         response.EnsureSuccessStatusCode();
         var responseBody = await response.Content.ReadAsStringAsync();

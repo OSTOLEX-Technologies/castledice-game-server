@@ -5,5 +5,5 @@ namespace castledice_game_server.GameService;
 public interface IGameSavingService
 {
     Task<int> SaveGameStartAsync(GameStartData gameStartData);
-    Task SaveGameEndAsync(int gameId, int winnerId, string history);
+    Task SaveGameEndAsync(int gameId, string history, int? winnerId = null);
 }

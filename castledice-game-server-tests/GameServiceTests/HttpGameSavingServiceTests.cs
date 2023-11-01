@@ -105,7 +105,7 @@ public class HttpGameSavingServiceTests
         var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
             GetJsonConverterMock().Object, GetLocalRepositoryMock().Object);
         
-        await service.SaveGameEndAsync(gameId, 0, "history");
+        await service.SaveGameEndAsync(gameId, "history", null);
         
         dataSenderMock.Verify(x => x.GetGameDataAsync(gameId), Times.Once);
     }
@@ -125,7 +125,7 @@ public class HttpGameSavingServiceTests
         var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
             GetJsonConverterMock().Object, localRepositoryMock.Object);
         
-        await service.SaveGameEndAsync(gameId, 0, "history");
+        await service.SaveGameEndAsync(gameId, "history", null);
         
         localRepositoryMock.Verify(x => x.GetGameData(gameId), Times.Once);
     }
@@ -141,7 +141,7 @@ public class HttpGameSavingServiceTests
         var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
             GetJsonConverterMock().Object, localRepositoryMock.Object);
         
-        var result = await Record.ExceptionAsync(() => service.SaveGameEndAsync(1, 0, "history"));
+        var result = await Record.ExceptionAsync(() => service.SaveGameEndAsync(1, "history", null));
         
         Assert.IsType<GameNotSavedException>(result);
         Assert.Same(exception, result.InnerException);
@@ -151,7 +151,8 @@ public class HttpGameSavingServiceTests
     [InlineData(1)]
     [InlineData(2)]
     [InlineData(3)]
-    public async void SaveGameEndAsync_ShouldPutGameDataToHttpRepository_WithGivenWinnerId(int winnerId)
+    [InlineData(null)]
+    public async void SaveGameEndAsync_ShouldPutGameDataToHttpRepository_WithGivenWinnerId(int? winnerId)
     {
         var gameData = new GameData(1, "aaa", DateTime.Now, new List<int>());
         var dataSenderMock = GetHttpRepositoryMock();
@@ -159,7 +160,7 @@ public class HttpGameSavingServiceTests
         var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
             GetJsonConverterMock().Object, GetLocalRepositoryMock().Object);
         
-        await service.SaveGameEndAsync(1, winnerId, "history");
+        await service.SaveGameEndAsync(1, "history", winnerId);
         
         dataSenderMock.Verify(x => x.PutGameDataAsync(It.Is<GameData>(g => g.WinnerId == winnerId)), Times.Once);
     }
@@ -176,7 +177,7 @@ public class HttpGameSavingServiceTests
         var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
             GetJsonConverterMock().Object, GetLocalRepositoryMock().Object);
         
-        await service.SaveGameEndAsync(1, 0, history);
+        await service.SaveGameEndAsync(1, history, null);
         
         dataSenderMock.Verify(x => x.PutGameDataAsync(It.Is<GameData>(g => g.History == history)), Times.Once);
     }
@@ -196,7 +197,7 @@ public class HttpGameSavingServiceTests
         var service = new HttpGameSavingService(dataSenderMock.Object, timeProviderMock.Object,
             GetJsonConverterMock().Object, GetLocalRepositoryMock().Object);
         
-        await service.SaveGameEndAsync(1, 0, "history");
+        await service.SaveGameEndAsync(1, "history", null);
         
         dataSenderMock.Verify(x => x.PutGameDataAsync(It.Is<GameData>(g => g.GameEndedTime == expectedTime)), Times.Once);
     }
@@ -212,7 +213,7 @@ public class HttpGameSavingServiceTests
         var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
             GetJsonConverterMock().Object, GetLocalRepositoryMock().Object);
         
-        var result = await Record.ExceptionAsync(() => service.SaveGameEndAsync(1, 0, "history"));
+        var result = await Record.ExceptionAsync(() => service.SaveGameEndAsync(1, "history", null));
         
         Assert.IsType<GameNotSavedException>(result);
         Assert.Same(exception, result.InnerException);
@@ -228,7 +229,7 @@ public class HttpGameSavingServiceTests
         var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
             GetJsonConverterMock().Object, localRepositoryMock.Object);
         
-        await service.SaveGameEndAsync(1, 0, "history");
+        await service.SaveGameEndAsync(1, "history", null);
         
         localRepositoryMock.Verify(x => x.RemoveGameData(1), Times.Once);
     }
