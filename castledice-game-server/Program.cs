@@ -3,6 +3,7 @@ using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.GameObjects;
 using castledice_game_server.Configuration;
 using castledice_game_server.GameController;
+using castledice_game_server.GameController.ActionPoints;
 using castledice_game_server.GameController.GameInitialization;
 using castledice_game_server.GameController.GameInitialization.GameCreation;
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders;
@@ -15,6 +16,7 @@ using castledice_game_server.GameController.GameInitialization.GameCreation.Game
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlayersListProviders;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
+using castledice_game_server.GameController.GameOver;
 using castledice_game_server.GameController.Moves;
 using castledice_game_server.GameController.PlayerInitialization;
 using castledice_game_server.Logging;
@@ -131,6 +133,33 @@ internal class Program
         var moveStatusSender = new MoveStatusSender(serverWrapper, playersDictionary);
         var movesController = new MovesController(gameForPlayerProvider, dataToMoveConverterProvider, moveDataSender,
             moveStatusSender, loggerWrapper);
+       var moveAccepter = new MoveAccepter(movesController);
+       MoveFromClientMessageHandler.SetAccepter(moveAccepter);
        
+       //Setting up action points controller
+       var negentropyGeneratorsFactory = new NegentropyGeneratorsFactory(RandomConfig);
+       var generatorsCollection = new GeneratorsCollection(negentropyGeneratorsFactory);
+       var actionPointsSender = new ActionPointsSender(serverWrapper, playersDictionary);
+       var actionPointsController = new ActionPointsController(activeGamesCollection, generatorsCollection,
+           actionPointsSender, loggerWrapper);
+       
+       //Setting up game over controller
+       var historyProvider = new HistoryProviderStub();
+       var gameOverController =
+           new GameOverController(activeGamesCollection, gameSavingService, historyProvider, loggerWrapper);
+       
+       //Running the server and client
+       while (true)
+       {
+           try
+           {
+                gameServer.Update();
+                matchMakerClient.Update();
+           }
+           catch (Exception e)
+           {
+                Logger.Error(e);
+           }
+       }
     }
 }
