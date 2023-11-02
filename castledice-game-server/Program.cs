@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using castledice_game_server.Configuration;
+using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders.ContentSpawnersProviders.CastlesSpawning;
 using castledice_game_server.Logging;
 using castledice_game_server.NetworkManager;
 using castledice_game_server.NetworkManager.RiptideWrappers;
@@ -10,6 +11,9 @@ using Riptide.Utils;
 internal class Program
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+    
+    //Game creation providers
+    private readonly ICastleConfigProvider CastleConfigProvider;
     
     public static void Main(string[] args)
     {
