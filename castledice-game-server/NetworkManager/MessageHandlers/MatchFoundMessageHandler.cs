@@ -15,7 +15,7 @@ public static class MatchFoundMessageHandler
     }
 
     [MessageHandler((ushort)ServerToClientMessageType.MatchFound)]
-    public static void HandleMatchFoundMessage(Message message)
+    private static void HandleMatchFoundMessage(Message message)
     {
         Task.Run(() => _dtoAccepter.AcceptMatchFoundDTOAsync(message.GetMatchFoundDTO()));
     }
