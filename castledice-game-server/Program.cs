@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using castledice_game_server.Configuration;
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders.ContentSpawnersProviders.CastlesSpawning;
+using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders.ContentSpawnersProviders.TreesSpawning;
 using castledice_game_server.Logging;
 using castledice_game_server.NetworkManager;
 using castledice_game_server.NetworkManager.RiptideWrappers;
@@ -13,7 +14,10 @@ internal class Program
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     
     //Game creation providers
-    private readonly ICastleConfigProvider CastleConfigProvider;
+    private readonly ICastleConfigProvider CastleConfigProvider = new DefaultCastleConfigProvider(3, 1, 1);
+    private readonly IDuelCastlesPositionsProvider DuelCastlesPositionsProvider = new DefaultDuelCastlePositionsProvider((0, 0), (9, 9));
+    private readonly ITreeConfigProvider TreeConfigProvider = new DefaultTreeConfigProvider(1, false);
+    private readonly ITreesGenerationConfigProvider TreesGenerationConfigProvider;
     
     public static void Main(string[] args)
     {

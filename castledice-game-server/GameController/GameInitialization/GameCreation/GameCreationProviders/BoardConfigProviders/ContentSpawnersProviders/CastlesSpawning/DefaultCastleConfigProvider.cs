@@ -17,6 +17,6 @@ public class DefaultCastleConfigProvider : ICastleConfigProvider
 
     public CastleConfig GetCastleConfig()
     {
-        return new CastleConfig(_maxDurability, _maxDurability, _captureHitCost);
+        return new CastleConfig(_maxDurability, _maxFreeDurability, _captureHitCost);
     }
 }
