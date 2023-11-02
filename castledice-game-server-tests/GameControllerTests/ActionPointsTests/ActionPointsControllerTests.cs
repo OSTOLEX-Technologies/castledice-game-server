@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using castledice_game_logic;
-using castledice_game_logic.Math;
+﻿using castledice_game_logic.Math;
 using castledice_game_logic.TurnsLogic;
+using castledice_game_server_tests.TestImplementations;
 using castledice_game_server.GameController;
 using castledice_game_server.GameController.ActionPoints;
 using static castledice_game_server_tests.ObjectCreationUtility;
@@ -12,40 +11,6 @@ namespace castledice_game_server_tests.GameControllerTests.ActionPointsTests;
 
 public class ActionPointsControllerTests
 {
-    private class TestGamesCollection : IGamesCollection
-    {
-        public Game GameToReturnOnGameRemoved { get; set; } = GetGame();
-        
-        public IEnumerator<Game> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public void AddGame(int gameId, Game game)
-        {
-            GameAdded?.Invoke(this, game);
-        }
-
-        public int GetGameId(Game game)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool RemoveGame(int gameId)
-        {
-            GameRemoved?.Invoke(this, GameToReturnOnGameRemoved);
-            return true;
-        }
-
-        public event EventHandler<Game>? GameAdded;
-        public event EventHandler<Game>? GameRemoved;
-    }
-    
     [Theory]
     [InlineData(1, 1)]
     [InlineData(2, 3)]
