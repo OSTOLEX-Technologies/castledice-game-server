@@ -28,6 +28,7 @@ using castledice_game_server.NetworkManager.RiptideWrappers;
 using castledice_game_server.Stubs;
 using Microsoft.Extensions.Configuration;
 using Riptide;
+using Riptide.Transports.Tcp;
 using Riptide.Utils;
 
 internal class Program
@@ -68,10 +69,10 @@ internal class Program
         Debug.Assert(gameServerStartConfig != null, nameof(gameServerStartConfig) + " != null");
 
         //Starting the server
-        var gameServer = new Server();
+        var gameServer = new Server(new TcpServer());
         gameServer.Start(gameServerStartConfig.Port, gameServerStartConfig.MaxClientCount);
         var serverWrapper = new ServerWrapper(gameServer);
-        var matchMakerClient = new Client();
+        var matchMakerClient = new Client(new TcpClient());
         matchMakerClient.Connect($"{matchMakerConnectionConfig.Ip}:{matchMakerConnectionConfig.Port}");
         var clientWrapper = new ClientWrapper(matchMakerClient);
         

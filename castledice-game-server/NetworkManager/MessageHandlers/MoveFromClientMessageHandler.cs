@@ -15,7 +15,7 @@ public static class MoveFromClientMessageHandler
     }
 
     [MessageHandler((ushort)ClientToServerMessageType.MakeMove)]
-    private static void HandleMoveFromClientMessage(Message message)
+    private static void HandleMoveFromClientMessage(ushort fromClientId, Message message)
     {
         _dtoAccepter.AcceptMoveFromClientDTO(message.GetMoveFromClientDTO());
     }
