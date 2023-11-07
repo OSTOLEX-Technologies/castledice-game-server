@@ -51,6 +51,7 @@ public class ActionPointsController
                 _numberGenerators.AddGeneratorForPlayer(playerId);
             }
             game.TurnSwitched += OnTurnSwitched;
+            //GiveActionPointsToCurrentPlayer(game); TODO: This should be fixed
             GiveActionPointsToCurrentPlayer(game);
         }
         catch (Exception e)
