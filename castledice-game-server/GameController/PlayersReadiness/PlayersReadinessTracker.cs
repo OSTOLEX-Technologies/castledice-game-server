@@ -9,7 +9,7 @@ public class PlayersReadinessTracker : IPlayersReadinessTracker
         _playersReadiness[playerId] = isPlayerReady;
     }
 
-    public bool IsPlayerReady(int playerId)
+    public bool PlayerIsReady(int playerId)
     {
         return _playersReadiness.TryGetValue(playerId, out var isPlayerReady) && isPlayerReady;
     }

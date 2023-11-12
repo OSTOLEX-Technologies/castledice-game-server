@@ -20,7 +20,7 @@ public class MovesControllerTests
     [InlineData(3)]
     public void MakeMove_ShouldPassPlayerIdFromGivenMoveData_ToGivenGameForPlayerProvider(int playerId)
     {
-        var gameForPlayerProviderMock = GetGameProviderMock();
+        var gameForPlayerProviderMock = GetGameForPlayerProviderMock();
         var movesController = new MovesControllerBuilder { GameProvider = gameForPlayerProviderMock.Object }.Build();
         var moveData = GetMoveData(playerId);
         
@@ -36,7 +36,7 @@ public class MovesControllerTests
     public void MakeMove_ShouldLogExceptionMessage_IfGivenGameForPlayerProviderWillThrowOne(string message)
     {
         var exceptionToThrow = new GameNotFoundException(message);
-        var gameForPlayerProviderMock = GetGameProviderMock();
+        var gameForPlayerProviderMock = GetGameForPlayerProviderMock();
         gameForPlayerProviderMock.Setup(g => g.GetGame(It.IsAny<int>())).Throws(exceptionToThrow);
         var loggerMock = new Mock<ILogger>();
         var movesController = new MovesControllerBuilder { GameProvider = gameForPlayerProviderMock.Object, Logger = loggerMock.Object }.Build();
@@ -51,7 +51,7 @@ public class MovesControllerTests
     public void MakeMove_ShouldPassFoundGame_ToGivenConverterProvider()
     {
         var game = GetGameMock().Object;
-        var gameForPlayerProviderMock = GetGameProviderMock();
+        var gameForPlayerProviderMock = GetGameForPlayerProviderMock();
         gameForPlayerProviderMock.Setup(g => g.GetGame(It.IsAny<int>())).Returns(game);
         var converterProviderMock = GetDataConverterProviderMock();
         var movesController = new MovesControllerBuilder { GameProvider = gameForPlayerProviderMock.Object, DataToMoveConverterProvider = converterProviderMock.Object }.Build();
@@ -70,7 +70,7 @@ public class MovesControllerTests
         var player = GetPlayer(playerId);
         var gameMock = GetGameMock();
         gameMock.Setup(g => g.GetPlayer(playerId)).Returns(player);
-        var gameForPlayerProviderMock = GetGameProviderMock();
+        var gameForPlayerProviderMock = GetGameForPlayerProviderMock();
         gameForPlayerProviderMock.Setup(g => g.GetGame(It.IsAny<int>())).Returns(gameMock.Object);
         var converterProviderMock = GetDataConverterProviderMock();
         var converterMock = GetConverterMock();
@@ -91,7 +91,7 @@ public class MovesControllerTests
     {
         var gameMock = GetGameMock();
         gameMock.Setup(g => g.TryMakeMove(It.IsAny<AbstractMove>())).Returns(false);
-        var gameForPlayerProviderMock = GetGameProviderMock();
+        var gameForPlayerProviderMock = GetGameForPlayerProviderMock();
         gameForPlayerProviderMock.Setup(g => g.GetGame(It.IsAny<int>())).Returns(gameMock.Object);
         var moveStatusSenderMock = new Mock<IMoveStatusSender>();
         var moveData = GetMoveData(playerId);
@@ -110,7 +110,7 @@ public class MovesControllerTests
     {
         var gameMock = GetGameMock();
         gameMock.Setup(g => g.TryMakeMove(It.IsAny<AbstractMove>())).Returns(true);
-        var gameForPlayerProviderMock = GetGameProviderMock();
+        var gameForPlayerProviderMock = GetGameForPlayerProviderMock();
         gameForPlayerProviderMock.Setup(g => g.GetGame(It.IsAny<int>())).Returns(gameMock.Object);
         var moveStatusSenderMock = new Mock<IMoveStatusSender>();
         var moveData = GetMoveData(playerId);
@@ -134,7 +134,7 @@ public class MovesControllerTests
         var gameMock = GetGameMock();
         gameMock.Setup(g => g.TryMakeMove(It.IsAny<AbstractMove>())).Returns(true);
         gameMock.Setup(g => g.GetAllPlayersIds()).Returns(playersIdsList);
-        var gameForPlayerProviderMock = GetGameProviderMock();
+        var gameForPlayerProviderMock = GetGameForPlayerProviderMock();
         gameForPlayerProviderMock.Setup(g => g.GetGame(It.IsAny<int>())).Returns(gameMock.Object);
         var moveDataSenderMock = new Mock<IMoveDataSender>();
         var moveData = GetMoveData(playerId);
@@ -161,7 +161,7 @@ public class MovesControllerTests
     
     private class MovesControllerBuilder
     {
-        public IGameForPlayerProvider GameProvider { get; set; } = GetGameProviderMock().Object;
+        public IGameForPlayerProvider GameProvider { get; set; } = GetGameForPlayerProviderMock().Object;
         public IDataToMoveConverterProvider DataToMoveConverterProvider { get; set; } = GetDataConverterProviderMock().Object;
         public IMoveDataSender MoveDataSender { get; set; } = new Mock<IMoveDataSender>().Object;
         public IMoveStatusSender MoveStatusSender { get; set; } = new Mock<IMoveStatusSender>().Object;
@@ -171,14 +171,6 @@ public class MovesControllerTests
         {
             return new MovesController(GameProvider, DataToMoveConverterProvider, MoveDataSender, MoveStatusSender, Logger);
         }
-    }
-
-    private static Mock<IGameForPlayerProvider> GetGameProviderMock()
-    {
-        var mock = new Mock<IGameForPlayerProvider>();
-        var gameMock = GetGameMock();
-        mock.Setup(x => x.GetGame(It.IsAny<int>())).Returns(gameMock.Object);
-        return mock;
     }
 
     private static Mock<IDataToMoveConverterProvider> GetDataConverterProviderMock()

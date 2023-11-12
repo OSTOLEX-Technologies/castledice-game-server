@@ -13,7 +13,7 @@ public class PlayersReadinessTrackerTests
         var playersReadinessTracker = new PlayersReadinessTracker();
         playersReadinessTracker.SetPlayerReadiness(playerId, isReady);
         
-        var result = playersReadinessTracker.IsPlayerReady(playerId);
+        var result = playersReadinessTracker.PlayerIsReady(playerId);
         
         Assert.Equal(isReady, result);
     }
@@ -24,7 +24,7 @@ public class PlayersReadinessTrackerTests
         var playerId = 1;
         var playersReadinessTracker = new PlayersReadinessTracker();
         
-        var result = playersReadinessTracker.IsPlayerReady(playerId);
+        var result = playersReadinessTracker.PlayerIsReady(playerId);
         
         Assert.False(result);
     }

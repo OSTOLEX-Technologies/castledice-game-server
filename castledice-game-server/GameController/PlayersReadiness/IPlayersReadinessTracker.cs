@@ -3,5 +3,5 @@
 public interface IPlayersReadinessTracker
 {
     void SetPlayerReadiness(int playerId, bool isPlayerReady);
-    bool IsPlayerReady(int playerId);
+    bool PlayerIsReady(int playerId);
 }

@@ -10,6 +10,7 @@ using castledice_game_logic.GameObjects;
 using castledice_game_logic.GameObjects.Configs;
 using castledice_game_logic.GameObjects.Factories.Castles;
 using castledice_game_logic.Math;
+using castledice_game_server.GameController.Moves;
 using Moq;
 using CastleGO = castledice_game_logic.GameObjects.Castle;
 
@@ -17,6 +18,14 @@ namespace castledice_game_server_tests;
 
 public class ObjectCreationUtility
 {
+    public static Mock<IGameForPlayerProvider> GetGameForPlayerProviderMock()
+    {
+        var mock = new Mock<IGameForPlayerProvider>();
+        var gameMock = GetGameMock();
+        mock.Setup(x => x.GetGame(It.IsAny<int>())).Returns(gameMock.Object);
+        return mock;
+    }
+    
     public static Mock<Game> GetGameMock()
     {
         var player = GetPlayer(1);
