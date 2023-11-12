@@ -19,6 +19,7 @@ using castledice_game_server.GameController.GameInitialization.GameStartDataCrea
 using castledice_game_server.GameController.GameOver;
 using castledice_game_server.GameController.Moves;
 using castledice_game_server.GameController.PlayerInitialization;
+using castledice_game_server.GameController.PlayersReadiness;
 using castledice_game_server.Logging;
 using castledice_game_server.NetworkManager;
 using castledice_game_server.NetworkManager.MessageHandlers;
@@ -137,12 +138,21 @@ internal class Program
        var moveAccepter = new MoveAccepter(movesController);
        MoveFromClientMessageHandler.SetAccepter(moveAccepter);
        
+       //Setting up players readiness controller
+       var playersReadinessTracker = new PlayersReadinessTracker();
+       var gamePlayersReadinessNotifier = new GamePlayersReadinessNotifier();
+       var playerReadinessController = new PlayerReadinessController(idRetriever, gameForPlayerProvider,
+           playersReadinessTracker, gamePlayersReadinessNotifier, loggerWrapper);
+       var playerReadinessAccepter = new PlayerReadinessAccepter(playerReadinessController);
+       PlayerReadyMessageHandler.SetAccepter(playerReadinessAccepter);
+        
+       
        //Setting up action points controller
        var negentropyGeneratorsFactory = new NegentropyGeneratorsFactory(RandomConfig);
        var generatorsCollection = new GeneratorsCollection(negentropyGeneratorsFactory);
        var actionPointsSender = new ActionPointsSender(serverWrapper, playersDictionary);
-       //var actionPointsController = new ActionPointsController(activeGamesCollection, generatorsCollection,
-       //    actionPointsSender, loggerWrapper);
+       var actionPointsController = new ActionPointsController(activeGamesCollection, generatorsCollection,
+           actionPointsSender, gamePlayersReadinessNotifier, loggerWrapper);
        
        //Setting up game over controller
        var historyProvider = new HistoryProviderStub();
