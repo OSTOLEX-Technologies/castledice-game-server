@@ -2,6 +2,7 @@
 using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.GameObjects;
 using castledice_game_logic.Math;
+using castledice_game_logic.MovesLogic;
 using castledice_game_server_tests.TestImplementations;
 using castledice_game_server.GameController;
 using castledice_game_server.GameController.GameOver;
@@ -28,6 +29,11 @@ public class GameOverControllerTests
         public void ForceDraw()
         {
             OnDraw();
+        }
+
+        public void InvokeMoveApplied(AbstractMove move)
+        {
+            OnMoveApplied(move);
         }
     }
     
