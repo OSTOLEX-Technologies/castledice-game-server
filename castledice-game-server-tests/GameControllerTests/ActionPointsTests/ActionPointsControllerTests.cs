@@ -3,6 +3,7 @@ using castledice_game_logic.TurnsLogic;
 using castledice_game_server_tests.TestImplementations;
 using castledice_game_server.GameController;
 using castledice_game_server.GameController.ActionPoints;
+using castledice_game_server.GameController.PlayersReadiness;
 using static castledice_game_server_tests.ObjectCreationUtility;
 using ILogger = castledice_game_server.Logging.ILogger;
 using Moq;
@@ -112,9 +113,9 @@ public class ActionPointsControllerTests
     }
 
     [Fact]
-    public void OnGameAdded_ShouldCallGiveActionPointsToCurrentPlayer_WithAddedGame()
+    public void GiveActionPointsToCurrentPlayer_ShouldBeCalled_IfPlayersAreReady()
     {
-        var expectedGame = GetGameMock().Object;
+        var game = GetGameMock().Object;
         var gamesCollection = new TestGamesCollection();
         var generatorMock = new Mock<IRandomNumberGenerator>();
         generatorMock.Setup(g => g.GetNextRandom()).Returns(1);
@@ -122,13 +123,14 @@ public class ActionPointsControllerTests
         generatorsCollectionMock.Setup(g => g.GetGeneratorForPlayer(It.IsAny<int>())).Returns(generatorMock.Object);
         var loggerMock = new Mock<ILogger>();
         var actionPointsSenderMock = new Mock<IActionPointsSender>();
+        var notifier = new GamePlayersReadinessNotifier();
         var controllerMock = new Mock<ActionPointsController>(gamesCollection, generatorsCollectionMock.Object,
-            actionPointsSenderMock.Object, loggerMock.Object);
+            actionPointsSenderMock.Object, notifier, loggerMock.Object);
         var testObject = controllerMock.Object; //This line is needed to force constructor call.
         
-        gamesCollection.AddGame(1, expectedGame);
+        notifier.NotifyPlayersAreReady(game);
         
-        controllerMock.Verify(c => c.GiveActionPointsToCurrentPlayer(expectedGame), Times.Once);
+        controllerMock.Verify(c => c.GiveActionPointsToCurrentPlayer(game), Times.Once);
     }
 
     [Theory]
@@ -193,14 +195,15 @@ public class ActionPointsControllerTests
         generatorsCollectionMock.Setup(g => g.GetGeneratorForPlayer(It.IsAny<int>())).Returns(generatorMock.Object);
         var loggerMock = new Mock<ILogger>();
         var actionPointsSenderMock = new Mock<IActionPointsSender>();
+        var notifier = new GamePlayersReadinessNotifier();
         var controllerMock = new Mock<ActionPointsController>(gamesCollection, generatorsCollectionMock.Object,
-            actionPointsSenderMock.Object, loggerMock.Object);
+            actionPointsSenderMock.Object, notifier, loggerMock.Object);
         var testObject = controllerMock.Object; //This line is needed to force constructor call.
         
         gamesCollection.AddGame(1, expectedGame);
         expectedGame.SwitchTurn(); //Forcing turn switch in game
         
-        controllerMock.Verify(c => c.GiveActionPointsToCurrentPlayer(expectedGame), Times.Exactly(2)); //We check if method was called twice because firstly it is called in OnGameAdded
+        controllerMock.Verify(c => c.GiveActionPointsToCurrentPlayer(expectedGame), Times.Exactly(1));
     }
 
     [Fact]
@@ -218,15 +221,16 @@ public class ActionPointsControllerTests
         generatorsCollectionMock.Setup(g => g.GetGeneratorForPlayer(It.IsAny<int>())).Returns(generatorMock.Object);
         var loggerMock = new Mock<ILogger>();
         var actionPointsSenderMock = new Mock<IActionPointsSender>();
+        var notifier = new GamePlayersReadinessNotifier();
         var controllerMock = new Mock<ActionPointsController>(gamesCollection, generatorsCollectionMock.Object,
-            actionPointsSenderMock.Object, loggerMock.Object);
+            actionPointsSenderMock.Object, notifier, loggerMock.Object);
         var testObject = controllerMock.Object; //This line is needed to force constructor call.
         
         gamesCollection.AddGame(1, expectedGame);
         gamesCollection.RemoveGame(1);
         expectedGame.SwitchTurn(); //Forcing turn switch in game
         
-        controllerMock.Verify(c => c.GiveActionPointsToCurrentPlayer(expectedGame), Times.Once); //We check if method was called once because firstly it is called in OnGameAdded
+        controllerMock.Verify(c => c.GiveActionPointsToCurrentPlayer(expectedGame), Times.Never); 
     }
 
     private class ActionPointsControllerBuilder
@@ -234,11 +238,12 @@ public class ActionPointsControllerTests
         public IGamesCollection GamesCollection { get; set; } = new Mock<IGamesCollection>().Object;
         public INumberGeneratorsCollection NumberGeneratorsCollection { get; set; } = GetGeneratorsCollectionMock().Object;
         public IActionPointsSender ActionPointsSender { get; set; } = new Mock<IActionPointsSender>().Object;
+        public IGamePlayersReadinessNotifier PlayersReadinessNotifier { get; set; } = new GamePlayersReadinessNotifier();
         public ILogger Logger { get; set; } = new Mock<ILogger>().Object;
         
         public ActionPointsController Build()
         {
-            return new(GamesCollection, NumberGeneratorsCollection, ActionPointsSender, Logger);
+            return new(GamesCollection, NumberGeneratorsCollection, ActionPointsSender, PlayersReadinessNotifier,  Logger);
         }
     }
 

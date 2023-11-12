@@ -1,4 +1,5 @@
 ﻿using castledice_game_logic;
+using castledice_game_server.GameController.PlayersReadiness;
 using castledice_game_server.Logging;
 
 namespace castledice_game_server.GameController.ActionPoints;
@@ -8,17 +9,20 @@ public class ActionPointsController
     private readonly IGamesCollection _activeGames;
     private readonly INumberGeneratorsCollection _numberGenerators;
     private readonly IActionPointsSender _actionPointsSender;
+    private readonly IGamePlayersReadinessNotifier _gamePlayersReadinessNotifier;
     private readonly ILogger _logger;
 
     public ActionPointsController(IGamesCollection activeGames, INumberGeneratorsCollection numberGenerators,
-        IActionPointsSender actionPointsSender, ILogger logger)
+        IActionPointsSender actionPointsSender, IGamePlayersReadinessNotifier gamePlayersReadinessNotifier, ILogger logger)
     {
         _activeGames = activeGames;
         _numberGenerators = numberGenerators;
         _actionPointsSender = actionPointsSender;
+        _gamePlayersReadinessNotifier = gamePlayersReadinessNotifier;
         _logger = logger;
         _activeGames.GameAdded += OnGameAdded;
         _activeGames.GameRemoved += OnGameRemoved;
+        _gamePlayersReadinessNotifier.PlayersAreReady += OnPlayersAreReady;
     }
 
     public virtual void GiveActionPointsToCurrentPlayer(Game game)
@@ -51,12 +55,16 @@ public class ActionPointsController
                 _numberGenerators.AddGeneratorForPlayer(playerId);
             }
             game.TurnSwitched += OnTurnSwitched;
-            GiveActionPointsToCurrentPlayer(game); //TODO: This should be fixed
         }
         catch (Exception e)
         {
             _logger.Error(e.Message);
         }
+    }
+    
+    private void OnPlayersAreReady(object? sender, Game game)
+    {
+        GiveActionPointsToCurrentPlayer(game);
     }
 
     private void OnGameRemoved(object? sender, Game game)

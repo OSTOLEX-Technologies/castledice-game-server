@@ -141,8 +141,8 @@ internal class Program
        var negentropyGeneratorsFactory = new NegentropyGeneratorsFactory(RandomConfig);
        var generatorsCollection = new GeneratorsCollection(negentropyGeneratorsFactory);
        var actionPointsSender = new ActionPointsSender(serverWrapper, playersDictionary);
-       var actionPointsController = new ActionPointsController(activeGamesCollection, generatorsCollection,
-           actionPointsSender, loggerWrapper);
+       //var actionPointsController = new ActionPointsController(activeGamesCollection, generatorsCollection,
+       //    actionPointsSender, loggerWrapper);
        
        //Setting up game over controller
        var historyProvider = new HistoryProviderStub();
