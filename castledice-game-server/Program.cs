@@ -123,10 +123,10 @@ internal class Program
         var gameStartDataCreator = new GameStartDataCreator(gameStartDataVersionProvider, boardDataProvider,
             placeablesConfigDataProvider, decksDataProvider);
         var gameStartDataSender = new GameStartDataSender(serverWrapper, playersDictionary);
-        var gameInitializationController = new GameInitializationController(gameSavingService, activeGamesCollection,
-            gameStartDataSender, gameCreator, gameStartDataCreator, loggerWrapper);
-        var gameInitializer = new GameInitializer(gameInitializationController);
-        MatchFoundMessageHandler.SetDTOAccepter(gameInitializer);
+        // var gameInitializationController = new GameInitializationController(gameSavingService, activeGamesCollection,
+        //     gameStartDataSender, gameCreator, gameStartDataCreator, loggerWrapper);
+        // var gameInitializer = new GameInitializer(gameInitializationController);
+        // MatchFoundMessageHandler.SetDTOAccepter(gameInitializer);
         
         //Setting up moves controller
         var gameForPlayerProvider = new GameForPlayerProvider(activeGamesCollection);

@@ -1,5 +1,8 @@
 using castledice_game_data_logic;
+using castledice_game_data_logic.Errors;
 using castledice_game_logic;
+using castledice_game_server;
+using castledice_game_server.Exceptions;
 using castledice_game_server.GameController;
 using castledice_game_server.GameController.GameInitialization;
 using castledice_game_server.GameController.GameInitialization.GameCreation;
@@ -18,7 +21,7 @@ public class GameInitializationControllerTests
     public async void InitializeGameAsync_ShouldCallCreateGame_OnGivenGameCreator()
     {
         var gameCreatorMock = GetGameCreatorMock();
-        var gameCreationController = new GameCreationControllerBuilder
+        var gameCreationController = new GameInitializationControllerBuilder
         {
             GameCreator = gameCreatorMock.Object
         }.Build();
@@ -35,7 +38,7 @@ public class GameInitializationControllerTests
     {
         var gameStartDataCreatorMock = GetGameStartDataCreatorMock();
         var createdGame = GetGame();
-        var gameCreationController = new GameCreationControllerBuilder
+        var gameCreationController = new GameInitializationControllerBuilder
         {
             GameCreator = GetGameCreatorMock(createdGame).Object,
             GameStartDataCreator = gameStartDataCreatorMock.Object
@@ -52,7 +55,7 @@ public class GameInitializationControllerTests
         var gameSavingServiceMock = new Mock<IGameSavingService>();
         var createdGameStartData = GetGameStartData();
         var gameStartDataCreatorMock = GetGameStartDataCreatorMock(createdGameStartData);
-        var gameCreationController = new GameCreationControllerBuilder
+        var gameCreationController = new GameInitializationControllerBuilder
         {
             GameSavingService = gameSavingServiceMock.Object,
             GameStartDataCreator = gameStartDataCreatorMock.Object
@@ -74,7 +77,7 @@ public class GameInitializationControllerTests
         var gamesCollectionMock = new Mock<IGamesCollection>();
         var savingServiceMock = new Mock<IGameSavingService>();
         savingServiceMock.Setup(saver => saver.SaveGameStartAsync(It.IsAny<GameStartData>())).ReturnsAsync(gameId);
-        var gameCreationController = new GameCreationControllerBuilder
+        var gameCreationController = new GameInitializationControllerBuilder
         {
             GameCreator = gameCreator,
             ActiveGamesCollection = gamesCollectionMock.Object,
@@ -91,7 +94,7 @@ public class GameInitializationControllerTests
     {
         var gameStartDataSenderMock = new Mock<IGameStartDataSender>();
         var createdGameStartData = GetGameStartData();
-        var gameCreationController = new GameCreationControllerBuilder
+        var gameCreationController = new GameInitializationControllerBuilder
         {
             GameStartDataCreator = GetGameStartDataCreatorMock(createdGameStartData).Object,
             GameStartDataSender = gameStartDataSenderMock.Object
@@ -111,7 +114,7 @@ public class GameInitializationControllerTests
         var gameStartDataCreatorMock = new Mock<IGameStartDataCreator>();
         gameStartDataCreatorMock.Setup(creator => creator.CreateGameStartData(It.IsAny<Game>())).Throws(new Exception(message));
         var loggerMock = new Mock<ILogger>();
-        var gameCreationController = new GameCreationControllerBuilder
+        var gameCreationController = new GameInitializationControllerBuilder
         {
             GameStartDataCreator = gameStartDataCreatorMock.Object,
             Logger = loggerMock.Object
@@ -122,18 +125,67 @@ public class GameInitializationControllerTests
         loggerMock.Verify(logger => logger.Error(message), Times.Once);
     }
 
-public class GameCreationControllerBuilder
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2, 1, 4)]
+    [InlineData(3, 1, 2, 5)]
+    public async void InitializeGameAsync_ShouldSendProperGameNotSavedErrorToEveryGamePlayer_IfCaughtGameNotSavedException(params int[] playersIds)
+    {
+        var gameSavingServiceMock = new Mock<IGameSavingService>();
+        gameSavingServiceMock.Setup(saver => saver.SaveGameStartAsync(It.IsAny<GameStartData>())).Throws(new GameNotSavedException());
+        var errorSenderMock = new Mock<IErrorSender>();
+        var playersIdsList = new List<int>(playersIds);
+        var expectedErrorData = new ErrorData(ErrorType.GameNotSaved, ErrorMessages.GameNotSaved);
+        var gameCreationController = new GameInitializationControllerBuilder
+        {
+            GameSavingService = gameSavingServiceMock.Object,
+            ErrorSender = errorSenderMock.Object
+        }.Build();
+        
+        await gameCreationController.InitializeGameAsync(playersIdsList);
+
+        foreach (var id in playersIdsList)
+        {
+            errorSenderMock.Verify(sender => sender.SendErrorToPlayer(expectedErrorData, id), Times.Once);
+        }
+    }
+
+    [Theory]
+    [InlineData("some message")]
+    [InlineData("another message")]
+    [InlineData("yet another message")]
+    public async void InitializeGameAsync_ShouldLogExceptions_ThrownByErrorSender(string message)
+    {
+        var gameSavingServiceMock = new Mock<IGameSavingService>();
+        gameSavingServiceMock.Setup(saver => saver.SaveGameStartAsync(It.IsAny<GameStartData>())).Throws(new GameNotSavedException());
+        var errorSenderMock = new Mock<IErrorSender>();
+        errorSenderMock.Setup(sender => sender.SendErrorToPlayer(It.IsAny<ErrorData>(), It.IsAny<int>())).Throws(new Exception(message));
+        var loggerMock = new Mock<ILogger>();
+        var gameCreationController = new GameInitializationControllerBuilder
+        {
+            GameSavingService = gameSavingServiceMock.Object,
+            ErrorSender = errorSenderMock.Object,
+            Logger = loggerMock.Object
+        }.Build();
+        
+        await gameCreationController.InitializeGameAsync(new List<int> { 1, 2 });
+        
+        loggerMock.Verify(logger => logger.Error(message), Times.Once);
+    }
+
+    public class GameInitializationControllerBuilder
     {
         public IGameSavingService GameSavingService { get; set; } = new Mock<IGameSavingService>().Object;
         public IGamesCollection ActiveGamesCollection { get; set; } = new Mock<IGamesCollection>().Object;
         public IGameStartDataSender GameStartDataSender { get; set; } = new Mock<IGameStartDataSender>().Object;
         public IGameCreator GameCreator { get; set; } = GetGameCreatorMock().Object;
         public IGameStartDataCreator GameStartDataCreator { get; set; } = GetGameStartDataCreatorMock().Object;
+        public IErrorSender ErrorSender { get; set; } = new Mock<IErrorSender>().Object;
         public ILogger Logger { get; set; } = new Mock<ILogger>().Object;
         
         public GameInitializationController Build()
         {
-            return new GameInitializationController(GameSavingService, ActiveGamesCollection, GameStartDataSender, GameCreator, GameStartDataCreator, Logger);
+            return new GameInitializationController(GameSavingService, ActiveGamesCollection, GameStartDataSender, GameCreator, GameStartDataCreator, ErrorSender, Logger);
         }
     }
 
