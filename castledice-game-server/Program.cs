@@ -79,6 +79,7 @@ internal class Program
         
         //Setting up common objects
         var playersDictionary = new PlayerToClientDictionary();
+        var errorSender = new ErrorSender(serverWrapper, playersDictionary);
         var idRetriever = new StringIdRetrieverStub();//TODO: Replace with actual id retriever
         var playersDisconnecter = new PlayerDisconnecter(serverWrapper, playersDictionary, playersDictionary);
         var gameSavingService = new GameSavingServiceStub();//TODO: Replace with actual game saving service
@@ -123,10 +124,10 @@ internal class Program
         var gameStartDataCreator = new GameStartDataCreator(gameStartDataVersionProvider, boardDataProvider,
             placeablesConfigDataProvider, decksDataProvider);
         var gameStartDataSender = new GameStartDataSender(serverWrapper, playersDictionary);
-        // var gameInitializationController = new GameInitializationController(gameSavingService, activeGamesCollection,
-        //     gameStartDataSender, gameCreator, gameStartDataCreator, loggerWrapper);
-        // var gameInitializer = new GameInitializer(gameInitializationController);
-        // MatchFoundMessageHandler.SetDTOAccepter(gameInitializer);
+        var gameInitializationController = new GameInitializationController(gameSavingService, activeGamesCollection,
+            gameStartDataSender, gameCreator, gameStartDataCreator, errorSender, loggerWrapper);
+        var gameInitializer = new GameInitializer(gameInitializationController);
+        MatchFoundMessageHandler.SetDTOAccepter(gameInitializer);
         
         //Setting up moves controller
         var gameForPlayerProvider = new GameForPlayerProvider(activeGamesCollection);
