@@ -83,6 +83,7 @@ internal class Program
         var idRetriever = new StringIdRetrieverStub();//TODO: Replace with actual id retriever
         var playersDisconnecter = new PlayerDisconnecter(serverWrapper, playersDictionary, playersDictionary);
         var gameSavingService = new GameSavingServiceStub();//TODO: Replace with actual game saving service
+        //var gameSavingService = new GameSavingServiceWithErrorStub() { ThrowErrorDelay = 1000};
         var activeGamesCollection = new ActiveGamesCollection();
         
         //Setting up matchmaker retranslation
