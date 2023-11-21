@@ -5,7 +5,7 @@ using Riptide;
 
 namespace castledice_game_server.NetworkManager.MessageHandlers;
 
-public class CancelGameResultMessageHandler
+public static class CancelGameResultMessageHandler
 {
     private static ICancelGameResultDTOAccepter _dtoAccepter;
     
@@ -15,7 +15,7 @@ public class CancelGameResultMessageHandler
     }
     
     [MessageHandler((ushort)ServerToClientMessageType.CancelGame)]
-    public static void HandleCancelGameResultMessage(Message message)
+    private static void HandleCancelGameResultMessage(Message message)
     {
         _dtoAccepter.AcceptCancelGameResultDTO(message.GetCancelGameResultDTO());
     }

@@ -4,5 +4,5 @@ namespace castledice_game_server.NetworkManager.DTOAccepters;
 
 public interface IMatchFoundDTOAccepter
 {
-    void AcceptMatchFoundDTO(MatchFoundDTO matchFoundDTO);
+    Task AcceptMatchFoundDTOAsync(MatchFoundDTO matchFoundDTO);
 }

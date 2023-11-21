@@ -1,21 +1,20 @@
 ﻿using casltedice_events_logic.ClientToServer;
-using castledice_game_server.Auth;
+using castledice_game_server.GameController.PlayerInitialization;
+using castledice_game_server.NetworkManager.DTOAccepters;
 
 namespace castledice_game_server.NetworkManager;
 
-public class PlayerInitializer
+public class PlayerInitializer : IInitializePlayerDTOAccepter
 {
-    private IIdRetriever _idRetriever;
+    private readonly IPlayerInitializationController _controller;
 
-    public PlayerInitializer(IIdRetriever idRetriever)
+    public PlayerInitializer(IPlayerInitializationController controller)
     {
-        _idRetriever = idRetriever;
+        _controller = controller;
     }
 
-    public void InitializePlayer(InitializePlayerDTO dto, ushort clientId)
+    public async Task AcceptInitializePlayerDTOAsync(InitializePlayerDTO dto, ushort clientId)
     {
-        var playerId = _idRetriever.RetrievePlayerId(dto.VerificationKey);
-        PlayersDictionary.Dictionary.Remove(playerId); //TODO: Disconnect player with this id and send dto to old client.
-        PlayersDictionary.Dictionary.Add(playerId, clientId);
+        await _controller.InitializePlayerAsync(dto.VerificationKey, clientId);
     }
 }

@@ -1,10 +1,9 @@
 ﻿using castledice_game_data_logic;
-using castledice_game_logic;
 
-namespace castledice_game_server.GameDataSaver;
+namespace castledice_game_server.GameService;
 
 public interface IGameSavingService
 {
-    void SaveGameStart(Game game);
-    void SaveGameEnd(Game game);
+    Task<int> SaveGameStartAsync(GameStartData gameStartData);
+    Task SaveGameEndAsync(int gameId, string history, int? winnerId = null);
 }

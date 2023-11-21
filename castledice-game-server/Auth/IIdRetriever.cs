@@ -2,5 +2,5 @@
 
 public interface IIdRetriever
 {
-    int RetrievePlayerId(string playerToken);
+    Task<int> RetrievePlayerIdAsync(string playerToken);
 }

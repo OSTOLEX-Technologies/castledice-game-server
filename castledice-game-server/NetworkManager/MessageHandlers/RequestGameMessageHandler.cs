@@ -15,7 +15,7 @@ public static class RequestGameMessageHandler
     }
 
     [MessageHandler((ushort)ClientToServerMessageType.RequestGame)]
-    public static void HandleRequestGameMessage(ushort fromClientId, Message message)
+    private static void HandleRequestGameMessage(ushort fromClientId, Message message)
     {
         _dtoAccepter.AcceptRequestGameDTO(message.GetRequestGameDTO(), fromClientId);
     }
