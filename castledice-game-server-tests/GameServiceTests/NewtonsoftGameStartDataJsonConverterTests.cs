@@ -15,7 +15,7 @@ public class NewtonsoftGameStartDataJsonConverterTests
         var converter = new NewtonsoftGameStartDataJsonConverter();
 
         var json = converter.GetJson(expectedData);
-        var actualData = JsonConvert.DeserializeObject<GameStartData>(json, new ContentDataConverter());
+        var actualData = JsonConvert.DeserializeObject<GameStartData>(json, new ContentDataConverter(), new TscDataConverter());
 
         Assert.Equal(expectedData, actualData);
     }

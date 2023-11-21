@@ -100,7 +100,7 @@ internal class Program
         InitializePlayerMessageHandler.SetDTOAccepter(playerInitializer);
         
         //Setting up game initialization
-        var castlesFactoryProvider = new CastlesFactoryProvider(CastleConfigProvider);
+        /*var castlesFactoryProvider = new CastlesFactoryProvider(CastleConfigProvider);
         var duelCastlesSpawnerProvider =
             new DuelCastlesSpawnerProvider(DuelCastlesPositionsProvider, castlesFactoryProvider);
         var treesFactoryProvider = new TreesFactoryProvider(TreeConfigProvider);
@@ -128,7 +128,7 @@ internal class Program
         var gameInitializationController = new GameInitializationController(gameSavingService, activeGamesCollection,
             gameStartDataSender, gameCreator, gameStartDataCreator, errorSender, loggerWrapper);
         var gameInitializer = new GameInitializer(gameInitializationController);
-        MatchFoundMessageHandler.SetDTOAccepter(gameInitializer);
+        MatchFoundMessageHandler.SetDTOAccepter(gameInitializer);*/
         
         //Setting up moves controller
         var gameForPlayerProvider = new GameForPlayerProvider(activeGamesCollection);

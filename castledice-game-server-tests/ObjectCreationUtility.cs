@@ -1,6 +1,7 @@
 ﻿using castledice_game_data_logic;
 using castledice_game_data_logic.ConfigsData;
 using castledice_game_data_logic.Content;
+using castledice_game_data_logic.TurnSwitchConditions;
 using castledice_game_logic;
 using castledice_game_logic.ActionPointsLogic;
 using castledice_game_logic.BoardGeneration.CellsGeneration;
@@ -10,7 +11,11 @@ using castledice_game_logic.GameObjects;
 using castledice_game_logic.GameObjects.Configs;
 using castledice_game_logic.GameObjects.Factories.Castles;
 using castledice_game_logic.Math;
+using castledice_game_logic.TurnsLogic;
+using castledice_game_server.GameController.GameInitialization.GameCreation;
+using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.TscProviders;
 using castledice_game_server.GameController.Moves;
+using ITimer = castledice_game_logic.Time.ITimer;
 using Moq;
 using CastleGO = castledice_game_logic.GameObjects.Castle;
 
@@ -18,6 +23,33 @@ namespace castledice_game_server_tests;
 
 public class ObjectCreationUtility
 {
+    public static Mock<IGameConstructorWrapper> GetGameConstructorWrapperMock()
+    {
+        var mock = new Mock<IGameConstructorWrapper>();
+        var gameMock = GetGameMock();
+        mock.Setup(x => x.ConstructGame(It.IsAny<List<Player>>(), It.IsAny<BoardConfig>(), It.IsAny<PlaceablesConfig>(), It.IsAny<IDecksList>()))
+            .Returns(gameMock.Object);
+        return mock;
+    }
+
+    public static Mock<ITscListProvider> GetTscListProviderMock()
+    {
+        var listToReturn = new List<ITurnSwitchCondition>();
+        var mock = new Mock<ITscListProvider>();
+        mock.Setup(x => x.GetTurnSwitchConditions()).Returns(listToReturn);
+        return mock;
+    }
+    
+    public static ActionPointsCondition GetActionPointsCondition()
+    {
+        return new ActionPointsCondition(new Mock<ICurrentPlayerProvider>().Object);
+    }
+    
+    public static TimeCondition GetTimeCondition()
+    {
+        return new TimeCondition(new Mock<ITimer>().Object, 100, new PlayerTurnsSwitcher(new PlayersList()));
+    }
+    
     public static Mock<IGameForPlayerProvider> GetGameForPlayerProviderMock()
     {
         var mock = new Mock<IGameForPlayerProvider>();
@@ -64,7 +96,14 @@ public class ObjectCreationUtility
             new(playerIds[0], new List<PlacementType> { PlacementType.Knight }),
             new (playerIds[1], new List<PlacementType> { PlacementType.Knight })
         };
-        var data = new GameStartData(version, boardData, placeablesConfigs, playersIdsList, playerDecks);
+        var actionPointsCondition = new ActionPointsConditionData();
+        var timeCondition = new TimeConditionData(100);
+        var turnSwitchConditions = new List<TscData>
+        {
+            actionPointsCondition,
+            timeCondition
+        };
+        var data = new GameStartData(version, boardData, placeablesConfigs, turnSwitchConditions, playersIdsList, playerDecks);
         return data;
     }
 
