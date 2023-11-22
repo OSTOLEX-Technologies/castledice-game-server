@@ -2,13 +2,17 @@
 
 namespace castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.TscProviders;
 
-public class TscPresenceConfig
+public class DefaultTscPresenceConfigProvider : ITscPresenceConfigProvider
 {
-    public IReadOnlyCollection<TscType> PresentConditions => _presentConditions;
     private readonly HashSet<TscType> _presentConditions;
 
-    public TscPresenceConfig(HashSet<TscType> presentConditions)
+    public DefaultTscPresenceConfigProvider(HashSet<TscType> presentConditions)
     {
         _presentConditions = presentConditions;
+    }
+
+    public TscPresenceConfig GetTscPresenceConfig()
+    {
+        return new TscPresenceConfig(_presentConditions);
     }
 }

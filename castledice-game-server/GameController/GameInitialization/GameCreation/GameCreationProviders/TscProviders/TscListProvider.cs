@@ -17,7 +17,7 @@ public class TscListProvider : ITscListProvider
     {
         var tscPresenceConfig = _presenceConfigProvider.GetTscPresenceConfig();
         var tscList = new List<ITurnSwitchCondition>();
-        foreach (var tscType in tscPresenceConfig.PresentTypes)
+        foreach (var tscType in tscPresenceConfig.PresentConditions)
         {
             tscList.Add(_tscProvider.GetTurnSwitchCondition(tscType));
         }
