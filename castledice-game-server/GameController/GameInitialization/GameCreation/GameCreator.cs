@@ -34,6 +34,7 @@ public class GameCreator : IGameCreator
         var placeablesConfig = _placeablesConfigProvider.GetPlaceablesConfig();
         var decksList = _playersDecksProvider.GetPlayersDecksList(playersIds);
         var game = _gameConstructorWrapper.ConstructGame(players, boardConfig, placeablesConfig, decksList);
+        var currentPlayerProvider = game.CurrentPlayerProvider;
         var tscList = _tscListProvider.GetTurnSwitchConditions();
         game.AddTurnSwitchConditionsList(tscList);
         return game;
