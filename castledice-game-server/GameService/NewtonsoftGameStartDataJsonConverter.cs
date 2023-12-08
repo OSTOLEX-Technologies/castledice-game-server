@@ -8,6 +8,6 @@ public class NewtonsoftGameStartDataJsonConverter : IGameStartDataJsonConverter
 {
     public string GetJson(GameStartData data)
     {
-        return JsonConvert.SerializeObject(data, new ContentDataConverter(), new TscDataConverter());
+        return JsonConvert.SerializeObject(data, new ContentDataConverter());
     }
 }

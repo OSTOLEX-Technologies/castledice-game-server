@@ -1,8 +1,0 @@
-﻿using castledice_game_logic.TurnsLogic;
-
-namespace castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.TscProviders;
-
-public interface ITscListProvider
-{
-    List<ITurnSwitchCondition> GetTurnSwitchConditions();
-}

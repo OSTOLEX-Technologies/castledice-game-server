@@ -6,6 +6,5 @@ namespace castledice_game_server.GameController.GameInitialization.GameCreation;
 
 public interface IGameConstructorWrapper
 {
-    Game ConstructGame(List<Player> players, BoardConfig boardConfig, PlaceablesConfig placeablesConfig,
-        IDecksList decksList);
+    Game ConstructGame(List<Player> players, BoardConfig boardConfig, PlaceablesConfig placeablesConfig, IDecksList decksList, TurnSwitchConditionsConfig turnSwitchConditionsConfig);
 }

@@ -37,7 +37,6 @@ public class GameInitializationController : IGameInitializationController
         {
             //TODO: add proper logic for adding turn switch conditions.
             var game = _gameCreator.CreateGame(playersIds);
-            game.AddTurnSwitchCondition(new ActionPointsCondition(game.CurrentPlayerProvider));
             var gameStartData = _gameStartDataCreator.CreateGameStartData(game);
             var gameId = await _gameSavingService.SaveGameStartAsync(gameStartData);
             _activeGamesCollection.AddGame(gameId, game);

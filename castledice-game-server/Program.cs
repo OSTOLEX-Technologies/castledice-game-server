@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
-using castledice_game_data_logic.TurnSwitchConditions;
 using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.GameObjects;
+using castledice_game_logic.TurnsLogic.TurnSwitchConditions;
 using castledice_game_server.Configuration;
 using castledice_game_server.GameController;
 using castledice_game_server.GameController.ActionPoints;
@@ -15,9 +15,7 @@ using castledice_game_server.GameController.GameInitialization.GameCreation.Game
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlaceablesConfigProviders;
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlayersDecksListsProviders;
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlayersListProviders;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.TscProviders;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.TscProviders.ActionPointsConditionProviders;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.TscProviders.TimeConditionProviders;
+using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.TscConfigProviders;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
 using castledice_game_server.GameController.GameOver;
@@ -53,11 +51,10 @@ internal class Program
     {
         PlacementType.Knight
     });
-    private static readonly ITscPresenceConfigProvider TscPresenceConfigProvider = new DefaultTscPresenceConfigProvider(new HashSet<TscType>
+    private static readonly ITscConfigProvider TscConfigProvider = new DefaultTscConfigProvider(new List<TscType>
     {
-        TscType.ActionPoints
+        TscType.SwitchByActionPoints
     });
-    private static readonly ITimeConditionConfigProvider TimeConditionConfigProvider = new DefaultTimeConditionConfigProvider(30000);
 
     private static readonly string GameStartDataVersion = "1.0.0";
 
@@ -122,9 +119,7 @@ internal class Program
         var decksListProvider = new PlayersDecksListProvider(DeckProvider);
         var playersListProvider = new PlayersListProvider();
         var gameConstructorWrapper = new GameConstructorWrapper();
-        var tscProvider = new TscProvider(new ActionPointsConditionProvider());
-        var gameCreator = new GameCreator(playersListProvider, boardConfigProvider, placeablesConfigProvider,
-            decksListProvider, gameConstructorWrapper);
+        var gameCreator = new GameCreator(playersListProvider, boardConfigProvider, placeablesConfigProvider, decksListProvider, TscConfigProvider, gameConstructorWrapper);
         var cellsPresenceMatrixProvider = new CellsPresenceMatrixProvider();
         var contentDataProvider = new ContentDataProvider();
         var contentDataListProvider = new ContentDataListProvider(contentDataProvider);
