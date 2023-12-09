@@ -128,7 +128,7 @@ internal class Program
         var placeablesConfigDataProvider = new PlaceablesConfigDataProvider();
         var decksDataProvider = new DecksDataProvider();
         var gameStartDataCreator = new GameStartDataCreator(gameStartDataVersionProvider, boardDataProvider,
-            placeablesConfigDataProvider, decksDataProvider);
+            placeablesConfigDataProvider, null, decksDataProvider);
         var gameStartDataSender = new GameStartDataSender(serverWrapper, playersDictionary);
         var gameInitializationController = new GameInitializationController(gameSavingService, activeGamesCollection,
             gameStartDataSender, gameCreator, gameStartDataCreator, errorSender, loggerWrapper);
