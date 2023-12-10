@@ -1,9 +1,10 @@
-﻿using casltedice_events_logic.ServerToClient;
+﻿using castledice_events_logic.ServerToClient;
 using castledice_game_data_logic.Moves;
 using castledice_game_logic.Math;
 using castledice_game_server_tests.TestImplementations;
 using castledice_game_server.NetworkManager;
 using castledice_game_server.NetworkManager.PlayersTracking;
+using castledice_game_server.NetworkManager.RiptideWrappers;
 using castledice_riptide_dto_adapters.Extensions;
 using Moq;
 using Riptide;

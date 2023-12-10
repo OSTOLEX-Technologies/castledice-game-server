@@ -1,4 +1,4 @@
-﻿using casltedice_events_logic.ClientToServer;
+﻿using castledice_events_logic.ClientToServer;
 using castledice_game_server_tests.TestImplementations;
 using castledice_game_server.NetworkManager;
 using castledice_riptide_dto_adapters.Extensions;

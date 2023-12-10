@@ -1,4 +1,4 @@
-﻿using casltedice_events_logic.ClientToServer;
+﻿using castledice_events_logic.ClientToServer;
 using castledice_game_server.GameController.PlayersReadiness;
 using castledice_game_server.NetworkManager;
 using Moq;

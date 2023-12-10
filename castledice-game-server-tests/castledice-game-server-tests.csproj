@@ -28,8 +28,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="casltedice-events-logic">
-        <HintPath>..\..\casltedice-events-logic\casltedice-events-logic\bin\Debug\netstandard2.1\casltedice-events-logic.dll</HintPath>
+      <Reference Include="castledice-events-logic">
+        <HintPath>..\..\casltedice-events-logic\castledice-events-logic\castledice-events-logic\bin\Debug\netstandard2.1\castledice-events-logic.dll</HintPath>
       </Reference>
       <Reference Include="castledice-riptide-message-extensions">
         <HintPath>..\..\castledice-riptide-dto-adapters\castledice-riptide-message-extensions\bin\Debug\netstandard2.1\castledice-riptide-message-extensions.dll</HintPath>

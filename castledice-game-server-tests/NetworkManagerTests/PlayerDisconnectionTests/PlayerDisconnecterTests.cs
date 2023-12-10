@@ -1,5 +1,6 @@
 ﻿using castledice_game_server.NetworkManager.PlayerDisconnection;
 using castledice_game_server.NetworkManager.PlayersTracking;
+using castledice_game_server.NetworkManager.RiptideWrappers;
 using Moq;
 
 namespace castledice_game_server_tests.NetworkManagerTests.PlayerDisconnectionTests;

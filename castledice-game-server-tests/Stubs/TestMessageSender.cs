@@ -1,4 +1,5 @@
 ﻿using castledice_game_server.NetworkManager;
+using castledice_game_server.NetworkManager.RiptideWrappers;
 using Riptide;
 
 namespace castledice_game_server_tests.TestImplementations;

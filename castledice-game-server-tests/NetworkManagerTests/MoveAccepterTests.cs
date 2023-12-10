@@ -1,4 +1,4 @@
-﻿using casltedice_events_logic.ClientToServer;
+﻿using castledice_events_logic.ClientToServer;
 using castledice_game_data_logic.Moves;
 using castledice_game_logic.Math;
 using castledice_game_server.GameController.Moves;

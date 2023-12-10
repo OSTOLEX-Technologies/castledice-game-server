@@ -1,5 +1,6 @@
-﻿using casltedice_events_logic.ClientToServer;
+﻿using castledice_events_logic.ClientToServer;
 using castledice_game_server.NetworkManager.DTOAccepters;
+using castledice_game_server.NetworkManager.RiptideWrappers;
 using castledice_riptide_dto_adapters.Extensions;
 using Riptide;
 

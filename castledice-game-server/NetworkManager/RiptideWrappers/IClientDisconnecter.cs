@@ -1,6 +1,6 @@
 ﻿using Riptide;
 
-namespace castledice_game_server.NetworkManager.PlayerDisconnection;
+namespace castledice_game_server.NetworkManager.RiptideWrappers;
 
 public interface IClientDisconnecter
 {
