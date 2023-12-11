@@ -1,6 +1,7 @@
 ﻿using castledice_game_data_logic;
 using castledice_game_data_logic.ConfigsData;
 using castledice_game_data_logic.Content;
+using castledice_game_data_logic.TurnSwitchConditions;
 using castledice_game_logic;
 using castledice_game_logic.ActionPointsLogic;
 using castledice_game_logic.BoardGeneration.CellsGeneration;
@@ -89,7 +90,8 @@ public class ObjectCreationUtility
             new(playerIds[0], new List<PlacementType> { PlacementType.Knight }),
             new (playerIds[1], new List<PlacementType> { PlacementType.Knight })
         };
-        var data = new GameStartData(version, boardData, placeablesConfigs, playersIdsList, playerDecks);
+        var tscConfigData = new TscConfigData(new List<TscType> { TscType.SwitchByActionPoints });
+        var data = new GameStartData(version, boardData, placeablesConfigs, tscConfigData, playersIdsList, playerDecks);
         return data;
     }
 

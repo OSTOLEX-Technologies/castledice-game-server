@@ -1,4 +1,4 @@
-﻿using casltedice_events_logic.ServerToClient;
+﻿using castledice_events_logic.ServerToClient;
 using castledice_game_server_tests.TestImplementations;
 using castledice_game_server.NetworkManager;
 using castledice_game_server.NetworkManager.PlayersTracking;
