@@ -1,1 +1,2 @@
 global using Xunit;
+global using static castledice_game_server_tests.ObjectCreationUtility;

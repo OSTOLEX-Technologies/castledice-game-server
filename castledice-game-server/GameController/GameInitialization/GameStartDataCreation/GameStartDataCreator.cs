@@ -26,7 +26,8 @@ public class GameStartDataCreator : IGameStartDataCreator
         var placeablesConfigData = _placeablesConfigDataProvider.GetPlaceablesConfigData(game.PlaceablesConfig);
         var playersDecksData = _decksDataProvider.GetPlayersDecksData(game.GetDecksList(), game.GetAllPlayersIds());
         var playersIds = game.GetAllPlayersIds();
-        
-        return new GameStartData(version, boardData, placeablesConfigData, playersIds, playersDecksData);
+
+        throw new NotImplementedException();
+        //return new GameStartData(version, boardData, placeablesConfigData, playersIds, playersDecksData);
     }
 }

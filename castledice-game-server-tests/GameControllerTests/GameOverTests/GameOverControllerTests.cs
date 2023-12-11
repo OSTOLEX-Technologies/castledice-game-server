@@ -17,7 +17,7 @@ public class GameOverControllerTests
 {
     public class TestGame : Game
     {
-        public TestGame(List<Player> players, BoardConfig boardConfig, PlaceablesConfig placeablesConfig, IDecksList decksList) : base(players, boardConfig, placeablesConfig, decksList)
+        public TestGame(List<Player> players, BoardConfig boardConfig, PlaceablesConfig placeablesConfig, IDecksList decksList, TurnSwitchConditionsConfig turnSwitchConditionsConfig) : base(players, boardConfig, placeablesConfig, decksList, turnSwitchConditionsConfig)
         {
         }
         
@@ -273,7 +273,7 @@ public class GameOverControllerTests
         {
             {player, (0, 0)},
             {secondPlayer, (9, 9)}
-        }), GetPlaceablesConfig(), new Mock<IDecksList>().Object);
+        }), GetPlaceablesConfig(), new Mock<IDecksList>().Object, GetTurnSwitchConditionsConfig());
         gameMock.Setup(x => x.GetPlayer(It.IsAny<int>())).Returns(player);
         gameMock.Setup(x => x.GetAllPlayers()).Returns(playersList);
         gameMock.Setup(x => x.GetAllPlayersIds()).Returns(new List<int> { 1, 2 });

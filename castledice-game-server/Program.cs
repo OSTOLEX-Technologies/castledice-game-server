@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.GameObjects;
+using castledice_game_logic.TurnsLogic.TurnSwitchConditions;
 using castledice_game_server.Configuration;
 using castledice_game_server.GameController;
 using castledice_game_server.GameController.ActionPoints;
@@ -14,6 +15,7 @@ using castledice_game_server.GameController.GameInitialization.GameCreation.Game
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlaceablesConfigProviders;
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlayersDecksListsProviders;
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlayersListProviders;
+using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.TscConfigProviders;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
 using castledice_game_server.GameController.GameOver;
@@ -48,6 +50,10 @@ internal class Program
     private static readonly IPlayerDeckProvider DeckProvider = new DefaultDeckProvider(new List<PlacementType>
     {
         PlacementType.Knight
+    });
+    private static readonly ITscConfigProvider TscConfigProvider = new DefaultTscConfigProvider(new List<TscType>
+    {
+        TscType.SwitchByActionPoints
     });
 
     private static readonly string GameStartDataVersion = "1.0.0";
@@ -113,8 +119,7 @@ internal class Program
         var decksListProvider = new PlayersDecksListProvider(DeckProvider);
         var playersListProvider = new PlayersListProvider();
         var gameConstructorWrapper = new GameConstructorWrapper();
-        var gameCreator = new GameCreator(playersListProvider, boardConfigProvider, placeablesConfigProvider,
-            decksListProvider, gameConstructorWrapper);
+        var gameCreator = new GameCreator(playersListProvider, boardConfigProvider, placeablesConfigProvider, decksListProvider, TscConfigProvider, gameConstructorWrapper);
         var cellsPresenceMatrixProvider = new CellsPresenceMatrixProvider();
         var contentDataProvider = new ContentDataProvider();
         var contentDataListProvider = new ContentDataListProvider(contentDataProvider);

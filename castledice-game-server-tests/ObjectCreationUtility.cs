@@ -10,6 +10,9 @@ using castledice_game_logic.GameObjects;
 using castledice_game_logic.GameObjects.Configs;
 using castledice_game_logic.GameObjects.Factories.Castles;
 using castledice_game_logic.Math;
+using castledice_game_logic.TurnsLogic.TurnSwitchConditions;
+using castledice_game_server.GameController.GameInitialization.GameCreation;
+using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.TscConfigProviders;
 using castledice_game_server.GameController.Moves;
 using Moq;
 using CastleGO = castledice_game_logic.GameObjects.Castle;
@@ -18,6 +21,28 @@ namespace castledice_game_server_tests;
 
 public class ObjectCreationUtility
 {
+    public static Mock<ITscConfigProvider> GetTscConfigProviderMock()
+    {
+        var mock = new Mock<ITscConfigProvider>();
+        mock.Setup(x => x.GetTurnSwitchConditionsConfig()).Returns(GetTurnSwitchConditionsConfig());
+        return mock;
+    }
+    
+    public static TurnSwitchConditionsConfig GetTurnSwitchConditionsConfig()
+    {
+        return new TurnSwitchConditionsConfig(new List<TscType> { TscType.SwitchByActionPoints });
+    }
+    
+    public static Mock<IGameConstructorWrapper> GetGameConstructorWrapperMock()
+    {
+        var mock = new Mock<IGameConstructorWrapper>();
+        var gameMock = GetGameMock();
+        mock.Setup(x => x.ConstructGame(It.IsAny<List<Player>>(), It.IsAny<BoardConfig>(), It.IsAny<PlaceablesConfig>(), 
+                It.IsAny<IDecksList>(), It.IsAny<TurnSwitchConditionsConfig>()))
+            .Returns(gameMock.Object);
+        return mock;
+    }
+    
     public static Mock<IGameForPlayerProvider> GetGameForPlayerProviderMock()
     {
         var mock = new Mock<IGameForPlayerProvider>();
@@ -35,7 +60,7 @@ public class ObjectCreationUtility
         {
             {player, (0, 0)},
             {secondPlayer, (9, 9)}
-        }), GetPlaceablesConfig(), new Mock<IDecksList>().Object);
+        }), GetPlaceablesConfig(), new Mock<IDecksList>().Object, GetTurnSwitchConditionsConfig());
         gameMock.Setup(x => x.GetPlayer(It.IsAny<int>())).Returns(player);
         gameMock.Setup(x => x.GetAllPlayers()).Returns(playersList);
         gameMock.Setup(x => x.GetAllPlayersIds()).Returns(new List<int> { 1, 2 });
@@ -151,8 +176,13 @@ public class ObjectCreationUtility
         {
             PlacementType.Knight
         });
-            
-        var game = new Game(players, boardConfig, unitsConfig, placementListProvider);
+
+        var turnSwitchConditionsConfig = new TurnSwitchConditionsConfig(new List<TscType>
+            {
+                TscType.SwitchByActionPoints
+            });
+        
+        var game = new Game(players, boardConfig, unitsConfig, placementListProvider, turnSwitchConditionsConfig);
         
         return game;
     }

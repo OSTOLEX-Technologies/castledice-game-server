@@ -1,5 +1,6 @@
 ﻿using castledice_game_logic.Math;
 using castledice_game_logic.TurnsLogic;
+using castledice_game_logic.TurnsLogic.TurnSwitchConditions;
 using castledice_game_server_tests.TestImplementations;
 using castledice_game_server.GameController;
 using castledice_game_server.GameController.ActionPoints;
@@ -185,9 +186,6 @@ public class ActionPointsControllerTests
     public void OnTurnSwitched_ShouldCallGiveActionPointsToCurrentPlayer_WithGivenGame()
     {
         var expectedGame = GetGameMock().Object;
-        var turnSwitchConditionMock = new Mock<ITurnSwitchCondition>();
-        turnSwitchConditionMock.Setup(t => t.ShouldSwitchTurn()).Returns(true);
-        expectedGame.AddTurnSwitchCondition(turnSwitchConditionMock.Object);
         var gamesCollection = new TestGamesCollection();
         var generatorMock = new Mock<IRandomNumberGenerator>();
         generatorMock.Setup(g => g.GetNextRandom()).Returns(1);
@@ -210,9 +208,6 @@ public class ActionPointsControllerTests
     public void OnTurnSwitched_ShouldNotCallGiveActionPointsToCurrentPlayer_IfGameWasRemoved()
     {
         var expectedGame = GetGameMock().Object;
-        var turnSwitchConditionMock = new Mock<ITurnSwitchCondition>();
-        turnSwitchConditionMock.Setup(t => t.ShouldSwitchTurn()).Returns(true);
-        expectedGame.AddTurnSwitchCondition(turnSwitchConditionMock.Object);
         var gamesCollection = new TestGamesCollection();
         gamesCollection.GameToReturnOnGameRemoved = expectedGame;
         var generatorMock = new Mock<IRandomNumberGenerator>();
