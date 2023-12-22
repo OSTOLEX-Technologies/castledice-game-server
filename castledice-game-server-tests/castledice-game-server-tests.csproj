@@ -11,8 +11,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="castledice-events-logic" Version="0.0.1-dev2" />
         <PackageReference Include="castledice-game-data-logic" Version="0.0.1-dev4" />
         <PackageReference Include="castledice-game-logic" Version="0.0.1-dev3" />
+        <PackageReference Include="castledice-riptide-message-extensions" Version="0.0.1-dev1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0"/>
         <PackageReference Include="Moq" Version="4.20.69" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -25,15 +27,6 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="castledice-events-logic">
-        <HintPath>..\..\casltedice-events-logic\castledice-events-logic\castledice-events-logic\bin\Debug\netstandard2.1\castledice-events-logic.dll</HintPath>
-      </Reference>
-      <Reference Include="castledice-riptide-message-extensions">
-        <HintPath>..\..\castledice-riptide-dto-adapters\castledice-riptide-message-extensions\bin\Debug\netstandard2.1\castledice-riptide-message-extensions.dll</HintPath>
-      </Reference>
     </ItemGroup>
 
     <ItemGroup>
