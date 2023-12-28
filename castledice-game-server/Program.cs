@@ -117,7 +117,7 @@ internal class Program
         var boardConfigProvider = new BoardConfigProvider(rectCellsGeneratorProvider, contentSpawnersListProvider);
         var placeablesConfigProvider = new PlaceablesConfigProvider(KnightConfigProvider);
         var decksListProvider = new PlayersDecksListProvider(DeckProvider);
-        var playersListProvider = new PlayersListProvider();
+        var playersListProvider = new PlayersListProvider(null);
         var gameConstructorWrapper = new GameConstructorWrapper();
         var gameCreator = new GameCreator(playersListProvider, boardConfigProvider, placeablesConfigProvider, decksListProvider, TscConfigProvider, gameConstructorWrapper);
         var cellsPresenceMatrixProvider = new CellsPresenceMatrixProvider();
