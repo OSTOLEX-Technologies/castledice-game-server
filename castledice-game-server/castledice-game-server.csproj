@@ -16,17 +16,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="castledice-events-logic">
-        <HintPath>..\..\casltedice-events-logic\castledice-events-logic\castledice-events-logic\bin\Debug\netstandard2.1\castledice-events-logic.dll</HintPath>
-      </Reference>
-      <Reference Include="castledice-riptide-message-extensions">
-        <HintPath>..\..\castledice-riptide-dto-adapters\castledice-riptide-message-extensions\bin\Debug\netstandard2.1\castledice-riptide-message-extensions.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
+      <PackageReference Include="castledice-events-logic" Version="0.0.1-dev2" />
       <PackageReference Include="castledice-game-data-logic" Version="0.0.1-dev4" />
       <PackageReference Include="castledice-game-logic" Version="0.0.1-dev3" />
+      <PackageReference Include="castledice-riptide-message-extensions" Version="0.0.1-dev1" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0-rc.2.23479.6" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0-rc.2.23479.6" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.2.23479.6" />

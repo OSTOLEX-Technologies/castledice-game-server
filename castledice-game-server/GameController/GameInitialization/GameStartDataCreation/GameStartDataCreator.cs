@@ -9,13 +9,15 @@ public class GameStartDataCreator : IGameStartDataCreator
     private readonly IGameStartDataVersionProvider _versionProvider;
     private readonly IBoardDataProvider _boardDataProvider;
     private readonly IPlaceablesConfigDataProvider _placeablesConfigDataProvider;
+    private readonly ITscConfigDataProvider _tscConfigDataProvider;
     private readonly IDecksDataProvider _decksDataProvider;
 
-    public GameStartDataCreator(IGameStartDataVersionProvider versionProvider, IBoardDataProvider boardDataProvider, IPlaceablesConfigDataProvider placeablesConfigDataProvider, IDecksDataProvider decksDataProvider)
+    public GameStartDataCreator(IGameStartDataVersionProvider versionProvider, IBoardDataProvider boardDataProvider, IPlaceablesConfigDataProvider placeablesConfigDataProvider, ITscConfigDataProvider tscConfigDataProvider, IDecksDataProvider decksDataProvider)
     {
         _versionProvider = versionProvider;
         _boardDataProvider = boardDataProvider;
         _placeablesConfigDataProvider = placeablesConfigDataProvider;
+        _tscConfigDataProvider = tscConfigDataProvider;
         _decksDataProvider = decksDataProvider;
     }
 
@@ -25,9 +27,9 @@ public class GameStartDataCreator : IGameStartDataCreator
         var boardData = _boardDataProvider.GetBoardData(game.GetBoard());
         var placeablesConfigData = _placeablesConfigDataProvider.GetPlaceablesConfigData(game.PlaceablesConfig);
         var playersDecksData = _decksDataProvider.GetPlayersDecksData(game.GetDecksList(), game.GetAllPlayersIds());
+        var tscConfigData = _tscConfigDataProvider.GetTscConfigData(game.TurnSwitchConditionsConfig);
         var playersIds = game.GetAllPlayersIds();
-
-        throw new NotImplementedException();
-        //return new GameStartData(version, boardData, placeablesConfigData, playersIds, playersDecksData);
+        
+        return new GameStartData(version, boardData, placeablesConfigData, tscConfigData, playersIds, playersDecksData);
     }
 }
