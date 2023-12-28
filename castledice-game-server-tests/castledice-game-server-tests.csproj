@@ -28,6 +28,7 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
+    <ItemGroup>
       <ProjectReference Include="..\castledice-game-server\castledice-game-server.csproj" />
     </ItemGroup>
 
