@@ -2,9 +2,9 @@
 using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.GameObjects.Configs;
 
-namespace castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
+namespace castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
 
-public class PlaceablesConfigDataProvider : IPlaceablesConfigDataProvider
+public class PlaceablesConfigDataCreator : IPlaceablesConfigDataCreator
 {
     public PlaceablesConfigData GetPlaceablesConfigData(PlaceablesConfig config)
     {

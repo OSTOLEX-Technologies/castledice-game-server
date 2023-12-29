@@ -1,19 +1,18 @@
 ﻿using castledice_game_logic;
 using castledice_game_logic.Math;
-using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
-using static castledice_game_server_tests.ObjectCreationUtility;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
 
 namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests;
 
-public class CellsPresenceMatrixProviderTests
+public class CellsPresenceMatrixCreatorTests
 {
     [Theory]
     [MemberData(nameof(GetCellsPresenceMatrixTestCases))]
     public void GetCellsPresenceMatrix_ShouldReturnAppropriateCellsPresenceMatrix(Board board, bool[,] expectedMatrix)
     {
-        var provider = new CellsPresenceMatrixProvider();
+        var creator = new CellsPresenceMatrixCreator();
         
-        var actualMatrix = provider.GetCellsPresenceMatrix(board);
+        var actualMatrix = creator.GetCellsPresenceMatrix(board);
 
         for (int i = 0; i < expectedMatrix.GetLength(0); i++)
         {

@@ -2,9 +2,9 @@
 using castledice_game_logic.GameObjects;
 using castledice_game_logic.Math;
 
-namespace castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
+namespace castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
 
-public class ContentDataProvider : IContentDataProvider, IContentVisitor<ContentData>
+public class ContentDataCreator : IContentDataCreator, IContentVisitor<ContentData>
 {
     private Vector2Int _currentContentPosition;
     

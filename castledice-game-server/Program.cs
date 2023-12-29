@@ -17,6 +17,7 @@ using castledice_game_server.GameController.GameInitialization.GameCreation.Crea
 using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlayersListCreators;
 using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.TscConfigCreators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
 using castledice_game_server.GameController.GameOver;
 using castledice_game_server.GameController.Moves;
@@ -120,13 +121,13 @@ internal class Program
         var playersListProvider = new PlayersListCreator(new StopwatchPlayerTimerCreator(PlayerTimeSpanCreator));
         var gameConstructorWrapper = new GameConstructorWrapper();
         var gameCreator = new GameCreator(playersListProvider, boardConfigProvider, placeablesConfigProvider, TscConfigCreator, gameConstructorWrapper);
-        var cellsPresenceMatrixProvider = new CellsPresenceMatrixProvider();
-        var contentDataProvider = new ContentDataProvider();
-        var contentDataListProvider = new ContentDataListProvider(contentDataProvider);
-        var boardDataProvider = new BoardDataProvider(cellsPresenceMatrixProvider, contentDataListProvider);
+        var cellsPresenceMatrixProvider = new CellsPresenceMatrixCreator();
+        var contentDataProvider = new ContentDataCreator();
+        var contentDataListProvider = new ContentDataListCreator(contentDataProvider);
+        var boardDataProvider = new BoardDataCreator(cellsPresenceMatrixProvider, contentDataListProvider);
         var gameStartDataVersionProvider = new DefaultGameStartDataVersionProvider(GameStartDataVersion);
-        var placeablesConfigDataProvider = new PlaceablesConfigDataProvider();
-        var tsConfigDataProvider = new TscConfigDataProvider();
+        var placeablesConfigDataProvider = new PlaceablesConfigDataCreator();
+        var tsConfigDataProvider = new TscConfigDataCreator();
         var gameStartDataCreator = new GameStartDataCreator(gameStartDataVersionProvider, boardDataProvider,
             placeablesConfigDataProvider, tsConfigDataProvider, null);
         var gameStartDataSender = new GameStartDataSender(serverWrapper, playersDictionary);

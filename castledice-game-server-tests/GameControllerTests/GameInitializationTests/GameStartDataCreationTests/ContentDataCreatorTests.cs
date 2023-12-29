@@ -1,22 +1,21 @@
 ﻿using castledice_game_data_logic.Content;
 using castledice_game_logic.GameObjects;
 using castledice_game_logic.Math;
-using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
 using CastleGO = castledice_game_logic.GameObjects.Castle;
-using static castledice_game_server_tests.ObjectCreationUtility;
 
 namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests;
 
-public class ContentDataProviderTests
+public class ContentDataCreatorTests
 {
     [Theory]
     [MemberData(nameof(GetContentDataTestCases))]
     public void GetContentData_ShouldReturnAppropriateContentData(Content content, Vector2Int position,
         ContentData expectedData)
     {
-        var provider = new ContentDataProvider();
+        var creator = new ContentDataCreator();
         
-        var data = provider.GetContentData(content, position);
+        var data = creator.GetContentData(content, position);
         
         Assert.Equal(expectedData, data);
     }
