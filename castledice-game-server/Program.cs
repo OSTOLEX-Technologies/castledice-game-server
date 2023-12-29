@@ -7,15 +7,15 @@ using castledice_game_server.GameController;
 using castledice_game_server.GameController.ActionPoints;
 using castledice_game_server.GameController.GameInitialization;
 using castledice_game_server.GameController.GameInitialization.GameCreation;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders.CellsGeneratorsProviders;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders.ContentSpawnersProviders;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders.ContentSpawnersProviders.CastlesSpawning;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders.ContentSpawnersProviders.TreesSpawning;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlaceablesConfigProviders;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlayersDecksListsProviders;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlayersListProviders;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.TscConfigProviders;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.BoardConfigCreators;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.BoardConfigCreators.CellsGeneratorsCreators;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.BoardConfigCreators.ContentSpawnersCreators;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.BoardConfigCreators.ContentSpawnersCreators.CastlesSpawning;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.BoardConfigCreators.ContentSpawnersCreators.TreesSpawning;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlaceablesConfigCreators;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlayersDecksCreators;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlayersListCreators;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.TscConfigCreators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
 using castledice_game_server.GameController.GameOver;
@@ -39,23 +39,23 @@ internal class Program
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     
     //Game creation providers
-    private static readonly ICastleConfigProvider CastleConfigProvider = new DefaultCastleConfigProvider(3, 1, 1);
-    private static readonly IDuelCastlesPositionsProvider DuelCastlesPositionsProvider = new DefaultDuelCastlePositionsProvider((0, 0), (9, 9));
-    private static readonly ITreeConfigProvider TreeConfigProvider = new DefaultTreeConfigProvider(1, false);
-    private static readonly ITreesGenerationConfigProvider TreesGenerationConfigProvider = new DefaultTreesGenerationConfigProvider(0, 3, 3);
-    private static readonly IRectGenerationConfigProvider RectGenerationConfigProvider =
-        new DefaultRectGenerationConfigProvider(10, 10);
-    private static readonly IKnightConfigProvider KnightConfigProvider = new DefaultKnightConfigProvider(1, 2);
+    private static readonly ICastleConfigCreator CastleConfigCreator = new DefaultCastleConfigCreator(3, 1, 1);
+    private static readonly IDuelCastlesPositionsCreator DuelCastlesPositionsCreator = new DefaultDuelCastlePositionsCreator((0, 0), (9, 9));
+    private static readonly ITreeConfigCreator TreeConfigCreator = new DefaultTreeConfigCreator(1, false);
+    private static readonly ITreesGenerationConfigCreator TreesGenerationConfigCreator = new DefaultTreesGenerationConfigCreator(0, 3, 3);
+    private static readonly IRectGenerationConfigCreator RectGenerationConfigCreator =
+        new DefaultRectGenerationConfigCreator(10, 10);
+    private static readonly IKnightConfigCreator KnightConfigCreator = new DefaultKnightConfigCreator(1, 2);
 
-    private static readonly IPlayerDeckProvider DeckProvider = new DefaultDeckProvider(new List<PlacementType>
+    private static readonly IPlayerDeckCreator DeckCreator = new DefaultDeckCreator(new List<PlacementType>
     {
         PlacementType.Knight
     });
-    private static readonly ITscConfigProvider TscConfigProvider = new DefaultTscConfigProvider(new List<TscType>
+    private static readonly ITscConfigCreator TscConfigCreator = new DefaultTscConfigCreator(new List<TscType>
     {
         TscType.SwitchByActionPoints
     });
-    private static readonly IPlayerTimeSpanProvider PlayerTimeSpanProvider = new DefaultPlayerTimeSpanProvider(TimeSpan.FromMinutes(5));
+    private static readonly IPlayerTimeSpanCreator PlayerTimeSpanCreator = new DefaultPlayerTimeSpanCreator(TimeSpan.FromMinutes(5));
 
     private static readonly string GameStartDataVersion = "1.0.0";
 
@@ -107,30 +107,28 @@ internal class Program
         InitializePlayerMessageHandler.SetDTOAccepter(playerInitializer);
         
         //Setting up game initialization
-        var castlesFactoryProvider = new CastlesFactoryProvider(CastleConfigProvider);
+        var castlesFactoryProvider = new CastlesFactoryCreator(CastleConfigCreator);
         var duelCastlesSpawnerProvider =
-            new DuelCastlesSpawnerProvider(DuelCastlesPositionsProvider, castlesFactoryProvider);
-        var treesFactoryProvider = new TreesFactoryProvider(TreeConfigProvider);
-        var treesSpawnerProvider = new TreesSpawnerProvider(TreesGenerationConfigProvider, treesFactoryProvider);
+            new DuelCastlesSpawnerCreator(DuelCastlesPositionsCreator, castlesFactoryProvider);
+        var treesFactoryProvider = new TreesFactoryCreator(TreeConfigCreator);
+        var treesSpawnerProvider = new TreesSpawnerCreator(TreesGenerationConfigCreator, treesFactoryProvider);
         var contentSpawnersListProvider =
-            new ContentSpawnersListProvider(duelCastlesSpawnerProvider, treesSpawnerProvider);
-        var rectCellsGeneratorProvider = new RectCellsGeneratorProvider(RectGenerationConfigProvider);
-        var boardConfigProvider = new BoardConfigProvider(rectCellsGeneratorProvider, contentSpawnersListProvider);
-        var placeablesConfigProvider = new PlaceablesConfigProvider(KnightConfigProvider);
-        var decksListProvider = new PlayersDecksListProvider(DeckProvider);
-        var playersListProvider = new PlayersListProvider(new StopwatchPlayerTimerProvider(PlayerTimeSpanProvider));
+            new ContentSpawnersListCreator(duelCastlesSpawnerProvider, treesSpawnerProvider);
+        var rectCellsGeneratorProvider = new RectCellsGeneratorCreator(RectGenerationConfigCreator);
+        var boardConfigProvider = new BoardConfigCreator(rectCellsGeneratorProvider, contentSpawnersListProvider);
+        var placeablesConfigProvider = new PlaceablesConfigCreator(KnightConfigCreator);
+        var playersListProvider = new PlayersListCreator(new StopwatchPlayerTimerCreator(PlayerTimeSpanCreator));
         var gameConstructorWrapper = new GameConstructorWrapper();
-        var gameCreator = new GameCreator(playersListProvider, boardConfigProvider, placeablesConfigProvider, decksListProvider, TscConfigProvider, gameConstructorWrapper);
+        var gameCreator = new GameCreator(playersListProvider, boardConfigProvider, placeablesConfigProvider, TscConfigCreator, gameConstructorWrapper);
         var cellsPresenceMatrixProvider = new CellsPresenceMatrixProvider();
         var contentDataProvider = new ContentDataProvider();
         var contentDataListProvider = new ContentDataListProvider(contentDataProvider);
         var boardDataProvider = new BoardDataProvider(cellsPresenceMatrixProvider, contentDataListProvider);
         var gameStartDataVersionProvider = new DefaultGameStartDataVersionProvider(GameStartDataVersion);
         var placeablesConfigDataProvider = new PlaceablesConfigDataProvider();
-        var decksDataProvider = new DecksDataProvider();
         var tsConfigDataProvider = new TscConfigDataProvider();
         var gameStartDataCreator = new GameStartDataCreator(gameStartDataVersionProvider, boardDataProvider,
-            placeablesConfigDataProvider, tsConfigDataProvider, decksDataProvider);
+            placeablesConfigDataProvider, tsConfigDataProvider, null);
         var gameStartDataSender = new GameStartDataSender(serverWrapper, playersDictionary);
         var gameInitializationController = new GameInitializationController(gameSavingService, activeGamesCollection,
             gameStartDataSender, gameCreator, gameStartDataCreator, errorSender, loggerWrapper);

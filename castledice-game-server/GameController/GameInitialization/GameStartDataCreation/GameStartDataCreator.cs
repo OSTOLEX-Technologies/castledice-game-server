@@ -10,15 +10,15 @@ public class GameStartDataCreator : IGameStartDataCreator
     private readonly IBoardDataProvider _boardDataProvider;
     private readonly IPlaceablesConfigDataProvider _placeablesConfigDataProvider;
     private readonly ITscConfigDataProvider _tscConfigDataProvider;
-    private readonly IDecksDataProvider _decksDataProvider;
+    private readonly IPlayersDataListCreator _playersDataListCreator;
 
-    public GameStartDataCreator(IGameStartDataVersionProvider versionProvider, IBoardDataProvider boardDataProvider, IPlaceablesConfigDataProvider placeablesConfigDataProvider, ITscConfigDataProvider tscConfigDataProvider, IDecksDataProvider decksDataProvider)
+    public GameStartDataCreator(IGameStartDataVersionProvider versionProvider, IBoardDataProvider boardDataProvider, IPlaceablesConfigDataProvider placeablesConfigDataProvider, ITscConfigDataProvider tscConfigDataProvider, IPlayersDataListCreator playersDataListCreator)
     {
         _versionProvider = versionProvider;
         _boardDataProvider = boardDataProvider;
         _placeablesConfigDataProvider = placeablesConfigDataProvider;
         _tscConfigDataProvider = tscConfigDataProvider;
-        _decksDataProvider = decksDataProvider;
+        _playersDataListCreator = playersDataListCreator;
     }
 
     public GameStartData CreateGameStartData(Game game)
@@ -26,10 +26,8 @@ public class GameStartDataCreator : IGameStartDataCreator
         var version = _versionProvider.GetGameStartDataVersion();
         var boardData = _boardDataProvider.GetBoardData(game.GetBoard());
         var placeablesConfigData = _placeablesConfigDataProvider.GetPlaceablesConfigData(game.PlaceablesConfig);
-        var playersDecksData = _decksDataProvider.GetPlayersDecksData(game.GetDecksList(), game.GetAllPlayersIds());
         var tscConfigData = _tscConfigDataProvider.GetTscConfigData(game.TurnSwitchConditionsConfig);
-        var playersIds = game.GetAllPlayersIds();
         
-        return new GameStartData(version, boardData, placeablesConfigData, tscConfigData, playersIds, playersDecksData);
+        return new GameStartData(version, boardData, placeablesConfigData, tscConfigData, null);
     }
 }

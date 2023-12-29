@@ -17,8 +17,8 @@
 
     <ItemGroup>
       <PackageReference Include="castledice-events-logic" Version="0.0.1-dev2" />
-      <PackageReference Include="castledice-game-data-logic" Version="0.0.1-dev4" />
-      <PackageReference Include="castledice-game-logic" Version="0.0.1-dev4" />
+      <PackageReference Include="castledice-game-data-logic" Version="0.0.1-dev5" />
+      <PackageReference Include="castledice-game-logic" Version="0.0.1-dev5" />
       <PackageReference Include="castledice-riptide-message-extensions" Version="0.0.1-dev1" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0-rc.2.23479.6" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0-rc.2.23479.6" />

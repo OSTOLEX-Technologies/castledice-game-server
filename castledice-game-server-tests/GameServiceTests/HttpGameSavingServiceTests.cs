@@ -50,13 +50,18 @@ public class HttpGameSavingServiceTests
     }
 
     [Fact]
-    public async void SaveGameStartAsync_ShouldPostGameData_WithPlayersListFromGivenGameStartData()
+    public async void SaveGameStartAsync_ShouldPostGameData_WithPlayersIdsFromGivenGameStartData()
     {
         var gameStartData = GetGameStartData();
         var dataSenderMock = GetHttpRepositoryMock();
         var service = new HttpGameSavingService(dataSenderMock.Object, GetTimeProviderMock().Object,
             GetJsonConverterMock().Object, GetLocalRepositoryMock().Object);
-        Predicate<GameData> gameDataHasNeededPlayersList = gameData => gameData.Players.Equals(gameStartData.PlayersIds);
+        var playersIdsList = new List<int>();
+        foreach (var playerData in gameStartData.PlayersData)
+        {
+            playersIdsList.Add(playerData.PlayerId);
+        }
+        Predicate<GameData> gameDataHasNeededPlayersList = gameData => gameData.Players.Equals(playersIdsList);
         
         await service.SaveGameStartAsync(gameStartData);
 

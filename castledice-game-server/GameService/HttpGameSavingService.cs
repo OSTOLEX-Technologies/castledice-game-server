@@ -23,7 +23,8 @@ public class HttpGameSavingService : IGameSavingService
     {
         var config = _gameStartDataJsonConverter.GetJson(gameStartData);
         var startTime = _currentTimeProvider.GetCurrentTime();
-        var gameData = new GameData(0, config, startTime, gameStartData.PlayersIds);
+        var playersIds = gameStartData.PlayersData.Select(playerData => playerData.PlayerId).ToList();
+        var gameData = new GameData(0, config, startTime, playersIds);
         try
         {
             var responseData = await _dataRepository.PostGameDataAsync(gameData);

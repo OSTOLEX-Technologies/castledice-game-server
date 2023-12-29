@@ -1,39 +1,35 @@
 ﻿using castledice_game_logic;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.BoardConfigProviders;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlaceablesConfigProviders;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlayersDecksListsProviders;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.PlayersListProviders;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.TscConfigProviders;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.BoardConfigCreators;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlayersListCreators;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.TscConfigCreators;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlaceablesConfigCreators;
 
 namespace castledice_game_server.GameController.GameInitialization.GameCreation;
 
 public class GameCreator : IGameCreator
 {
-    private readonly IPlayersListProvider _playersListProvider;
-    private readonly IBoardConfigProvider _boardConfigProvider;
-    private readonly IPlaceablesConfigProvider _placeablesConfigProvider;
-    private readonly ITscConfigProvider _tscConfigProvider;
-    private readonly IPlayersDecksProvider _playersDecksProvider;
+    private readonly IPlayersListCreator _playersListCreator;
+    private readonly IBoardConfigCreator _boardConfigCreator;
+    private readonly IPlaceablesConfigCreator _placeablesConfigCreator;
+    private readonly ITscConfigCreator _tscConfigCreator;
     private readonly IGameConstructorWrapper _gameConstructorWrapper;
 
-    public GameCreator(IPlayersListProvider playersListProvider, IBoardConfigProvider boardConfigProvider, IPlaceablesConfigProvider placeablesConfigProvider,  IPlayersDecksProvider playersDecksProvider, ITscConfigProvider tscConfigProvider, IGameConstructorWrapper gameConstructorWrapper)
+    public GameCreator(IPlayersListCreator playersListCreator, IBoardConfigCreator boardConfigCreator, IPlaceablesConfigCreator placeablesConfigCreator, ITscConfigCreator tscConfigCreator, IGameConstructorWrapper gameConstructorWrapper)
     {
-        _playersListProvider = playersListProvider;
-        _boardConfigProvider = boardConfigProvider;
-        _placeablesConfigProvider = placeablesConfigProvider;
-        _tscConfigProvider = tscConfigProvider;
-        _playersDecksProvider = playersDecksProvider;
+        _playersListCreator = playersListCreator;
+        _boardConfigCreator = boardConfigCreator;
+        _placeablesConfigCreator = placeablesConfigCreator;
+        _tscConfigCreator = tscConfigCreator;
         _gameConstructorWrapper = gameConstructorWrapper;
     }
 
     public Game CreateGame(List<int> playersIds)
     {
-        var players = _playersListProvider.GetPlayersList(playersIds);
-        var boardConfig = _boardConfigProvider.GetBoardConfig(players);
-        var placeablesConfig = _placeablesConfigProvider.GetPlaceablesConfig();
-        var decksList = _playersDecksProvider.GetPlayersDecksList(playersIds);
-        var tscConfig = _tscConfigProvider.GetTurnSwitchConditionsConfig();
-        var game = _gameConstructorWrapper.ConstructGame(players, boardConfig, placeablesConfig, decksList, tscConfig);
+        var players = _playersListCreator.GetPlayersList(playersIds);
+        var boardConfig = _boardConfigCreator.GetBoardConfig(players);
+        var placeablesConfig = _placeablesConfigCreator.GetPlaceablesConfig();
+        var tscConfig = _tscConfigCreator.GetTurnSwitchConditionsConfig();
+        var game = _gameConstructorWrapper.ConstructGame(players, boardConfig, placeablesConfig, tscConfig);
         return game;
     }
 }

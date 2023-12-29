@@ -14,7 +14,7 @@ using castledice_game_logic.Math;
 using castledice_game_logic.Time;
 using castledice_game_logic.TurnsLogic.TurnSwitchConditions;
 using castledice_game_server.GameController.GameInitialization.GameCreation;
-using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.TscConfigProviders;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.TscConfigCreators;
 using castledice_game_server.GameController.Moves;
 using Moq;
 using CastleGO = castledice_game_logic.GameObjects.Castle;
@@ -23,9 +23,9 @@ namespace castledice_game_server_tests;
 
 public class ObjectCreationUtility
 {
-    public static Mock<ITscConfigProvider> GetTscConfigProviderMock()
+    public static Mock<ITscConfigCreator> GetTscConfigCreatorMock()
     {
-        var mock = new Mock<ITscConfigProvider>();
+        var mock = new Mock<ITscConfigCreator>();
         mock.Setup(x => x.GetTurnSwitchConditionsConfig()).Returns(GetTurnSwitchConditionsConfig());
         return mock;
     }
@@ -39,8 +39,7 @@ public class ObjectCreationUtility
     {
         var mock = new Mock<IGameConstructorWrapper>();
         var gameMock = GetGameMock();
-        mock.Setup(x => x.ConstructGame(It.IsAny<List<Player>>(), It.IsAny<BoardConfig>(), It.IsAny<PlaceablesConfig>(), 
-                It.IsAny<IDecksList>(), It.IsAny<TurnSwitchConditionsConfig>()))
+        mock.Setup(x => x.ConstructGame(It.IsAny<List<Player>>(), It.IsAny<BoardConfig>(), It.IsAny<PlaceablesConfig>(), It.IsAny<TurnSwitchConditionsConfig>()))
             .Returns(gameMock.Object);
         return mock;
     }
@@ -62,7 +61,7 @@ public class ObjectCreationUtility
         {
             {player, (0, 0)},
             {secondPlayer, (9, 9)}
-        }), GetPlaceablesConfig(), new Mock<IDecksList>().Object, GetTurnSwitchConditionsConfig());
+        }), GetPlaceablesConfig(), GetTurnSwitchConditionsConfig());
         gameMock.Setup(x => x.GetPlayer(It.IsAny<int>())).Returns(player);
         gameMock.Setup(x => x.GetAllPlayers()).Returns(playersList);
         gameMock.Setup(x => x.GetAllPlayersIds()).Returns(new List<int> { 1, 2 });
@@ -77,7 +76,7 @@ public class ObjectCreationUtility
 
     public static Player GetPlayer(int id)
     {
-        return new Player(new PlayerActionPoints(), GetPlayerTimer(), id);
+        return new Player(new PlayerActionPoints(), GetPlayerTimer(), new List<PlacementType>(), id);
     }
     
     public static IPlayerTimer GetPlayerTimer()
@@ -85,19 +84,22 @@ public class ObjectCreationUtility
         return new Mock<IPlayerTimer>().Object;
     }
     
+    public static PlayerData GetPlayerData(int id = 1, TimeSpan timeSpan = new(), params PlacementType[] placementTypes)
+    {
+        return new PlayerData(id, placementTypes.ToList(), timeSpan);
+    }
+    
     public static GameStartData GetGameStartData(params int[] playerIds)
     {
         var version = "1.0.0";
         var boardData = GetBoardData();
-        var playersIdsList = new List<int>(playerIds);
         var placeablesConfigs = new PlaceablesConfigData(new KnightConfigData(1, 2));
-        var playerDecks = new List<PlayerDeckData>()
-        {
-            new(playerIds[0], new List<PlacementType> { PlacementType.Knight }),
-            new (playerIds[1], new List<PlacementType> { PlacementType.Knight })
-        };
         var tscConfigData = new TscConfigData(new List<TscType> { TscType.SwitchByActionPoints });
-        var data = new GameStartData(version, boardData, placeablesConfigs, tscConfigData, playersIdsList, playerDecks);
+        var data = new GameStartData(version, boardData, placeablesConfigs, tscConfigData, new List<PlayerData>
+        {
+            GetPlayerData(id: 1),
+            GetPlayerData(id: 2)
+        });
         return data;
     }
 
@@ -167,30 +169,26 @@ public class ObjectCreationUtility
         };
         var castleConfig = new CastleConfig(3, 1, 1);
         var castlesFactory = new CastlesFactory(castleConfig);
-        var casltesSpawner = new CastlesSpawner(playersToCastlesPositions, castlesFactory);
+        var castlesSpawner = new CastlesSpawner(playersToCastlesPositions, castlesFactory);
 
-        var contentSpanwers = new List<IContentSpawner>()
+        var contentSpawners = new List<IContentSpawner>()
         {
-            casltesSpawner
+            castlesSpawner
         };
 
         var cellsGenerator = new RectCellsGenerator(10, 10);
             
-        var boardConfig = new BoardConfig(contentSpanwers, cellsGenerator, CellType.Square);
+        var boardConfig = new BoardConfig(contentSpawners, cellsGenerator, CellType.Square);
 
         var unitsConfig = new PlaceablesConfig(new KnightConfig(1, 2));
-
-        var placementListProvider = new CommonDecksList(new List<PlacementType>
-        {
-            PlacementType.Knight
-        });
+        
 
         var turnSwitchConditionsConfig = new TurnSwitchConditionsConfig(new List<TscType>
             {
                 TscType.SwitchByActionPoints
             });
         
-        var game = new Game(players, boardConfig, unitsConfig, placementListProvider, turnSwitchConditionsConfig);
+        var game = new Game(players, boardConfig, unitsConfig, turnSwitchConditionsConfig);
         
         return game;
     }
