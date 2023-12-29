@@ -5,6 +5,13 @@ namespace castledice_game_server.GameController.GameInitialization.GameCreation.
 
 public class PlayersListProvider : IPlayersListProvider
 {
+    private readonly IPlayerTimerProvider _playerTimerProvider;
+    
+    public PlayersListProvider(IPlayerTimerProvider playerTimerProvider)
+    {
+        _playerTimerProvider = playerTimerProvider;
+    }
+    
     public List<Player> GetPlayersList(List<int> playersIds)
     {
         return playersIds.Select(GetPlayer).ToList();
@@ -12,6 +19,7 @@ public class PlayersListProvider : IPlayersListProvider
     
     private Player GetPlayer(int playerId)
     {
-        return new Player(new PlayerActionPoints(), playerId);
+        var timer = _playerTimerProvider.GetPlayerTimer();
+        return new Player(new PlayerActionPoints(), timer, playerId);
     }
 }

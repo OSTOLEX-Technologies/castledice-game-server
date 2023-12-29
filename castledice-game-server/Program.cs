@@ -55,6 +55,7 @@ internal class Program
     {
         TscType.SwitchByActionPoints
     });
+    private static readonly IPlayerTimeSpanProvider PlayerTimeSpanProvider = new DefaultPlayerTimeSpanProvider(TimeSpan.FromMinutes(5));
 
     private static readonly string GameStartDataVersion = "1.0.0";
 
@@ -117,7 +118,7 @@ internal class Program
         var boardConfigProvider = new BoardConfigProvider(rectCellsGeneratorProvider, contentSpawnersListProvider);
         var placeablesConfigProvider = new PlaceablesConfigProvider(KnightConfigProvider);
         var decksListProvider = new PlayersDecksListProvider(DeckProvider);
-        var playersListProvider = new PlayersListProvider();
+        var playersListProvider = new PlayersListProvider(new StopwatchPlayerTimerProvider(PlayerTimeSpanProvider));
         var gameConstructorWrapper = new GameConstructorWrapper();
         var gameCreator = new GameCreator(playersListProvider, boardConfigProvider, placeablesConfigProvider, decksListProvider, TscConfigProvider, gameConstructorWrapper);
         var cellsPresenceMatrixProvider = new CellsPresenceMatrixProvider();

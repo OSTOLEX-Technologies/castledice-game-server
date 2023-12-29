@@ -11,6 +11,7 @@ using castledice_game_logic.GameObjects;
 using castledice_game_logic.GameObjects.Configs;
 using castledice_game_logic.GameObjects.Factories.Castles;
 using castledice_game_logic.Math;
+using castledice_game_logic.Time;
 using castledice_game_logic.TurnsLogic.TurnSwitchConditions;
 using castledice_game_server.GameController.GameInitialization.GameCreation;
 using castledice_game_server.GameController.GameInitialization.GameCreation.GameCreationProviders.TscConfigProviders;
@@ -76,7 +77,12 @@ public class ObjectCreationUtility
 
     public static Player GetPlayer(int id)
     {
-        return new Player(new PlayerActionPoints(), id);
+        return new Player(new PlayerActionPoints(), GetPlayerTimer(), id);
+    }
+    
+    public static IPlayerTimer GetPlayerTimer()
+    {
+        return new Mock<IPlayerTimer>().Object;
     }
     
     public static GameStartData GetGameStartData(params int[] playerIds)
@@ -141,8 +147,8 @@ public class ObjectCreationUtility
 
     public static Game GetGame()
     {
-        var firstPlayer = new Player(new PlayerActionPoints(), 1);
-        var secondPlayer = new Player(new PlayerActionPoints(), 2);
+        var firstPlayer = GetPlayer(id: 1);
+        var secondPlayer = GetPlayer(id: 2);
         return GetGame(firstPlayer, secondPlayer);
     }
     
@@ -193,8 +199,8 @@ public class ObjectCreationUtility
     {
         var playersToCastlesPositions = new Dictionary<Player, Vector2Int>()
         {
-            { new Player(new PlayerActionPoints(), 1), (0, 0) },
-            { new Player(new PlayerActionPoints(), 2), (9, 9) }
+            { GetPlayer(id: 1), (0, 0) },
+            { GetPlayer(id: 2), (9, 9) }
         };
         return GetBoardConfig(playersToCastlesPositions);
     }
@@ -250,4 +256,11 @@ public class ObjectCreationUtility
     {
         return new Tree(removeCost, canBeRemoved);
     }
+    public static TimeSpan GetRandomTimeSpan()
+    {
+        var random = new Random();
+        var milliseconds = random.Next(1, 1000);
+        return new TimeSpan(0, 0, 0, 0, milliseconds);
+    }
+    
 }

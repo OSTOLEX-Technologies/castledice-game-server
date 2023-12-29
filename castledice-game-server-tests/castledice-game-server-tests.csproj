@@ -13,7 +13,7 @@
     <ItemGroup>
         <PackageReference Include="castledice-events-logic" Version="0.0.1-dev2" />
         <PackageReference Include="castledice-game-data-logic" Version="0.0.1-dev4" />
-        <PackageReference Include="castledice-game-logic" Version="0.0.1-dev3" />
+        <PackageReference Include="castledice-game-logic" Version="0.0.1-dev4" />
         <PackageReference Include="castledice-riptide-message-extensions" Version="0.0.1-dev1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0"/>
         <PackageReference Include="Moq" Version="4.20.69" />
