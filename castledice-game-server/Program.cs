@@ -118,7 +118,7 @@ internal class Program
         var rectCellsGeneratorProvider = new RectCellsGeneratorCreator(RectGenerationConfigCreator);
         var boardConfigProvider = new BoardConfigCreator(rectCellsGeneratorProvider, contentSpawnersListProvider);
         var placeablesConfigProvider = new PlaceablesConfigCreator(KnightConfigCreator);
-        var playersListProvider = new PlayersListCreator(new StopwatchPlayerTimerCreator(PlayerTimeSpanCreator));
+        var playersListProvider = new PlayersListCreator(null);
         var gameConstructorWrapper = new GameConstructorWrapper();
         var gameCreator = new GameCreator(playersListProvider, boardConfigProvider, placeablesConfigProvider, TscConfigCreator, gameConstructorWrapper);
         var cellsPresenceMatrixProvider = new CellsPresenceMatrixCreator();
