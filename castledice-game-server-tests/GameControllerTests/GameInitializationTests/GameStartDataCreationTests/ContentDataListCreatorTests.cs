@@ -2,28 +2,27 @@
 using castledice_game_logic;
 using castledice_game_logic.GameObjects;
 using castledice_game_logic.Math;
-using static castledice_game_server_tests.ObjectCreationUtility;
-using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
 using Moq;
 using CastleGO = castledice_game_logic.GameObjects.Castle;
 
 namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests;
 
-public class ContentDataListProviderTests
+public class ContentDataListCreatorTests
 {
     [Theory]
     [MemberData(nameof(BoardWithContentTestCases))]
-    public void GetContentDataList_ShouldPassAllContentOnBoard_ToGivenContentDataProvider(Board board,
+    public void GetContentDataList_ShouldPassAllContentOnBoard_ToGivenContentDataCreator(Board board,
         List<Content> boardContent)
     {
-        var dataProviderMock = new Mock<IContentDataProvider>();
-        var contentDataListProvider = new ContentDataListProvider(dataProviderMock.Object);
+        var dataCreatorMock = new Mock<IContentDataCreator>();
+        var contentDataListCreator = new ContentDataListCreator(dataCreatorMock.Object);
         
-        contentDataListProvider.GetContentDataList(board);
+        contentDataListCreator.GetContentDataList(board);
         
         foreach (var content in boardContent)
         {
-            dataProviderMock.Verify(provider => provider.GetContentData(content, It.IsAny<Vector2Int>()), Times.Once);
+            dataCreatorMock.Verify(creator => creator.GetContentData(content, It.IsAny<Vector2Int>()), Times.Once);
         }
     }
 
@@ -76,12 +75,12 @@ public class ContentDataListProviderTests
     }
 
     [Theory]
-    [MemberData(nameof(ContentDataProviderTestCases))]
-    public void GetContentDataList_ShouldReturnListOfAppropriateContentData(Board board, IContentDataProvider provider, List<ContentData> expectedList)
+    [MemberData(nameof(ContentDataCreatorTestCases))]
+    public void GetContentDataList_ShouldReturnListOfAppropriateContentData(Board board, IContentDataCreator creator, List<ContentData> expectedList)
     {
-        var contentDataListProvider = new ContentDataListProvider(provider);
+        var contentDataListCreator = new ContentDataListCreator(creator);
         
-        var actualList = contentDataListProvider.GetContentDataList(board);
+        var actualList = contentDataListCreator.GetContentDataList(board);
         
         Assert.Equal(expectedList.Count, actualList.Count);
         foreach (var contentData in expectedList)
@@ -90,7 +89,7 @@ public class ContentDataListProviderTests
         }
     }
 
-    public static IEnumerable<object[]> ContentDataProviderTestCases()
+    public static IEnumerable<object[]> ContentDataCreatorTestCases()
     {
         yield return CastlesTestCase();
         yield return TreeAndKnightTestCase();
@@ -105,13 +104,13 @@ public class ContentDataListProviderTests
         board[4, 4].AddContent(secondCastle);
         var firstCastleData = new CastleData(new Vector2Int(0, 0), 1, 1, 3, 3, 1);
         var secondCastleData = new CastleData(new Vector2Int(4, 4), 1, 1, 3, 3, 2);
-        var providerMock = new Mock<IContentDataProvider>();
-        providerMock.Setup(provider => provider.GetContentData(firstCastle, new Vector2Int(0, 0))).Returns(firstCastleData);
-        providerMock.Setup(provider => provider.GetContentData(secondCastle, new Vector2Int(4, 4))).Returns(secondCastleData);
+        var creatorMock = new Mock<IContentDataCreator>();
+        creatorMock.Setup(creator => creator.GetContentData(firstCastle, new Vector2Int(0, 0))).Returns(firstCastleData);
+        creatorMock.Setup(creator => creator.GetContentData(secondCastle, new Vector2Int(4, 4))).Returns(secondCastleData);
         return new object[]
         {
             board,
-            providerMock.Object,
+            creatorMock.Object,
             new List<ContentData>
             {
                 firstCastleData,
@@ -129,13 +128,13 @@ public class ContentDataListProviderTests
         board[4, 4].AddContent(knight);
         var treeData = new TreeData(new Vector2Int(0, 0), 3, true);
         var knightData = new KnightData(new Vector2Int(4, 4), 3, 3, 1);
-        var providerMock = new Mock<IContentDataProvider>();
-        providerMock.Setup(provider => provider.GetContentData(tree, new Vector2Int(0, 0))).Returns(treeData);
-        providerMock.Setup(provider => provider.GetContentData(knight, new Vector2Int(4, 4))).Returns(knightData);
+        var creatorMock = new Mock<IContentDataCreator>();
+        creatorMock.Setup(creator => creator.GetContentData(tree, new Vector2Int(0, 0))).Returns(treeData);
+        creatorMock.Setup(creator => creator.GetContentData(knight, new Vector2Int(4, 4))).Returns(knightData);
         return new object[]
         {
             board,
-            providerMock.Object,
+            creatorMock.Object,
             new List<ContentData>
             {
                 treeData,

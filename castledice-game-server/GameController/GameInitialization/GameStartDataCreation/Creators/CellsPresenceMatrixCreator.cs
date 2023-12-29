@@ -1,8 +1,8 @@
 ﻿using castledice_game_logic;
 
-namespace castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
+namespace castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
 
-public class CellsPresenceMatrixProvider : ICellsPresenceMatrixProvider
+public class CellsPresenceMatrixCreator : ICellsPresenceMatrixCreator
 {
     public bool[,] GetCellsPresenceMatrix(Board board)
     {

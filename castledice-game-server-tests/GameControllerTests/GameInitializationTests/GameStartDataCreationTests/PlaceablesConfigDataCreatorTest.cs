@@ -1,20 +1,20 @@
 ﻿using castledice_game_data_logic.ConfigsData;
 using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.GameObjects.Configs;
-using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
 
 namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests;
 
-public class PlaceablesConfigDataProviderTest
+public class PlaceablesConfigDataCreatorTest
 {
     [Theory]
     [MemberData(nameof(GetPlaceablesConfigDataTestCases))]
     public void GetPlaceablesConfigData_ShouldReturnAppropriatePlaceablesConfigData(PlaceablesConfig config,
         PlaceablesConfigData expectedData)
     {
-        var provider = new PlaceablesConfigDataProvider();
+        var creator = new PlaceablesConfigDataCreator();
         
-        var actualData = provider.GetPlaceablesConfigData(config);
+        var actualData = creator.GetPlaceablesConfigData(config);
         
         Assert.Equal(expectedData, actualData);
     }

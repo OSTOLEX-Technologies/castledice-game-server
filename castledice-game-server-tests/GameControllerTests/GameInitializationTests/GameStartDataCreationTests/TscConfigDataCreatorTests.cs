@@ -1,16 +1,16 @@
 ﻿using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.TurnsLogic.TurnSwitchConditions;
-using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
 
 namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests;
 
-public class TscConfigDataProviderTests
+public class TscConfigDataCreatorTests
 {
     [Theory]
     [MemberData(nameof(GetTscTypes))]
     public void GetTscConfigData_ShouldReturnTscConfigData_WithSameTscTypesToUse(List<TscType> tscTypes)
     {
-        var tscConfigData = new TscConfigDataProvider();
+        var tscConfigData = new TscConfigDataCreator();
         var turnSwitchConditionsConfig = new TurnSwitchConditionsConfig(tscTypes);
         
         var result = tscConfigData.GetTscConfigData(turnSwitchConditionsConfig);

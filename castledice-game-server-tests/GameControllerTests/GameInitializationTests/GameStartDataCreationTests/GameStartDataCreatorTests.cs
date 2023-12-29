@@ -5,6 +5,8 @@ using castledice_game_logic;
 using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.TurnsLogic.TurnSwitchConditions;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
 using Moq;
 
@@ -17,7 +19,7 @@ public class GameStartDataCreatorTests
     [InlineData("1.0.1")]
     [InlineData("1.1.0")]
     [InlineData("1.1.1")]
-    public void CreateGameStartData_ShouldReturnGameStartData_WithVersionFromVersionProvider(string version)
+    public void CreateGameStartData_ShouldReturnGameStartData_WithVersionFromVersionCreator(string version)
     {
         var versionProviderMock = new Mock<IGameStartDataVersionProvider>();
         versionProviderMock.Setup(x => x.GetGameStartDataVersion()).Returns(version);
@@ -32,14 +34,14 @@ public class GameStartDataCreatorTests
     }
     
     [Fact]
-    public void CreateGameStartData_ShouldReturnGameStartData_WithBoardDataFromBoardDataProvider()
+    public void CreateGameStartData_ShouldReturnGameStartData_WithBoardDataFromBoardDataCreator()
     {
-        var boardDataProviderMock = new Mock<IBoardDataProvider>();
+        var boardDataCreatorMock = new Mock<IBoardDataCreator>();
         var expectedBoardData = GetBoardData();
-        boardDataProviderMock.Setup(x => x.GetBoardData(It.IsAny<Board>())).Returns(expectedBoardData);
+        boardDataCreatorMock.Setup(x => x.GetBoardData(It.IsAny<Board>())).Returns(expectedBoardData);
         var gameStartDataCreator = new GameStartDataCreatorBuilder
         {
-            BoardDataProvider = boardDataProviderMock.Object
+            BoardDataCreator = boardDataCreatorMock.Object
         };
         
         var gameStartData = gameStartDataCreator.Build().CreateGameStartData(GetGame());
@@ -48,14 +50,14 @@ public class GameStartDataCreatorTests
     }
     
     [Fact]
-    public void CreateGameStartData_ShouldReturnGameStartData_WithPlaceablesConfigFromPlaceablesConfigProvider()
+    public void CreateGameStartData_ShouldReturnGameStartData_WithPlaceablesConfigFromPlaceablesConfigCreator()
     {
-        var provider = new Mock<IPlaceablesConfigDataProvider>();
+        var creator = new Mock<IPlaceablesConfigDataCreator>();
         var expectedData = new PlaceablesConfigData(new KnightConfigData(1, 2));
-        provider.Setup(x => x.GetPlaceablesConfigData(It.IsAny<PlaceablesConfig>())).Returns(expectedData);
+        creator.Setup(x => x.GetPlaceablesConfigData(It.IsAny<PlaceablesConfig>())).Returns(expectedData);
         var gameStartDataCreator = new GameStartDataCreatorBuilder
         {
-            PlaceablesConfigProvider = provider.Object
+            PlaceablesConfigCreator = creator.Object
         };
         
         var gameStartData = gameStartDataCreator.Build().CreateGameStartData(GetGame());
@@ -80,14 +82,14 @@ public class GameStartDataCreatorTests
     }
 
     [Fact]
-    public void CreateGameStartData_ShouldCreateGameStartData_WithTscConfigDataFromProvider()
+    public void CreateGameStartData_ShouldCreateGameStartData_WithTscConfigDataFromCreator()
     {
-        var providerMock = new Mock<ITscConfigDataProvider>();
+        var creatorMock = new Mock<ITscConfigDataCreator>();
         var expectedData = new TscConfigData(new List<TscType> { TscType.SwitchByActionPoints });
-        providerMock.Setup(x => x.GetTscConfigData(It.IsAny<TurnSwitchConditionsConfig>())).Returns(expectedData);
+        creatorMock.Setup(x => x.GetTscConfigData(It.IsAny<TurnSwitchConditionsConfig>())).Returns(expectedData);
         var gameStartDataCreator = new GameStartDataCreatorBuilder
         {
-            TscConfigProvider = providerMock.Object
+            TscConfigCreator = creatorMock.Object
         };
         
         var gameStartData = gameStartDataCreator.Build().CreateGameStartData(GetGame());
@@ -96,15 +98,15 @@ public class GameStartDataCreatorTests
     }
 
     [Fact]
-    public void CreateGameStartData_ShouldCreateGameStartData_WithPlayersDataFromProvider()
+    public void CreateGameStartData_ShouldCreateGameStartData_WithPlayersDataFromCreator()
     {
-        var providerMock = new Mock<IPlayersDataListCreator>();
+        var creatorMock = new Mock<IPlayersDataListCreator>();
         var expectedData = new List<PlayerData> { GetPlayerData() };
         var game = GetGame();
-        providerMock.Setup(x => x.GetPlayersData(game.GetAllPlayers())).Returns(expectedData);
+        creatorMock.Setup(x => x.GetPlayersData(game.GetAllPlayers())).Returns(expectedData);
         var gameStartDataCreator = new GameStartDataCreatorBuilder
         {
-            PlayersDataListCreator = providerMock.Object
+            PlayersDataListCreator = creatorMock.Object
         };
         
         var gameStartData = gameStartDataCreator.Build().CreateGameStartData(game);
@@ -115,14 +117,14 @@ public class GameStartDataCreatorTests
     private class GameStartDataCreatorBuilder
     {
         public IGameStartDataVersionProvider VersionProvider { get; set; } = new Mock<IGameStartDataVersionProvider>().Object;
-        public IBoardDataProvider BoardDataProvider { get; set; } = new Mock<IBoardDataProvider>().Object;
-        public IPlaceablesConfigDataProvider PlaceablesConfigProvider { get; set; } = new Mock<IPlaceablesConfigDataProvider>().Object;
-        public ITscConfigDataProvider TscConfigProvider { get; set; } = new Mock<ITscConfigDataProvider>().Object;
+        public IBoardDataCreator BoardDataCreator { get; set; } = new Mock<IBoardDataCreator>().Object;
+        public IPlaceablesConfigDataCreator PlaceablesConfigCreator { get; set; } = new Mock<IPlaceablesConfigDataCreator>().Object;
+        public ITscConfigDataCreator TscConfigCreator { get; set; } = new Mock<ITscConfigDataCreator>().Object;
         public IPlayersDataListCreator PlayersDataListCreator { get; set; } = new Mock<IPlayersDataListCreator>().Object;
         
         public GameStartDataCreator Build()
         {
-            return new GameStartDataCreator(VersionProvider, BoardDataProvider, PlaceablesConfigProvider, TscConfigProvider, PlayersDataListCreator);
+            return new GameStartDataCreator(VersionProvider, BoardDataCreator, PlaceablesConfigCreator, TscConfigCreator, PlayersDataListCreator);
         }
     }
 }
