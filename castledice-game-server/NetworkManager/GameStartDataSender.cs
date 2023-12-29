@@ -21,7 +21,7 @@ public class GameStartDataSender : IGameStartDataSender
 
     public void SendGameStartData(GameStartData data)
     {
-        var clientsIds = GetClientIds(data.PlayersIds);
+        var clientsIds = GetClientIds(data.PlayersData.Select(playerData => playerData.PlayerId).ToList());
         var createGameDTO = new CreateGameDTO(data);
         SendDTOToClients(createGameDTO, clientsIds);
     }
