@@ -23,6 +23,24 @@ namespace castledice_game_server_tests;
 
 public class ObjectCreationUtility
 {
+    public static List<int> GetIdsListWithRandomLength()
+    {
+        var random = new Random();
+        var count = random.Next(1, 10);
+        return GetIdsList(count);
+    }
+    
+    public static List<int> GetIdsList(int count)
+    {
+        var ids = new List<int>();
+        for (var i = 0; i < count; i++)
+        {
+            ids.Add(i);
+        }
+
+        return ids;
+    }
+    
     public static Mock<ITscConfigCreator> GetTscConfigCreatorMock()
     {
         var mock = new Mock<ITscConfigCreator>();
@@ -73,10 +91,22 @@ public class ObjectCreationUtility
     {
         return GetGameStartData(1, 2);
     }
+    
+    public static List<Player> GetRandomPlayersList()
+    {
+        var ids = GetIdsListWithRandomLength();
+        return ids.Select(GetPlayer).ToList();
+    }
+    
 
-    public static Player GetPlayer(int id)
+    public static Player GetPlayer(int id )
     {
         return new Player(new PlayerActionPoints(), GetPlayerTimer(), new List<PlacementType>(), id);
+    }
+    
+    public static Player GetPlayer(int id = 1, TimeSpan timeSpan = new(), params PlacementType[] deck)
+    {
+        return new Player(new PlayerActionPoints(), GetPlayerTimer(timeSpan), deck.ToList(), id);
     }
     
     public static IPlayerTimer GetPlayerTimer()
@@ -84,9 +114,31 @@ public class ObjectCreationUtility
         return new Mock<IPlayerTimer>().Object;
     }
     
+    public static IPlayerTimer GetPlayerTimer(TimeSpan timeSpan)
+    {
+        var mock = new Mock<IPlayerTimer>();
+        mock.Setup(x => x.GetTimeLeft()).Returns(timeSpan);
+        return mock.Object;
+    }
+    
     public static PlayerData GetPlayerData(int id = 1, TimeSpan timeSpan = new(), params PlacementType[] placementTypes)
     {
         return new PlayerData(id, placementTypes.ToList(), timeSpan);
+    }
+
+    public static List<PlacementType> GetRandomPlacementTypeList()
+    {
+        var rnd = new Random();
+        var typesCount = Enum.GetValues(typeof(PlacementType)).Length;
+        var length = rnd.Next(maxValue: 10);
+        var placementTypes = new List<PlacementType>();
+        for (var i = 0; i < length; i++)
+        {
+            var randomPlacementType = (PlacementType) rnd.Next(typesCount);
+            placementTypes.Add(randomPlacementType);
+        }
+
+        return placementTypes;
     }
     
     public static GameStartData GetGameStartData(params int[] playerIds)
