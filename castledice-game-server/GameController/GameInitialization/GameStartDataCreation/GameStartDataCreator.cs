@@ -28,7 +28,8 @@ public class GameStartDataCreator : IGameStartDataCreator
         var boardData = _boardDataCreator.GetBoardData(game.GetBoard());
         var placeablesConfigData = _placeablesConfigDataCreator.GetPlaceablesConfigData(game.PlaceablesConfig);
         var tscConfigData = _tscConfigDataCreator.GetTscConfigData(game.TurnSwitchConditionsConfig);
+        var playersData = _playersDataListCreator.GetPlayersData(game.GetAllPlayers());
         
-        return new GameStartData(version, boardData, placeablesConfigData, tscConfigData, null);
+        return new GameStartData(version, boardData, placeablesConfigData, tscConfigData, playersData);
     }
 }
