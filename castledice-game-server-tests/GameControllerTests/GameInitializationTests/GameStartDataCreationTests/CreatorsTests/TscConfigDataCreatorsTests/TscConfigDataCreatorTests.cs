@@ -1,8 +1,8 @@
 ﻿using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.TurnsLogic.TurnSwitchConditions;
-using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.TscConfigDataCreators;
 
-namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests;
+namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests.CreatorsTests.TscConfigDataCreatorsTests;
 
 public class TscConfigDataCreatorTests
 {

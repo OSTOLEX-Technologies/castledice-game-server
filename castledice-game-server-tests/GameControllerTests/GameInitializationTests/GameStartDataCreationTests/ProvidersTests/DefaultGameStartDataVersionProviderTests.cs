@@ -1,6 +1,6 @@
 ﻿using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
 
-namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests;
+namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests.ProvidersTests;
 
 public class DefaultGameStartDataVersionProviderTests
 {

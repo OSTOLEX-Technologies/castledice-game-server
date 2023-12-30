@@ -1,7 +1,7 @@
 ﻿using castledice_game_data_logic.TurnSwitchConditions;
 using castledice_game_logic.GameConfiguration;
 
-namespace castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
+namespace castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.TscConfigDataCreators;
 
 public interface ITscConfigDataCreator
 {

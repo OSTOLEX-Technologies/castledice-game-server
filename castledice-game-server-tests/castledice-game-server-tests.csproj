@@ -31,5 +31,8 @@
     <ItemGroup>
       <ProjectReference Include="..\castledice-game-server\castledice-game-server.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="GameControllerTests\GameInitializationTests\GameStartDataCreationTests\CreatorsTests\" />
+    </ItemGroup>
 
 </Project>

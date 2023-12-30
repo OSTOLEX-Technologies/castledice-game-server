@@ -2,7 +2,7 @@
 using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.GameObjects.Configs;
 
-namespace castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
+namespace castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.PlaceablesConfigDataCreators;
 
 public class PlaceablesConfigDataCreator : IPlaceablesConfigDataCreator
 {

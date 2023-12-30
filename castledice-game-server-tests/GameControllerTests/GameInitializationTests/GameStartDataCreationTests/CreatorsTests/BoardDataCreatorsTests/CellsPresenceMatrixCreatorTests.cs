@@ -1,8 +1,8 @@
 ﻿using castledice_game_logic;
 using castledice_game_logic.Math;
-using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.BoardDataCreators;
 
-namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests;
+namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests.CreatorsTests.BoardDataCreatorsTests;
 
 public class CellsPresenceMatrixCreatorTests
 {

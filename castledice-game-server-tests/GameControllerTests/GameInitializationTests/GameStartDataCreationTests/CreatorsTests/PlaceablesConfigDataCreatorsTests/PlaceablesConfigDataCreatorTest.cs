@@ -1,9 +1,9 @@
 ﻿using castledice_game_data_logic.ConfigsData;
 using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.GameObjects.Configs;
-using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.PlaceablesConfigDataCreators;
 
-namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests;
+namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests.CreatorsTests.PlaceablesConfigDataCreatorsTests;
 
 public class PlaceablesConfigDataCreatorTest
 {

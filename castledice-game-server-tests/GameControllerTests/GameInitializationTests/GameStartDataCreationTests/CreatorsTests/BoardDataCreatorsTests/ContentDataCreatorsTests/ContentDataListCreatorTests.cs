@@ -2,11 +2,11 @@
 using castledice_game_logic;
 using castledice_game_logic.GameObjects;
 using castledice_game_logic.Math;
-using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.BoardDataCreators.ContentDataCreators;
 using Moq;
 using CastleGO = castledice_game_logic.GameObjects.Castle;
 
-namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests;
+namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests.CreatorsTests.BoardDataCreatorsTests.ContentDataCreatorsTests;
 
 public class ContentDataListCreatorTests
 {

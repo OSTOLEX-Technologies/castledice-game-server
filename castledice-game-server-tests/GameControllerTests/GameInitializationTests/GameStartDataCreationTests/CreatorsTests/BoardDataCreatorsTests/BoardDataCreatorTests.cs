@@ -1,10 +1,10 @@
 ﻿using castledice_game_data_logic.Content;
 using castledice_game_logic;
-using static castledice_game_server_tests.ObjectCreationUtility;
-using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.BoardDataCreators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.BoardDataCreators.ContentDataCreators;
 using Moq;
 
-namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests;
+namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameStartDataCreationTests.CreatorsTests.BoardDataCreatorsTests;
 
 public class BoardDataCreatorTests
 {

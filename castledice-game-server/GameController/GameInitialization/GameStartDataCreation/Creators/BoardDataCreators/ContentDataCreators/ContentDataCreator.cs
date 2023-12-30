@@ -2,7 +2,7 @@
 using castledice_game_logic.GameObjects;
 using castledice_game_logic.Math;
 
-namespace castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
+namespace castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.BoardDataCreators.ContentDataCreators;
 
 public class ContentDataCreator : IContentDataCreator, IContentVisitor<ContentData>
 {
