@@ -91,6 +91,13 @@ public class ObjectCreationUtility
     {
         return GetGameStartData(1, 2);
     }
+    
+    public static List<Player> GetRandomPlayersList()
+    {
+        var ids = GetIdsListWithRandomLength();
+        return ids.Select(GetPlayer).ToList();
+    }
+    
 
     public static Player GetPlayer(int id)
     {
