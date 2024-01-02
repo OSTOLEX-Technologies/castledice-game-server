@@ -147,11 +147,8 @@ public class ObjectCreationUtility
         var boardData = GetBoardData();
         var placeablesConfigs = new PlaceablesConfigData(new KnightConfigData(1, 2));
         var tscConfigData = new TscConfigData(new List<TscType> { TscType.SwitchByActionPoints });
-        var data = new GameStartData(version, boardData, placeablesConfigs, tscConfigData, new List<PlayerData>
-        {
-            GetPlayerData(id: 1),
-            GetPlayerData(id: 2)
-        });
+        var playersData = playerIds.Select((playerId) => GetPlayerData(id: playerId)).ToList();
+        var data = new GameStartData(version, boardData, placeablesConfigs, tscConfigData, playersData);
         return data;
     }
 
