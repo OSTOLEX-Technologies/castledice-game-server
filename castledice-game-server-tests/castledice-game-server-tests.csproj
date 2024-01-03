@@ -11,10 +11,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="castledice-events-logic" Version="0.0.1-dev2" />
+        <PackageReference Include="castledice-events-logic" Version="0.0.1-dev3-timer-switch" />
         <PackageReference Include="castledice-game-data-logic" Version="0.0.1-dev5" />
-        <PackageReference Include="castledice-game-logic" Version="0.0.1-dev5" />
-        <PackageReference Include="castledice-riptide-message-extensions" Version="0.0.1-dev1" />
+        <PackageReference Include="castledice-game-logic" Version="0.0.1-dev7-virtual-events" />
+        <PackageReference Include="castledice-riptide-message-extensions" Version="0.0.1-dev2-timer-switch-messages" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0"/>
         <PackageReference Include="Moq" Version="4.20.69" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

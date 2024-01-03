@@ -7,6 +7,10 @@ using castledice_game_logic.TurnsLogic.TurnSwitchConditions;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.BoardDataCreators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.PlaceablesConfigDataCreators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.PlayerDataCreators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.TscConfigDataCreators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
 using Moq;
 
@@ -65,22 +69,23 @@ public class GameStartDataCreatorTests
         Assert.Same(expectedData, gameStartData.PlaceablesConfigData);
     }
 
-    [Theory]
-    [InlineData(1, 2)]
-    [InlineData(2, 1)]
-    [InlineData(13, 15)]
-    public void CreateGameStartData_ShouldCreateGameStartDataWithPlayersIdsList_FromGivenGame(int firstPlayerId, int secondPlayerId)
+    [Fact]
+    public void CreateGameStartData_ShouldCreateGameStartData_WithPlayersDataFromCreator()
     {
-        var game = GetGame(GetPlayer(firstPlayerId), GetPlayer(secondPlayerId));
-        var playersIds = game.GetAllPlayersIds();
-        var gameStartDataCreator = new GameStartDataCreatorBuilder().Build();
+        var creatorMock = new Mock<IPlayersDataListCreator>();
+        var expectedData = new List<PlayerData>();
+        var game = GetGame();
+        creatorMock.Setup(x => x.GetPlayersData(game.GetAllPlayers())).Returns(expectedData);
+        var gameStartDataCreator = new GameStartDataCreatorBuilder
+        {
+            PlayersDataListCreator = creatorMock.Object
+        };
         
-        var gameStartData = gameStartDataCreator.CreateGameStartData(game);
-        var actualPlayersIds = gameStartData.PlayersData.Select(x => x.PlayerId).ToList();
+        var gameStartData = gameStartDataCreator.Build().CreateGameStartData(game);
         
-        Assert.Equal(playersIds, actualPlayersIds);
+        Assert.Same(expectedData, gameStartData.PlayersData);
     }
-
+    
     [Fact]
     public void CreateGameStartData_ShouldCreateGameStartData_WithTscConfigDataFromCreator()
     {
@@ -95,23 +100,6 @@ public class GameStartDataCreatorTests
         var gameStartData = gameStartDataCreator.Build().CreateGameStartData(GetGame());
         
         Assert.Same(expectedData, gameStartData.TscConfigData);
-    }
-
-    [Fact]
-    public void CreateGameStartData_ShouldCreateGameStartData_WithPlayersDataFromCreator()
-    {
-        var creatorMock = new Mock<IPlayersDataListCreator>();
-        var expectedData = new List<PlayerData> { GetPlayerData() };
-        var game = GetGame();
-        creatorMock.Setup(x => x.GetPlayersData(game.GetAllPlayers())).Returns(expectedData);
-        var gameStartDataCreator = new GameStartDataCreatorBuilder
-        {
-            PlayersDataListCreator = creatorMock.Object
-        };
-        
-        var gameStartData = gameStartDataCreator.Build().CreateGameStartData(game);
-        
-        Assert.Same(expectedData, gameStartData.PlayersData);
     }
 
     private class GameStartDataCreatorBuilder

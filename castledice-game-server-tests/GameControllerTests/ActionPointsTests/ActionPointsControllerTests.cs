@@ -185,7 +185,9 @@ public class ActionPointsControllerTests
     [Fact]
     public void OnTurnSwitched_ShouldCallGiveActionPointsToCurrentPlayer_WithGivenGame()
     {
-        var expectedGame = GetGameMock().Object;
+        var gameMock = GetGameMock();
+        gameMock.Setup(g => g.SwitchTurn()).Raises(g => g.TurnSwitched += null, this, gameMock.Object);
+        var expectedGame = gameMock.Object;
         var gamesCollection = new TestGamesCollection();
         var generatorMock = new Mock<IRandomNumberGenerator>();
         generatorMock.Setup(g => g.GetNextRandom()).Returns(1);

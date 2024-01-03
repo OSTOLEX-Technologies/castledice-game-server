@@ -17,13 +17,14 @@ public class GameOverControllerTests
 {
     public class TestGame : Game
     {
+
         public TestGame(List<Player> players, BoardConfig boardConfig, PlaceablesConfig placeablesConfig, TurnSwitchConditionsConfig turnSwitchConditionsConfig) : base(players, boardConfig, placeablesConfig, turnSwitchConditionsConfig)
         {
         }
         
         public void ForceWin(Player winner)
         {
-            OnWin(winner);
+            OnWin( winner);
         }
         
         public void ForceDraw()
@@ -41,15 +42,16 @@ public class GameOverControllerTests
     //This test also checks if OnGameAdded is called and subscription is made in it.
     public void OnWin_ShouldCallSaveWin_WithGameAndWinner()
     {
-        var gameMock = GetTestGameMock();
-        var expectedGame = gameMock.Object;
+        var gameMock = GetGameMock();
         var expectedWinner = GetPlayer(1);
+        gameMock.Setup(g => g.CheckTurns()).Raises(g => g.Win += null, this, (gameMock.Object, expectedWinner));
+        var expectedGame = gameMock.Object;
         var gamesCollection = new TestGamesCollection();
         var gameOverController = new Mock<GameOverController>(gamesCollection, new Mock<IGameSavingService>().Object, new Mock<IHistoryProvider>().Object, new Mock<ILogger>().Object);
         var testObject = gameOverController.Object;
         gamesCollection.AddGame(1, expectedGame);//This should force OnGameAdded to be called
         
-        expectedGame.ForceWin(expectedWinner);
+        expectedGame.CheckTurns();
         
         gameOverController.Verify(x => x.SaveWin(expectedGame, expectedWinner), Times.Once);
     }
@@ -57,14 +59,15 @@ public class GameOverControllerTests
     [Fact]
     public void OnDraw_ShouldCallSaveDraw_WithGame()
     {
-        var gameMock = GetTestGameMock();
+        var gameMock = GetGameMock();
+        gameMock.Setup(g => g.CheckTurns()).Raises(g => g.Draw += null, this, gameMock.Object);
         var expectedGame = gameMock.Object;
         var gamesCollection = new TestGamesCollection();
         var gameOverControllerMock = new Mock<GameOverController>(gamesCollection, new Mock<IGameSavingService>().Object, new Mock<IHistoryProvider>().Object, new Mock<ILogger>().Object);
         var testObject = gameOverControllerMock.Object;
         gamesCollection.AddGame(1, expectedGame);//This should force OnGameAdded to be called
         
-        expectedGame.ForceDraw();
+        expectedGame.CheckTurns();
         
         gameOverControllerMock.Verify(x => x.SaveDraw(expectedGame), Times.Once);
     }
