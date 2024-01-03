@@ -24,7 +24,49 @@ public class TimersController
 
     public virtual void SwitchTimersForPlayers(Game game)
     {
-        
+        try
+        {
+            StopTimerForPreviousPlayer(game);
+            SendPreviousPlayerTimeLeftToAllPlayers(game);
+            StartTimerForCurrentPlayer(game);
+            SendCurrentPlayerTimeLeftToAllPlayers(game);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e.Message);
+        }
+    }
+    
+    private void StopTimerForPreviousPlayer(Game game)
+    {
+        var previousPlayer = game.GetPreviousPlayer();
+        previousPlayer.Timer.Stop();
+    }
+    
+    private void SendPreviousPlayerTimeLeftToAllPlayers(Game game)
+    {
+        var previousPlayer = game.GetPreviousPlayer();
+        var previousPlayerTimeLeft = previousPlayer.Timer.GetTimeLeft();
+        foreach (var player in game.GetAllPlayers())
+        {
+            _timerSwitchSender.SendTimerSwitch(previousPlayer.Id, previousPlayerTimeLeft, player.Id, false);
+        }
+    }
+    
+    private void StartTimerForCurrentPlayer(Game game)
+    {
+        var currentPlayer = game.GetCurrentPlayer();
+        currentPlayer.Timer.Start();
+    }
+    
+    private void SendCurrentPlayerTimeLeftToAllPlayers(Game game)
+    {
+        var currentPlayer = game.GetCurrentPlayer();
+        var currentPlayerTimeLeft = currentPlayer.Timer.GetTimeLeft();
+        foreach (var player in game.GetAllPlayers())
+        {
+            _timerSwitchSender.SendTimerSwitch(currentPlayer.Id, currentPlayerTimeLeft, player.Id, true);
+        }
     }
 
     private void OnGameAdded(object? sender, Game game)
