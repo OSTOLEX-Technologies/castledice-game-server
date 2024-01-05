@@ -23,6 +23,7 @@ using castledice_game_server.GameController.GameInitialization.GameStartDataCrea
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.BoardDataCreators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.BoardDataCreators.ContentDataCreators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.PlaceablesConfigDataCreators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.PlayerDataCreators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.TscConfigDataCreators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
 using castledice_game_server.GameController.GameOver;
@@ -136,8 +137,9 @@ internal class Program
         var gameStartDataVersionProvider = new DefaultGameStartDataVersionProvider(GameStartDataVersion);
         var placeablesConfigDataProvider = new PlaceablesConfigDataCreator();
         var tsConfigDataProvider = new TscConfigDataCreator();
+        var playerDataListCreator = new PlayersDataListCreator(new PlayerDataCreator());
         var gameStartDataCreator = new GameStartDataCreator(gameStartDataVersionProvider, boardDataProvider,
-            placeablesConfigDataProvider, tsConfigDataProvider, null);
+            placeablesConfigDataProvider, tsConfigDataProvider, playerDataListCreator);
         var gameStartDataSender = new GameStartDataSender(serverWrapper, playersDictionary);
         var gameInitializationController = new GameInitializationController(gameSavingService, activeGamesCollection,
             gameStartDataSender, gameCreator, gameStartDataCreator, errorSender, loggerWrapper);
