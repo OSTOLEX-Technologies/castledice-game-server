@@ -30,6 +30,7 @@ using castledice_game_server.GameController.GameOver;
 using castledice_game_server.GameController.Moves;
 using castledice_game_server.GameController.PlayerInitialization;
 using castledice_game_server.GameController.PlayersReadiness;
+using castledice_game_server.GameController.Timers;
 using castledice_game_server.Logging;
 using castledice_game_server.NetworkManager;
 using castledice_game_server.NetworkManager.MessageHandlers;
@@ -176,6 +177,10 @@ internal class Program
        var historyProvider = new HistoryProviderStub();
        var gameOverController =
            new GameOverController(activeGamesCollection, gameSavingService, historyProvider, loggerWrapper);
+       
+       //Setting up timers controller
+       var timerSwitchSender = new TimerSwitchSender(serverWrapper, playersDictionary);
+       var timersController = new TimersController(gamePlayersReadinessNotifier, activeGamesCollection, timerSwitchSender, loggerWrapper);
        
        //Running the server and client
        while (true)
