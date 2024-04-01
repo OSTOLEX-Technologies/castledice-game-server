@@ -112,6 +112,7 @@ internal class Program
         var currentTimeProvider = new CurrentTimeProvider();
         var gameStartDataJsonConverter = new NewtonsoftGameStartDataJsonConverter();
         var localGameDataRepository = new LocalGameDataRepository();
+        //TODO: Should be replaced with real implementation when game saving service is ready
         var gameSavingService = new GameSavingServiceStub();
         var activeGamesCollection = new ActiveGamesCollection();
         
