@@ -66,16 +66,14 @@ public class ActionPointsControllerTests
         }
     }
 
-    [Theory]
-    [InlineData("Test error message")]
-    [InlineData("Some other error message")]
-    [InlineData("Yet another error message")]
-    public void GiveActionPointsToCurrentPlayer_ShouldLogError_IfExceptionIsThrown(string message)
+    [Fact]
+    public void GiveActionPointsToCurrentPlayer_ShouldLogError_IfExceptionIsThrown()
     {
         var gameMock = GetGameMock();
+        var expectedException = new Exception();
         gameMock.Setup(p => p.GetCurrentPlayer()).Returns(GetPlayer(1));
         var generatorsCollectionMock = new Mock<INumberGeneratorsCollection>();
-        generatorsCollectionMock.Setup(g => g.GetGeneratorForPlayer(It.IsAny<int>())).Throws(new Exception(message));
+        generatorsCollectionMock.Setup(g => g.GetGeneratorForPlayer(It.IsAny<int>())).Throws(expectedException);
         var loggerMock = new Mock<ILogger>();
         var actionPointsController = new ActionPointsControllerBuilder
         {
@@ -85,7 +83,7 @@ public class ActionPointsControllerTests
         
         actionPointsController.GiveActionPointsToCurrentPlayer(gameMock.Object);
         
-        loggerMock.Verify(l => l.Error(message), Times.Once);
+        loggerMock.Verify(l => l.Error(expectedException), Times.Once);
     }
     
     [Theory]
@@ -134,16 +132,14 @@ public class ActionPointsControllerTests
         controllerMock.Verify(c => c.GiveActionPointsToCurrentPlayer(game), Times.Once);
     }
 
-    [Theory]
-    [InlineData("Test error message")]
-    [InlineData("Some other error message")]
-    [InlineData("Yet another error message")]
-    public void OnGameAdded_ShouldLogError_IfExceptionIsThrown(string message)
+    [Fact]
+    public void OnGameAdded_ShouldLogError_IfExceptionIsThrown()
     {
         var gameMock = GetGameMock();
+        var expectedException = new Exception();
         var gamesCollection = new TestGamesCollection();
         var generatorsCollectionMock = new Mock<INumberGeneratorsCollection>();
-        generatorsCollectionMock.Setup(g => g.AddGeneratorForPlayer(It.IsAny<int>())).Throws(new Exception(message));
+        generatorsCollectionMock.Setup(g => g.AddGeneratorForPlayer(It.IsAny<int>())).Throws(expectedException);
         var loggerMock = new Mock<ILogger>();
         var controller = new ActionPointsControllerBuilder
         {
@@ -154,7 +150,7 @@ public class ActionPointsControllerTests
         
         gamesCollection.AddGame(1, gameMock.Object);
         
-        loggerMock.Verify(l => l.Error(message), Times.Once);
+        loggerMock.Verify(l => l.Error(expectedException), Times.Once);
     }
     
     [Theory]

@@ -57,7 +57,6 @@ public class TimerSwitchSenderTests
         sender.SendTimerSwitch(playerToSwitchId, timeLeft, 0, switchTo);
         var sentMessage = messageSender.SentMessage;
         sentMessage.GetByte();
-        sentMessage.GetByte();
         var actualDTO = sentMessage.GetSwitchTimerDTO();
         
         Assert.Equal(expectedDTO, actualDTO);

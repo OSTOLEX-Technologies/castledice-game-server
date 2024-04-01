@@ -44,7 +44,6 @@ public class MoveDataSenderTests
         moveDataSender.SendDataToPlayer(moveData, 1);
         var sentMessage = messageSender.SentMessage;
         sentMessage.GetByte();
-        sentMessage.GetByte();
         var sentDTO = sentMessage.GetMoveFromServerDTO();
         
         Assert.Equal(expectedDTO, sentDTO);

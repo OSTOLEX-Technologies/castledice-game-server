@@ -137,19 +137,17 @@ public class GameOverControllerTests
         gameSavingServiceMock.Verify(g => g.SaveGameEndAsync(gameId, history, winnerId), Times.Once);
     }
     
-    [Theory]
-    [InlineData("some error")]
-    [InlineData("some other error")]
-    [InlineData("some other error")]
-    public async void SaveWin_ShouldLogError_IfExceptionIsThrown(string message)
+    [Fact]
+    public async void SaveWin_ShouldLogError_IfExceptionIsThrown()
     {
         var gameMock = GetTestGameMock();
-        var expectedGame = gameMock.Object;
+        var game = gameMock.Object;
+        var expectedException = new Exception();
         var gamesCollectionMock = new Mock<IGamesCollection>();
-        gamesCollectionMock.Setup(g => g.GetGameId(expectedGame)).Returns(1);
+        gamesCollectionMock.Setup(g => g.GetGameId(game)).Returns(1);
         var gameSavingServiceMock = new Mock<IGameSavingService>();
         gameSavingServiceMock.Setup(g => g.SaveGameEndAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()))
-            .Throws(new Exception(message));
+            .Throws(expectedException);
         var loggerMock = new Mock<ILogger>();
         var gameOverController = new GameOverControllerBuilder()
         {
@@ -158,9 +156,9 @@ public class GameOverControllerTests
             Logger = loggerMock.Object
         }.Build();
         
-        await gameOverController.SaveWin(expectedGame, GetPlayer(1));
+        await gameOverController.SaveWin(game, GetPlayer(1));
         
-        loggerMock.Verify(l => l.Error(It.IsAny<string>()), Times.Once);
+        loggerMock.Verify(l => l.Error(expectedException), Times.Once);
     }
     
     [Fact]
@@ -228,19 +226,17 @@ public class GameOverControllerTests
         gamesCollectionMock.Verify(g => g.RemoveGame(gameId), Times.Once);
     }
 
-    [Theory]
-    [InlineData("some error")]
-    [InlineData("some other error")]
-    [InlineData("some other error")]
-    public async void SaveDraw_ShouldLogError_IfExceptionIsThrown(string message)
+    [Fact]
+    public async void SaveDraw_ShouldLogError_IfExceptionIsThrown()
     {
         var gameMock = GetTestGameMock();
-        var expectedGame = gameMock.Object;
+        var game = gameMock.Object;
+        var expectedException = new Exception();
         var gamesCollectionMock = new Mock<IGamesCollection>();
-        gamesCollectionMock.Setup(g => g.GetGameId(expectedGame)).Returns(1);
+        gamesCollectionMock.Setup(g => g.GetGameId(game)).Returns(1);
         var gameSavingServiceMock = new Mock<IGameSavingService>();
         gameSavingServiceMock.Setup(g => g.SaveGameEndAsync(It.IsAny<int>(), It.IsAny<string>(), null))
-            .Throws(new Exception(message));
+            .Throws(expectedException);
         var loggerMock = new Mock<ILogger>();
         var gameOverController = new GameOverControllerBuilder()
         {
@@ -249,9 +245,9 @@ public class GameOverControllerTests
             Logger = loggerMock.Object
         }.Build();
         
-        await gameOverController.SaveDraw(expectedGame);
+        await gameOverController.SaveDraw(game);
         
-        loggerMock.Verify(l => l.Error(It.IsAny<string>()), Times.Once);
+        loggerMock.Verify(l => l.Error(expectedException), Times.Once);
     }
     
     private class GameOverControllerBuilder 

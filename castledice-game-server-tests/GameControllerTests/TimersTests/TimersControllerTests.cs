@@ -210,10 +210,10 @@ public class TimersControllerTests
     {
         var loggerMock = new Mock<ILogger>();
         var timerSwitchSenderMock = new Mock<ITimerSwitchSender>();
-        var message = "Test exception";
+        var expectedException = new Exception();
         timerSwitchSenderMock.Setup(s =>
                 s.SendTimerSwitch(It.IsAny<int>(), It.IsAny<TimeSpan>(), It.IsAny<int>(), It.IsAny<bool>()))
-            .Throws(new Exception(message));
+            .Throws(expectedException);
         var timersController = new TimersControllerBuilder()
         {
             TimerSwitchSender = timerSwitchSenderMock.Object,
@@ -222,7 +222,7 @@ public class TimersControllerTests
         
         timersController.SwitchTimersForPlayers(GetGame());
         
-        loggerMock.Verify(l => l.Error(message), Times.Once);
+        loggerMock.Verify(l => l.Error(expectedException), Times.Once);
     }
 
     private class TimersControllerBuilder

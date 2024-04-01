@@ -17,7 +17,6 @@ public class CancelGameRetranslatorTests
         retranslator.AcceptCancelGameDTO(DTO, 1);
         var sentMessage = messageSender.SentMessage;
         sentMessage.GetByte();
-        sentMessage.GetByte();
         var sentDTO = sentMessage.GetCancelGameDTO();
         
         Assert.Equal(DTO, sentDTO);

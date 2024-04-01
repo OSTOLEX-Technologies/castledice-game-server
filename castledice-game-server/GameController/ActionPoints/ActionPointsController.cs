@@ -41,7 +41,7 @@ public class ActionPointsController
         }
         catch (Exception e)
         {
-            _logger.Error(e.Message);
+            _logger.Error(e);
         }
     }
 
@@ -58,7 +58,7 @@ public class ActionPointsController
         }
         catch (Exception e)
         {
-            _logger.Error(e.Message);
+            _logger.Error(e);
         }
     }
     

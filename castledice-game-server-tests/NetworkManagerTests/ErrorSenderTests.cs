@@ -38,7 +38,6 @@ public class ErrorSenderTests
         errorSender.SendErrorToPlayer(new ErrorData(errorType, errorMessage), 1);
         var sentMessage = messageSender.SentMessage;
         sentMessage.GetByte();
-        sentMessage.GetByte();
         var sentDTO = sentMessage.GetServerErrorDTO();
         
         Assert.Equal(expectedDTO.ErrorData, sentDTO.ErrorData);

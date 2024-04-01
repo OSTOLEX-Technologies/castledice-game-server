@@ -42,7 +42,6 @@ public class ActionPointsSenderTests
         actionPointsSender.SendActionPoints(amount, actionPointsAccepterId, messageAccepterId);
         var sentMessage = messageSender.SentMessage;
         sentMessage.GetByte();
-        sentMessage.GetByte();
         var sentDTO = sentMessage.GetGiveActionPointsDTO();
         
         Assert.Equal(expectedDTO, sentDTO);
@@ -57,7 +56,7 @@ public class ActionPointsSenderTests
         
         actionPointsSender.SendActionPoints(1, 1, 1);
         var sentMessage = messageSender.SentMessage;
-        var sentMessageId = sentMessage.GetUShort();
+        var sentMessageId = sentMessage.GetByte();
         
         Assert.Equal((ushort)ServerToClientMessageType.GiveActionPoints, sentMessageId);
     }

@@ -17,7 +17,7 @@ public class HttpIdRetriever : IIdRetriever
 
     public async Task<int> RetrievePlayerIdAsync(string playerToken)
     {
-        using var requestMessage = new HttpRequestMessage(HttpMethod.Get, _authServiceUrl);
+        using var requestMessage = new HttpRequestMessage(HttpMethod.Get, _authServiceUrl + "/me");
         requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", playerToken);
         using var response = await _messageSender.SendAsync(requestMessage);
         response.EnsureSuccessStatusCode();

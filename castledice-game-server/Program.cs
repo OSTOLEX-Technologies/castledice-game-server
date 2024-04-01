@@ -112,7 +112,7 @@ internal class Program
         var currentTimeProvider = new CurrentTimeProvider();
         var gameStartDataJsonConverter = new NewtonsoftGameStartDataJsonConverter();
         var localGameDataRepository = new LocalGameDataRepository();
-        var gameSavingService = new HttpGameSavingService(httpGameDataRepository, currentTimeProvider, gameStartDataJsonConverter, localGameDataRepository);
+        var gameSavingService = new GameSavingServiceStub();
         var activeGamesCollection = new ActiveGamesCollection();
         
         //Setting up matchmaker retranslation

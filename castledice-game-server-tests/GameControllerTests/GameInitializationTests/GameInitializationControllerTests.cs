@@ -105,14 +105,12 @@ public class GameInitializationControllerTests
         gameStartDataSenderMock.Verify(sender => sender.SendGameStartData(createdGameStartData), Times.Once);
     }
 
-    [Theory]
-    [InlineData("some message")]
-    [InlineData("another message")]
-    [InlineData("yet another message")]
-    public async void InitializeGameAsync_ShouldLogCaughtExceptions(string message)
+    [Fact]
+    public async void InitializeGameAsync_ShouldLogCaughtExceptions()
     {
         var gameStartDataCreatorMock = new Mock<IGameStartDataCreator>();
-        gameStartDataCreatorMock.Setup(creator => creator.CreateGameStartData(It.IsAny<Game>())).Throws(new Exception(message));
+        var expectedException = new Exception();
+        gameStartDataCreatorMock.Setup(creator => creator.CreateGameStartData(It.IsAny<Game>())).Throws(expectedException);
         var loggerMock = new Mock<ILogger>();
         var gameCreationController = new GameInitializationControllerBuilder
         {
@@ -122,7 +120,7 @@ public class GameInitializationControllerTests
         
         await gameCreationController.InitializeGameAsync(new List<int> { 1, 2 });
         
-        loggerMock.Verify(logger => logger.Error(message), Times.Once);
+        loggerMock.Verify(logger => logger.Error(expectedException), Times.Once);
     }
 
     [Theory]
@@ -150,16 +148,14 @@ public class GameInitializationControllerTests
         }
     }
 
-    [Theory]
-    [InlineData("some message")]
-    [InlineData("another message")]
-    [InlineData("yet another message")]
-    public async void InitializeGameAsync_ShouldLogExceptions_ThrownByErrorSender(string message)
+    [Fact]
+    public async void InitializeGameAsync_ShouldLogExceptions_ThrownByErrorSender()
     {
         var gameSavingServiceMock = new Mock<IGameSavingService>();
+        var expectedException = new Exception();
         gameSavingServiceMock.Setup(saver => saver.SaveGameStartAsync(It.IsAny<GameStartData>())).Throws(new GameNotSavedException());
         var errorSenderMock = new Mock<IErrorSender>();
-        errorSenderMock.Setup(sender => sender.SendErrorToPlayer(It.IsAny<ErrorData>(), It.IsAny<int>())).Throws(new Exception(message));
+        errorSenderMock.Setup(sender => sender.SendErrorToPlayer(It.IsAny<ErrorData>(), It.IsAny<int>())).Throws(expectedException);
         var loggerMock = new Mock<ILogger>();
         var gameCreationController = new GameInitializationControllerBuilder
         {
@@ -170,7 +166,7 @@ public class GameInitializationControllerTests
         
         await gameCreationController.InitializeGameAsync(new List<int> { 1, 2 });
         
-        loggerMock.Verify(logger => logger.Error(message), Times.Once);
+        loggerMock.Verify(logger => logger.Error(expectedException), Times.Once);
     }
 
     public class GameInitializationControllerBuilder
