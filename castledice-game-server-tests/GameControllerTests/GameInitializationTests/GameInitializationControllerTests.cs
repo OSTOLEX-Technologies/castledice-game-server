@@ -10,6 +10,7 @@ using castledice_game_server.GameController.GameInitialization.GameStartDataCrea
 using castledice_game_server.GameService;
 using castledice_game_server.Logging;
 using castledice_game_server.NetworkManager;
+using castledice_game_server.NetworkManager.Senders;
 using Moq;
 using static castledice_game_server_tests.ObjectCreationUtility;
 

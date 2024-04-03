@@ -1,4 +1,5 @@
-﻿using castledice_game_server.Auth;
+﻿using castledice_events_logic.ServerToClient;
+using castledice_game_server.Auth;
 using castledice_game_server.GameController.PlayerInitialization;
 using castledice_game_server.Logging;
 using castledice_game_server.NetworkManager.PlayerDisconnection;
@@ -114,33 +115,33 @@ public class PlayerInitializationControllerTests
     public async void InitializePlayerAsync_ShouldSendTrueInitializationResultToClient_IfNoErrorsOccured()
     {
         var expectedClientId = (ushort) new Random().Next(ushort.MinValue, ushort.MaxValue);
-        var initializationResultSenderMock = new Mock<IInitializationResultSender>();
+        var initializationResultSenderMock = new Mock<IPlayerInitializationResultDTOSender>();
         var initializer = new PlayerInitializerBuilder
         {
-            InitializationResultSender = initializationResultSenderMock.Object
+            PlayerInitializationResultDtoSender = initializationResultSenderMock.Object
         }.Build();
         
         await initializer.InitializePlayerAsync("token", expectedClientId);
         
-        initializationResultSenderMock.Verify(sender => sender.SendInitializationResult(expectedClientId, true), Times.Once);
+        initializationResultSenderMock.Verify(sender => sender.SendInitializationResult(expectedClientId, new PlayerInitializationResultDTO(true)), Times.Once);
     }
     
     [Fact]
     public async void InitializePlayerAsync_ShouldSendFalseInitializationResultToClient_IfErrorOccured()
     {
         var expectedClientId = (ushort) new Random().Next(ushort.MinValue, ushort.MaxValue);
-        var initializationResultSenderMock = new Mock<IInitializationResultSender>();
+        var initializationResultSenderMock = new Mock<IPlayerInitializationResultDTOSender>();
         var retrieverMock = new Mock<IIdRetriever>();
         retrieverMock.Setup(retriever => retriever.RetrievePlayerIdAsync(It.IsAny<string>())).Throws(new Exception());
         var initializer = new PlayerInitializerBuilder
         {
-            InitializationResultSender = initializationResultSenderMock.Object,
+            PlayerInitializationResultDtoSender = initializationResultSenderMock.Object,
             IdRetriever = retrieverMock.Object
         }.Build();
         
         await initializer.InitializePlayerAsync("token", expectedClientId);
         
-        initializationResultSenderMock.Verify(sender => sender.SendInitializationResult(expectedClientId, false), Times.Once);
+        initializationResultSenderMock.Verify(sender => sender.SendInitializationResult(expectedClientId, new PlayerInitializationResultDTO(false)), Times.Once);
     }
 
     private class PlayerInitializerBuilder
@@ -149,12 +150,12 @@ public class PlayerInitializationControllerTests
         public IPlayerClientIdSaver PlayerClientIdSaver { get; set; } = new Mock<IPlayerClientIdSaver>().Object;
         public IPlayerClientIdProvider PlayerClientIdProvider { get; set; } = new Mock<IPlayerClientIdProvider>().Object;
         public IPlayerDisconnecter PlayerDisconnecter { get; set; } = new Mock<IPlayerDisconnecter>().Object;
-        public IInitializationResultSender InitializationResultSender { get; set; } = new Mock<IInitializationResultSender>().Object;
+        public IPlayerInitializationResultDTOSender PlayerInitializationResultDtoSender { get; set; } = new Mock<IPlayerInitializationResultDTOSender>().Object;
         public ILogger Logger { get; set; } = new Mock<ILogger>().Object;
         
         public PlayerInitializationController Build()
         {
-            return new PlayerInitializationController(IdRetriever, PlayerClientIdSaver, PlayerClientIdProvider, PlayerDisconnecter, InitializationResultSender, Logger);
+            return new PlayerInitializationController(IdRetriever, PlayerClientIdSaver, PlayerClientIdProvider, PlayerDisconnecter, PlayerInitializationResultDtoSender, Logger);
         }
     }
 

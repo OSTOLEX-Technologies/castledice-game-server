@@ -1,4 +1,5 @@
-﻿using castledice_game_server.Auth;
+﻿using castledice_events_logic.ServerToClient;
+using castledice_game_server.Auth;
 using castledice_game_server.Logging;
 using castledice_game_server.NetworkManager.PlayerDisconnection;
 using castledice_game_server.NetworkManager.PlayersTracking;
@@ -11,21 +12,21 @@ public class PlayerInitializationController : IPlayerInitializationController
     private readonly IPlayerClientIdSaver _playerClientIdSaver;
     private readonly IPlayerClientIdProvider _playerClientIdProvider;
     private readonly IPlayerDisconnecter _playerDisconnecter;
-    private readonly IInitializationResultSender _initializationResultSender;
+    private readonly IPlayerInitializationResultDTOSender _playerInitializationResultDtoSender;
     private readonly ILogger _logger;
 
     public PlayerInitializationController(IIdRetriever idRetriever, 
         IPlayerClientIdSaver playerClientIdSaver, 
         IPlayerClientIdProvider playerClientIdProvider, 
         IPlayerDisconnecter playerDisconnecter,
-        IInitializationResultSender initializationResultSender,
+        IPlayerInitializationResultDTOSender playerInitializationResultDtoSender,
         ILogger logger)
     {
         _idRetriever = idRetriever;
         _playerClientIdSaver = playerClientIdSaver;
         _playerClientIdProvider = playerClientIdProvider;
         _playerDisconnecter = playerDisconnecter;
-        _initializationResultSender = initializationResultSender;
+        _playerInitializationResultDtoSender = playerInitializationResultDtoSender;
         _logger = logger;
     }
 
@@ -39,12 +40,12 @@ public class PlayerInitializationController : IPlayerInitializationController
                 _playerDisconnecter.DisconnectPlayerWithId(playerId);
             }
             _playerClientIdSaver.SaveClientIdForPlayer(playerId, clientId);
-            _initializationResultSender.SendInitializationResult(clientId, true);
+            _playerInitializationResultDtoSender.SendInitializationResult(clientId, new PlayerInitializationResultDTO(true));
         }
         catch (Exception e)
         {
             _logger.Error(e);
-            _initializationResultSender.SendInitializationResult(clientId, false);
+            _playerInitializationResultDtoSender.SendInitializationResult(clientId, new PlayerInitializationResultDTO(false));
         }
     }
 }
