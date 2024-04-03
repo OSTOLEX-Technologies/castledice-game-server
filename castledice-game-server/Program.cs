@@ -125,9 +125,9 @@ internal class Program
         CancelGameResultMessageHandler.SetAccepter(cancelGameResultRetranslator);
         
         //Setting up players initialization
-        var playerInitializationController = new PlayerInitializationController(idRetriever, playersDictionary, playersDictionary, playersDisconnecter, loggerWrapper);
-        var playerInitializer = new PlayerInitializer(playerInitializationController);
-        InitializePlayerMessageHandler.SetDTOAccepter(playerInitializer);
+        //var playerInitializationController = new PlayerInitializationController(idRetriever, playersDictionary, playersDictionary, playersDisconnecter, loggerWrapper);
+        //var playerInitializer = new PlayerInitializer(playerInitializationController);
+        //InitializePlayerMessageHandler.SetDTOAccepter(playerInitializer);
         
         //Setting up game initialization
         var castlesFactoryProvider = new CastlesFactoryCreator(CastleConfigCreator);
