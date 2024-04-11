@@ -34,7 +34,6 @@ public class PlayerInitializationController : IPlayerInitializationController
     {
         try
         {
-            _logger.Info("Initializing player with token: " + playerToken + " and clientId: " + clientId + "...");
             var playerId = await _idRetriever.RetrievePlayerIdAsync(playerToken);
             if (_playerClientIdProvider.PlayerHasClientId(playerId))
             {
@@ -42,13 +41,11 @@ public class PlayerInitializationController : IPlayerInitializationController
             }
             _playerClientIdSaver.SaveClientIdForPlayer(playerId, clientId);
             _playerInitializationResultDtoSender.SendInitializationResult(clientId, new PlayerInitializationResultDTO(true));
-            _logger.Info("Player with token: " + playerToken + " and clientId: " + clientId + " initialized successfully");
         }
         catch (Exception e)
         {
             _logger.Error(e);
             _playerInitializationResultDtoSender.SendInitializationResult(clientId, new PlayerInitializationResultDTO(false));
-            _logger.Info("Player with token: " + playerToken + " and clientId: " + clientId + " initialization failed");
         }
     }
 }
