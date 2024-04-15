@@ -1,5 +1,6 @@
-﻿using castledice_game_logic.Time;
+﻿using castledice_game_logic;
 using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlayersListCreators;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlayersListCreators.PlayerCreators;
 using Moq;
 
 namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameCreationTests.CreatorsTests.PlayersListsCreatorsTests;
@@ -7,51 +8,24 @@ namespace castledice_game_server_tests.GameControllerTests.GameInitializationTes
 public class PlayersListCreatorTests
 {
     [Fact]
-    public void GetPlayersList_ShouldReturnListOfPlayers_WithAppropriateIds()
+    public void GetPlayersList_ShouldReturnPlayers_CreatedWithGivenCreator()
     {
-        var idsList = GetIdsListWithRandomLength();
-        var creator = new PlayersListCreator(new Mock<IPlayerTimerCreator>().Object);
-        
-        var players = creator.GetPlayersList(idsList);
-        
-        Assert.Equal(idsList.Count, players.Count);
-        foreach (var id in idsList)
+        var playersIds = GetIdsListWithRandomLength();
+        var expectedPlayers = GetPlayersList(playersIds);
+        var playerCreatorMock = new Mock<IPlayerCreator>();
+        foreach (var player in expectedPlayers)
         {
-            Assert.Contains(players, p => p.Id == id);
+            playerCreatorMock.Setup(x => x.GetPlayer(player.Id)).Returns(player);
         }
+        var playersListCreator = new PlayersListCreator(playerCreatorMock.Object);
+        
+        var actualPlayers = playersListCreator.GetPlayersList(playersIds);
+        
+        Assert.Equal(expectedPlayers, actualPlayers);
     }
     
-    [Fact]
-    public void GetPlayersList_ShouldReturnPlayers_WithTimerFromCreator()
+    private static List<Player> GetPlayersList(IEnumerable<int> ids)
     {
-        var expectedTimer = new Mock<IPlayerTimer>();
-        var timerCreatorMock = new Mock<IPlayerTimerCreator>();
-        timerCreatorMock.Setup(x => x.GetPlayerTimer()).Returns(expectedTimer.Object);
-        var creator = new PlayersListCreator(timerCreatorMock.Object);
-        
-        var players = creator.GetPlayersList(GetIdsListWithRandomLength());
-        
-        foreach (var player in players)
-        {
-            Assert.Same(expectedTimer.Object, player.Timer);
-        }
-    }
-    
-    private static List<int> GetIdsListWithRandomLength()
-    {
-        var random = new Random();
-        var count = random.Next(1, 10);
-        return GetIdsList(count);
-    }
-    
-    private static List<int> GetIdsList(int count)
-    {
-        var ids = new List<int>();
-        for (var i = 0; i < count; i++)
-        {
-            ids.Add(i);
-        }
-
-        return ids;
-    }
+        return ids.Select(GetPlayer).ToList();
+    } 
 }

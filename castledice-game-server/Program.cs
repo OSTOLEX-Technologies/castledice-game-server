@@ -13,8 +13,10 @@ using castledice_game_server.GameController.GameInitialization.GameCreation.Crea
 using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.BoardConfigCreators.ContentSpawnersCreators.CastlesSpawning;
 using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.BoardConfigCreators.ContentSpawnersCreators.TreesSpawning;
 using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlaceablesConfigCreators;
-using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlayersDecksCreators;
 using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlayersListCreators;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlayersListCreators.PlayerCreators;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlayersListCreators.PlayerCreators.PlayersDecksCreators;
+using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlayersListCreators.PlayerCreators.PlayerTimerCreators;
 using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.TscConfigCreators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
@@ -60,7 +62,7 @@ internal class Program
 
     private static readonly string GameStartDataVersion = "1.0.0";
 
-    private static readonly RandomConfig RandomConfig = new RandomConfig(1, 7, 100);
+    private static readonly RandomConfig RandomConfig = new (1, 7, 100);
     
     
     public static void Main(string[] args)
@@ -118,7 +120,9 @@ internal class Program
         var rectCellsGeneratorProvider = new RectCellsGeneratorCreator(RectGenerationConfigCreator);
         var boardConfigProvider = new BoardConfigCreator(rectCellsGeneratorProvider, contentSpawnersListProvider);
         var placeablesConfigProvider = new PlaceablesConfigCreator(KnightConfigCreator);
-        var playersListProvider = new PlayersListCreator(new StopwatchPlayerTimerCreator(PlayerTimeSpanCreator));
+        var timerCreator = new StopwatchPlayerTimerCreator(PlayerTimeSpanCreator);
+        var playerCreator = new PlayerCreator(DeckCreator, timerCreator);
+        var playersListProvider = new PlayersListCreator(playerCreator);
         var gameConstructorWrapper = new GameConstructorWrapper();
         var gameCreator = new GameCreator(playersListProvider, boardConfigProvider, placeablesConfigProvider, TscConfigCreator, gameConstructorWrapper);
         var cellsPresenceMatrixProvider = new CellsPresenceMatrixCreator();

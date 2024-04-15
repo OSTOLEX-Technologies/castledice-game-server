@@ -1,9 +1,10 @@
-﻿using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlayersListCreators;
+﻿using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.PlayersListCreators.PlayerCreators.PlayerTimerCreators;
 using Moq;
 
-namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameCreationTests.CreatorsTests.PlayersListsCreatorsTests;
+namespace castledice_game_server_tests.GameControllerTests.GameInitializationTests.GameCreationTests.CreatorsTests.PlayersListsCreatorsTests.PlayerCreatorsTests.PlayerTimerCreatorsTests;
 
-public class StopwatchPlayerTimerCreatorTests
+// This is a shortened name of the class. Full name is StopwatchPlayerTimerCreatorTests
+public class SwPlayerTimerCreatorTests
 {
     [Fact]
     public void GetPlayerTimer_ShouldReturnStopwatchTimer_WithTimeSpanFromCreator()

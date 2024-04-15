@@ -23,6 +23,24 @@ namespace castledice_game_server_tests;
 
 public class ObjectCreationUtility
 {
+    public static List<int> GetIdsListWithRandomLength()
+    {
+        var random = new Random();
+        var count = random.Next(1, 10);
+        return GetIdsList(count);
+    }
+    
+    public static List<int> GetIdsList(int count)
+    {
+        var ids = new List<int>();
+        for (var i = 0; i < count; i++)
+        {
+            ids.Add(i);
+        }
+
+        return ids;
+    }
+    
     public static Mock<ITscConfigCreator> GetTscConfigCreatorMock()
     {
         var mock = new Mock<ITscConfigCreator>();
