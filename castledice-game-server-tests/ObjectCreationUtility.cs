@@ -91,10 +91,22 @@ public class ObjectCreationUtility
     {
         return GetGameStartData(1, 2);
     }
+    
+    public static List<Player> GetRandomPlayersList()
+    {
+        var ids = GetIdsListWithRandomLength();
+        return ids.Select(GetPlayer).ToList();
+    }
+    
 
-    public static Player GetPlayer(int id)
+    public static Player GetPlayer(int id )
     {
         return new Player(new PlayerActionPoints(), GetPlayerTimer(), new List<PlacementType>(), id);
+    }
+    
+    public static Player GetPlayer(int id = 1, TimeSpan timeSpan = new(), params PlacementType[] deck)
+    {
+        return new Player(new PlayerActionPoints(), GetPlayerTimer(timeSpan), deck.ToList(), id);
     }
     
     public static IPlayerTimer GetPlayerTimer()
@@ -102,9 +114,31 @@ public class ObjectCreationUtility
         return new Mock<IPlayerTimer>().Object;
     }
     
+    public static IPlayerTimer GetPlayerTimer(TimeSpan timeSpan)
+    {
+        var mock = new Mock<IPlayerTimer>();
+        mock.Setup(x => x.GetTimeLeft()).Returns(timeSpan);
+        return mock.Object;
+    }
+    
     public static PlayerData GetPlayerData(int id = 1, TimeSpan timeSpan = new(), params PlacementType[] placementTypes)
     {
         return new PlayerData(id, placementTypes.ToList(), timeSpan);
+    }
+
+    public static List<PlacementType> GetRandomPlacementTypeList()
+    {
+        var rnd = new Random();
+        var typesCount = Enum.GetValues(typeof(PlacementType)).Length;
+        var length = rnd.Next(maxValue: 10);
+        var placementTypes = new List<PlacementType>();
+        for (var i = 0; i < length; i++)
+        {
+            var randomPlacementType = (PlacementType) rnd.Next(typesCount);
+            placementTypes.Add(randomPlacementType);
+        }
+
+        return placementTypes;
     }
     
     public static GameStartData GetGameStartData(params int[] playerIds)
@@ -113,11 +147,8 @@ public class ObjectCreationUtility
         var boardData = GetBoardData();
         var placeablesConfigs = new PlaceablesConfigData(new KnightConfigData(1, 2));
         var tscConfigData = new TscConfigData(new List<TscType> { TscType.SwitchByActionPoints });
-        var data = new GameStartData(version, boardData, placeablesConfigs, tscConfigData, new List<PlayerData>
-        {
-            GetPlayerData(id: 1),
-            GetPlayerData(id: 2)
-        });
+        var playersData = playerIds.Select((playerId) => GetPlayerData(id: playerId)).ToList();
+        var data = new GameStartData(version, boardData, placeablesConfigs, tscConfigData, playersData);
         return data;
     }
 

@@ -32,7 +32,6 @@ public class CancelGameResultRetranslatorTests
     private static bool MessageContainsCancelGameResultDTO(Message message, CancelGameResultDTO dto)
     {
         message.GetByte();
-        message.GetByte();
         var messageDTO = message.GetCancelGameResultDTO();
         return messageDTO.Equals(dto);
     }

@@ -61,7 +61,7 @@ public class HttpGameSavingServiceTests
         {
             playersIdsList.Add(playerData.PlayerId);
         }
-        Predicate<GameData> gameDataHasNeededPlayersList = gameData => gameData.Players.Equals(playersIdsList);
+        Predicate<GameData> gameDataHasNeededPlayersList = gameData => gameData.Players.SequenceEqual(playersIdsList);
         
         await service.SaveGameStartAsync(gameStartData);
 

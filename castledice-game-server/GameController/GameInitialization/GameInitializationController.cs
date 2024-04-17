@@ -35,7 +35,6 @@ public class GameInitializationController : IGameInitializationController
     {
         try
         {
-            //TODO: add proper logic for adding turn switch conditions.
             var game = _gameCreator.CreateGame(playersIds);
             var gameStartData = _gameStartDataCreator.CreateGameStartData(game);
             var gameId = await _gameSavingService.SaveGameStartAsync(gameStartData);
@@ -44,12 +43,12 @@ public class GameInitializationController : IGameInitializationController
         }
         catch (GameNotSavedException e)
         {
-            _logger.Error(e.Message);
+            _logger.Error(e);
             SendGameNotSavedErrorToPlayers(playersIds);
         }
         catch (Exception e)
         {
-            _logger.Error(e.Message);
+            _logger.Error(e);
         }
     }
     
@@ -65,7 +64,7 @@ public class GameInitializationController : IGameInitializationController
         }
         catch (Exception e)
         {
-            _logger.Error(e.Message);
+            _logger.Error(e);
         }
     }
 }

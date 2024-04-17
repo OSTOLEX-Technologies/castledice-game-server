@@ -44,7 +44,7 @@ public class MovesControllerTests
         
         movesController.MakeMove(moveData);
         
-        loggerMock.Verify(l => l.Error(exceptionToThrow.Message), Times.Once);
+        loggerMock.Verify(l => l.Error(exceptionToThrow), Times.Once);
     }
 
     [Fact]

@@ -39,7 +39,7 @@ public class MovesController : IMovesController
         }
         catch (Exception e)
         {
-            _logger.Error(e.Message);
+            _logger.Error(e);
         }
     }
     

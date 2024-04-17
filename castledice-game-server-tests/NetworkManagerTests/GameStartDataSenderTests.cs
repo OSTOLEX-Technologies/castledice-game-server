@@ -71,7 +71,6 @@ public class GameStartDataSenderTests
         gameStartDataSender.SendGameStartData(gameStartData);
         var sentMessage = messageSender.SentMessage;
         sentMessage.GetByte();
-        sentMessage.GetByte();
         var sentDTO = sentMessage.GetCreateGameDTO();
 
         Assert.Equal(expectedDTO, sentDTO);
@@ -87,7 +86,7 @@ public class GameStartDataSenderTests
         
         gameStartDataSender.SendGameStartData(gameStartData);
         var sentMessage = messageSender.SentMessage;
-        var messageId = sentMessage.GetUShort();
+        var messageId = sentMessage.GetByte();
         
         Assert.Equal((ushort)ServerToClientMessageType.CreateGame, messageId);
     }

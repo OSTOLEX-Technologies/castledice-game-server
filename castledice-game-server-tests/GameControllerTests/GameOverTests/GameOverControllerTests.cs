@@ -17,13 +17,14 @@ public class GameOverControllerTests
 {
     public class TestGame : Game
     {
+
         public TestGame(List<Player> players, BoardConfig boardConfig, PlaceablesConfig placeablesConfig, TurnSwitchConditionsConfig turnSwitchConditionsConfig) : base(players, boardConfig, placeablesConfig, turnSwitchConditionsConfig)
         {
         }
         
         public void ForceWin(Player winner)
         {
-            OnWin(winner);
+            OnWin( winner);
         }
         
         public void ForceDraw()
@@ -41,15 +42,16 @@ public class GameOverControllerTests
     //This test also checks if OnGameAdded is called and subscription is made in it.
     public void OnWin_ShouldCallSaveWin_WithGameAndWinner()
     {
-        var gameMock = GetTestGameMock();
-        var expectedGame = gameMock.Object;
+        var gameMock = GetGameMock();
         var expectedWinner = GetPlayer(1);
+        gameMock.Setup(g => g.CheckTurns()).Raises(g => g.Win += null, this, (gameMock.Object, expectedWinner));
+        var expectedGame = gameMock.Object;
         var gamesCollection = new TestGamesCollection();
         var gameOverController = new Mock<GameOverController>(gamesCollection, new Mock<IGameSavingService>().Object, new Mock<IHistoryProvider>().Object, new Mock<ILogger>().Object);
         var testObject = gameOverController.Object;
         gamesCollection.AddGame(1, expectedGame);//This should force OnGameAdded to be called
         
-        expectedGame.ForceWin(expectedWinner);
+        expectedGame.CheckTurns();
         
         gameOverController.Verify(x => x.SaveWin(expectedGame, expectedWinner), Times.Once);
     }
@@ -57,14 +59,15 @@ public class GameOverControllerTests
     [Fact]
     public void OnDraw_ShouldCallSaveDraw_WithGame()
     {
-        var gameMock = GetTestGameMock();
+        var gameMock = GetGameMock();
+        gameMock.Setup(g => g.CheckTurns()).Raises(g => g.Draw += null, this, gameMock.Object);
         var expectedGame = gameMock.Object;
         var gamesCollection = new TestGamesCollection();
         var gameOverControllerMock = new Mock<GameOverController>(gamesCollection, new Mock<IGameSavingService>().Object, new Mock<IHistoryProvider>().Object, new Mock<ILogger>().Object);
         var testObject = gameOverControllerMock.Object;
         gamesCollection.AddGame(1, expectedGame);//This should force OnGameAdded to be called
         
-        expectedGame.ForceDraw();
+        expectedGame.CheckTurns();
         
         gameOverControllerMock.Verify(x => x.SaveDraw(expectedGame), Times.Once);
     }
@@ -134,19 +137,17 @@ public class GameOverControllerTests
         gameSavingServiceMock.Verify(g => g.SaveGameEndAsync(gameId, history, winnerId), Times.Once);
     }
     
-    [Theory]
-    [InlineData("some error")]
-    [InlineData("some other error")]
-    [InlineData("some other error")]
-    public async void SaveWin_ShouldLogError_IfExceptionIsThrown(string message)
+    [Fact]
+    public async void SaveWin_ShouldLogError_IfExceptionIsThrown()
     {
         var gameMock = GetTestGameMock();
-        var expectedGame = gameMock.Object;
+        var game = gameMock.Object;
+        var expectedException = new Exception();
         var gamesCollectionMock = new Mock<IGamesCollection>();
-        gamesCollectionMock.Setup(g => g.GetGameId(expectedGame)).Returns(1);
+        gamesCollectionMock.Setup(g => g.GetGameId(game)).Returns(1);
         var gameSavingServiceMock = new Mock<IGameSavingService>();
         gameSavingServiceMock.Setup(g => g.SaveGameEndAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()))
-            .Throws(new Exception(message));
+            .Throws(expectedException);
         var loggerMock = new Mock<ILogger>();
         var gameOverController = new GameOverControllerBuilder()
         {
@@ -155,9 +156,9 @@ public class GameOverControllerTests
             Logger = loggerMock.Object
         }.Build();
         
-        await gameOverController.SaveWin(expectedGame, GetPlayer(1));
+        await gameOverController.SaveWin(game, GetPlayer(1));
         
-        loggerMock.Verify(l => l.Error(It.IsAny<string>()), Times.Once);
+        loggerMock.Verify(l => l.Error(expectedException), Times.Once);
     }
     
     [Fact]
@@ -225,19 +226,17 @@ public class GameOverControllerTests
         gamesCollectionMock.Verify(g => g.RemoveGame(gameId), Times.Once);
     }
 
-    [Theory]
-    [InlineData("some error")]
-    [InlineData("some other error")]
-    [InlineData("some other error")]
-    public async void SaveDraw_ShouldLogError_IfExceptionIsThrown(string message)
+    [Fact]
+    public async void SaveDraw_ShouldLogError_IfExceptionIsThrown()
     {
         var gameMock = GetTestGameMock();
-        var expectedGame = gameMock.Object;
+        var game = gameMock.Object;
+        var expectedException = new Exception();
         var gamesCollectionMock = new Mock<IGamesCollection>();
-        gamesCollectionMock.Setup(g => g.GetGameId(expectedGame)).Returns(1);
+        gamesCollectionMock.Setup(g => g.GetGameId(game)).Returns(1);
         var gameSavingServiceMock = new Mock<IGameSavingService>();
         gameSavingServiceMock.Setup(g => g.SaveGameEndAsync(It.IsAny<int>(), It.IsAny<string>(), null))
-            .Throws(new Exception(message));
+            .Throws(expectedException);
         var loggerMock = new Mock<ILogger>();
         var gameOverController = new GameOverControllerBuilder()
         {
@@ -246,9 +245,9 @@ public class GameOverControllerTests
             Logger = loggerMock.Object
         }.Build();
         
-        await gameOverController.SaveDraw(expectedGame);
+        await gameOverController.SaveDraw(game);
         
-        loggerMock.Verify(l => l.Error(It.IsAny<string>()), Times.Once);
+        loggerMock.Verify(l => l.Error(expectedException), Times.Once);
     }
     
     private class GameOverControllerBuilder 

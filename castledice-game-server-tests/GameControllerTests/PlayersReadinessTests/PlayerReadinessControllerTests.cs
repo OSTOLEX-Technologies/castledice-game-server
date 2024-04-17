@@ -82,14 +82,12 @@ public class PlayerReadinessControllerTests
         notifierMock.Verify(notifier => notifier.NotifyPlayersAreReady(game), Times.Once);
     }
 
-    [Theory]
-    [InlineData("message")]
-    [InlineData("another message")]
-    [InlineData("some message")]
-    public async void SetPlayerReadyAsync_ShouldLogExceptions_IfAnyThrown(string message)
+    [Fact]
+    public async void SetPlayerReadyAsync_ShouldLogExceptions_IfAnyThrown()
     {
         var idRetrieverMock = new Mock<IIdRetriever>();
-        idRetrieverMock.Setup(retriever => retriever.RetrievePlayerIdAsync(It.IsAny<string>())).ThrowsAsync(new Exception(message));
+        var expectedException = new Exception();
+        idRetrieverMock.Setup(retriever => retriever.RetrievePlayerIdAsync(It.IsAny<string>())).ThrowsAsync(expectedException);
         var loggerMock = new Mock<ILogger>();
         var controller = new PlayerReadinessControllerBuilder()
         {
@@ -99,7 +97,7 @@ public class PlayerReadinessControllerTests
         
         await controller.SetPlayerReadyAsync("sometoken");
         
-        loggerMock.Verify(logger => logger.Error(message));
+        loggerMock.Verify(logger => logger.Error(expectedException));
     }
 
     [Theory]

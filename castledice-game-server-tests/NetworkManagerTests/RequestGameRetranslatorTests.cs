@@ -17,7 +17,6 @@ public class RequestGameRetranslatorTests
         retranslator.AcceptRequestGameDTO(DTO, 1);
         var sentMessage = messageSender.SentMessage;
         sentMessage.GetByte();
-        sentMessage.GetByte();
         var sentDTO = sentMessage.GetRequestGameDTO();
         
         Assert.Equal(DTO, sentDTO);

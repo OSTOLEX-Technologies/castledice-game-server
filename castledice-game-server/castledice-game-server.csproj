@@ -16,17 +16,17 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="castledice-events-logic" Version="0.0.1-dev2" />
+      <PackageReference Include="castledice-events-logic" Version="0.0.1-dev3-timer-switch" />
       <PackageReference Include="castledice-game-data-logic" Version="0.0.1-dev5" />
-      <PackageReference Include="castledice-game-logic" Version="0.0.1-dev5" />
-      <PackageReference Include="castledice-riptide-message-extensions" Version="0.0.1-dev1" />
+      <PackageReference Include="castledice-game-logic" Version="0.0.1-dev8-fixed-timer-logic" />
+      <PackageReference Include="castledice-riptide-message-extensions" Version="0.0.1-dev2-timer-switch-messages" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0-rc.2.23479.6" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0-rc.2.23479.6" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.2.23479.6" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="NLog" Version="5.2.5" />
       <PackageReference Include="NLog.Extensions.Logging" Version="5.3.5" />
-      <PackageReference Include="RiptideNetworking.Riptide" Version="2.0.0" />
+      <PackageReference Include="RiptideNetworking.Riptide" Version="2.1.0" />
     </ItemGroup>
 
 </Project>

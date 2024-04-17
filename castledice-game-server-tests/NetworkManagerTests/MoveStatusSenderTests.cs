@@ -55,7 +55,7 @@ public class MoveStatusSenderTests
         
         moveStatusSender.SendMoveStatusToPlayer(true, 1);
         var sentMessage = messageSender.SentMessage;
-        var sentMessageId = sentMessage.GetUShort();
+        var sentMessageId = sentMessage.GetByte();
         
         Assert.Equal((ushort)ServerToClientMessageType.ApproveMove, sentMessageId);
     }

@@ -2,6 +2,7 @@
 using castledice_game_logic.GameConfiguration;
 using castledice_game_logic.GameObjects;
 using castledice_game_logic.TurnsLogic.TurnSwitchConditions;
+using castledice_game_server.Auth;
 using castledice_game_server.Configuration;
 using castledice_game_server.GameController;
 using castledice_game_server.GameController.ActionPoints;
@@ -20,11 +21,20 @@ using castledice_game_server.GameController.GameInitialization.GameCreation.Crea
 using castledice_game_server.GameController.GameInitialization.GameCreation.Creators.TscConfigCreators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.BoardDataCreators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.BoardDataCreators.ContentDataCreators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.PlaceablesConfigDataCreators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.PlayerDataCreators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.TscConfigDataCreators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
 using castledice_game_server.GameController.GameOver;
 using castledice_game_server.GameController.Moves;
 using castledice_game_server.GameController.PlayerInitialization;
 using castledice_game_server.GameController.PlayersReadiness;
+using castledice_game_server.GameController.Timers;
+using castledice_game_server.GameRepository;
+using castledice_game_server.GameService;
+using castledice_game_server.HttpUtilities;
 using castledice_game_server.Logging;
 using castledice_game_server.NetworkManager;
 using castledice_game_server.NetworkManager.MessageHandlers;
@@ -58,7 +68,7 @@ internal class Program
     {
         TscType.SwitchByActionPoints
     });
-    private static readonly IPlayerTimeSpanCreator PlayerTimeSpanCreator = new DefaultPlayerTimeSpanCreator(TimeSpan.FromMinutes(5));
+    private static readonly IPlayerTimeSpanCreator PlayerTimeSpanCreator = new DefaultPlayerTimeSpanCreator(TimeSpan.FromMinutes(100));
 
     private static readonly string GameStartDataVersion = "1.0.0";
 
@@ -76,9 +86,15 @@ internal class Program
             .AddJsonFile("appsettings.json").Build();
         var matchMakerConnectionConfig = config.GetRequiredSection("MatchMakerConnectionOptions").Get<MatchMakerConnectionOptions>();
         var gameServerStartConfig = config.GetRequiredSection("GameServerStartOptions").Get<GameServerStartOptions>();
+        var authBackendConnectionConfig = config.GetRequiredSection("AuthBackendConnectionOptions").Get<AuthBackendConnectionOptions>();
+        var storageBackendConnectionConfig = config.GetRequiredSection("StorageBackendConnectionOptions").Get<StorageBackendConnectionOptions>();
         Debug.Assert(matchMakerConnectionConfig != null, nameof(matchMakerConnectionConfig) + " != null");
         Debug.Assert(gameServerStartConfig != null, nameof(gameServerStartConfig) + " != null");
+        Debug.Assert(authBackendConnectionConfig != null, nameof(authBackendConnectionConfig) + " != null");
+        Debug.Assert(storageBackendConnectionConfig != null, nameof(storageBackendConnectionConfig) + " != null");
 
+        var httpClientWrapper = new HttpClientWrapper(new HttpClient());
+        
         //Starting the server
         var gameServer = new Server(new TcpServer());
         gameServer.Start(gameServerStartConfig.Port, gameServerStartConfig.MaxClientCount);
@@ -90,10 +106,14 @@ internal class Program
         //Setting up common objects
         var playersDictionary = new PlayerToClientDictionary();
         var errorSender = new ErrorSender(serverWrapper, playersDictionary);
-        var idRetriever = new StringIdRetrieverStub();//TODO: Replace with actual id retriever
+        var idRetriever = new HttpIdRetriever(authBackendConnectionConfig.Url, httpClientWrapper);
         var playersDisconnecter = new PlayerDisconnecter(serverWrapper, playersDictionary, playersDictionary);
-        var gameSavingService = new GameSavingServiceStub();//TODO: Replace with actual game saving service
-        //var gameSavingService = new GameSavingServiceWithErrorStub() { ThrowErrorDelay = 1000};
+        var httpGameDataRepository = new HttpGameDataRepository(storageBackendConnectionConfig.Url, httpClientWrapper);
+        var currentTimeProvider = new CurrentTimeProvider();
+        var gameStartDataJsonConverter = new NewtonsoftGameStartDataJsonConverter();
+        var localGameDataRepository = new LocalGameDataRepository();
+        //TODO: Should be replaced with real implementation when game saving service is ready
+        var gameSavingService = new GameSavingServiceStub();
         var activeGamesCollection = new ActiveGamesCollection();
         
         //Setting up matchmaker retranslation
@@ -132,8 +152,9 @@ internal class Program
         var gameStartDataVersionProvider = new DefaultGameStartDataVersionProvider(GameStartDataVersion);
         var placeablesConfigDataProvider = new PlaceablesConfigDataCreator();
         var tsConfigDataProvider = new TscConfigDataCreator();
+        var playerDataListCreator = new PlayersDataListCreator(new PlayerDataCreator());
         var gameStartDataCreator = new GameStartDataCreator(gameStartDataVersionProvider, boardDataProvider,
-            placeablesConfigDataProvider, tsConfigDataProvider, null);
+            placeablesConfigDataProvider, tsConfigDataProvider, playerDataListCreator);
         var gameStartDataSender = new GameStartDataSender(serverWrapper, playersDictionary);
         var gameInitializationController = new GameInitializationController(gameSavingService, activeGamesCollection,
             gameStartDataSender, gameCreator, gameStartDataCreator, errorSender, loggerWrapper);
@@ -170,6 +191,10 @@ internal class Program
        var historyProvider = new HistoryProviderStub();
        var gameOverController =
            new GameOverController(activeGamesCollection, gameSavingService, historyProvider, loggerWrapper);
+       
+       //Setting up timers controller
+       var timerSwitchSender = new TimerSwitchSender(serverWrapper, playersDictionary);
+       var timersController = new TimersController(gamePlayersReadinessNotifier, activeGamesCollection, timerSwitchSender, loggerWrapper);
        
        //Running the server and client
        while (true)

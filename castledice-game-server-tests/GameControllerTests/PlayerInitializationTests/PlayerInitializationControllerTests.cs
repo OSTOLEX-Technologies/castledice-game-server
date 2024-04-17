@@ -92,14 +92,12 @@ public class PlayerInitializationControllerTests
         clientIdSaverMock.Verify(saver => saver.SaveClientIdForPlayer(playerId, clientId), Times.Once);
     }
 
-    [Theory]
-    [InlineData("some message")]
-    [InlineData("another message")]
-    [InlineData("yet another message")]
-    public async void InitializePlayerAsync_ShouldLogThrownExceptions(string message)
+    [Fact]
+    public async void InitializePlayerAsync_ShouldLogThrownExceptions()
     {
         var retrieverMock = new Mock<IIdRetriever>();
-        retrieverMock.Setup(retriever => retriever.RetrievePlayerIdAsync(It.IsAny<string>())).Throws(new Exception(message));
+        var expectedException = new Exception();
+        retrieverMock.Setup(retriever => retriever.RetrievePlayerIdAsync(It.IsAny<string>())).Throws(expectedException);
         var loggerMock = new Mock<ILogger>();
         var initializer = new PlayerInitializerBuilder
         {
@@ -109,7 +107,7 @@ public class PlayerInitializationControllerTests
         
         await initializer.InitializePlayerAsync("token", 0);
         
-        loggerMock.Verify(logger => logger.Error(message), Times.Once);
+        loggerMock.Verify(logger => logger.Error(expectedException), Times.Once);
     }
 
     private class PlayerInitializerBuilder

@@ -26,8 +26,8 @@ public class NLogLoggerWrapper : ILogger
         _logger.Warn(message);
     }
 
-    public void Error(string message)
+    public void Error(Exception exception)
     {
-        _logger.Error(message);
+        _logger.Error(exception);
     }
 }

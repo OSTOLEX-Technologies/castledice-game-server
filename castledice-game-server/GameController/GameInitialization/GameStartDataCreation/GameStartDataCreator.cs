@@ -1,6 +1,10 @@
 ﻿using castledice_game_data_logic;
 using castledice_game_logic;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.BoardDataCreators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.PlaceablesConfigDataCreators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.PlayerDataCreators;
+using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Creators.TscConfigDataCreators;
 using castledice_game_server.GameController.GameInitialization.GameStartDataCreation.Providers;
 
 namespace castledice_game_server.GameController.GameInitialization.GameStartDataCreation;
@@ -28,7 +32,8 @@ public class GameStartDataCreator : IGameStartDataCreator
         var boardData = _boardDataCreator.GetBoardData(game.GetBoard());
         var placeablesConfigData = _placeablesConfigDataCreator.GetPlaceablesConfigData(game.PlaceablesConfig);
         var tscConfigData = _tscConfigDataCreator.GetTscConfigData(game.TurnSwitchConditionsConfig);
+        var playersData = _playersDataListCreator.GetPlayersData(game.GetAllPlayers());
         
-        return new GameStartData(version, boardData, placeablesConfigData, tscConfigData, null);
+        return new GameStartData(version, boardData, placeablesConfigData, tscConfigData, playersData);
     }
 }
