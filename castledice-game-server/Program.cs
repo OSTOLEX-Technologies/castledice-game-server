@@ -41,6 +41,7 @@ using castledice_game_server.NetworkManager.MessageHandlers;
 using castledice_game_server.NetworkManager.PlayerDisconnection;
 using castledice_game_server.NetworkManager.PlayersTracking;
 using castledice_game_server.NetworkManager.RiptideWrappers;
+using castledice_game_server.NetworkManager.Senders;
 using castledice_game_server.Stubs;
 using Microsoft.Extensions.Configuration;
 using Riptide;
@@ -125,7 +126,8 @@ internal class Program
         CancelGameResultMessageHandler.SetAccepter(cancelGameResultRetranslator);
         
         //Setting up players initialization
-        var playerInitializationController = new PlayerInitializationController(idRetriever, playersDictionary, playersDictionary, playersDisconnecter, loggerWrapper);
+        var playerInitializationResultDtoSender = new PlayerInitializationResultDTOSender(serverWrapper);
+        var playerInitializationController = new PlayerInitializationController(idRetriever, playersDictionary, playersDictionary, playersDisconnecter, playerInitializationResultDtoSender, loggerWrapper);
         var playerInitializer = new PlayerInitializer(playerInitializationController);
         InitializePlayerMessageHandler.SetDTOAccepter(playerInitializer);
         

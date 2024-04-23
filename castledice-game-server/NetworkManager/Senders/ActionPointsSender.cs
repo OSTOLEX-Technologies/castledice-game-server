@@ -5,7 +5,7 @@ using castledice_game_server.NetworkManager.RiptideWrappers;
 using castledice_riptide_dto_adapters.Extensions;
 using Riptide;
 
-namespace castledice_game_server.NetworkManager;
+namespace castledice_game_server.NetworkManager.Senders;
 
 public class ActionPointsSender : IActionPointsSender
 {
