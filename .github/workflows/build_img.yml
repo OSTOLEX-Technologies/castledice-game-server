@@ -1,0 +1,72 @@
+name: Build ARM image and Publish to ECR
+
+on:
+  push:
+    branches:
+      - develop
+
+env:
+  BUILD_PATH: './app/build/'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+              
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ github.repository }}
+        ref: ${{ github.sha }}
+
+    - name: Install .NET Core SDK
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '7.0'
+
+    - name: Login to NuGet registry
+      run: |
+        dotnet nuget add source -u "${{ secrets.NUGET_GITHUB_USER }}" \
+                                -p "${{ secrets.NUGET_GITHUB_TOKEN }}" \
+                                --store-password-in-clear-text \
+                                -n github "https://nuget.pkg.github.com/OSTOLEX-Technologies/index.json"
+
+    - name: Restore packages
+      run: dotnet restore "castledice-game-server/castledice-game-server.csproj"
+
+    - name: Create build directory
+      run: mkdir -p ${{ env.BUILD_PATH }}
+
+    - name: Build project
+      run: dotnet build castledice-game-server/castledice-game-server.csproj -c Release -r linux-musl-arm64 -o ${{ env.BUILD_PATH }}
+
+    - name: Copy service files
+      run: |
+        cp Dockerfile ${{ env.BUILD_PATH }}
+        cp entrypoint.sh ${{ env.BUILD_PATH }}
+        echo "${{ secrets.APPSETTINGS }}" | base64 -d > ${{ env.BUILD_PATH }}/appsettings.json
+        cp nlog.config ${{ env.BUILD_PATH }}
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: ${{ env.BUILD_PATH }}
+        push: true
+        tags: ${{ steps.login-ecr.outputs.registry }}/castledice-game_server:latest
+        platforms: linux/amd64,linux/arm64
