@@ -11,17 +11,17 @@ namespace castledice_game_server.NetworkManager.Senders;
 public class MoveDataSender : IMoveDataSender
 {
     private readonly IMessageSenderById _messageSender;
-    private readonly IPlayerClientIdProvider _playerClientIdProvider;
+    private readonly IPlayerToClientIdsMap _idsMap;
 
-    public MoveDataSender(IMessageSenderById messageSender, IPlayerClientIdProvider playerClientIdProvider)
+    public MoveDataSender(IMessageSenderById messageSender, IPlayerToClientIdsMap idsMap)
     {
         _messageSender = messageSender;
-        _playerClientIdProvider = playerClientIdProvider;
+        _idsMap = idsMap;
     }
 
     public void SendDataToPlayer(MoveData moveData, int playerId)
     {
-        var clientId = _playerClientIdProvider.GetClientIdForPlayer(playerId);
+        var clientId = _idsMap.GetClientByPlayer(playerId);
         var message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientMessageType.MakeMove);
         var DTO = new MoveFromServerDTO(moveData);
         message.AddMoveFromServerDTO(DTO);

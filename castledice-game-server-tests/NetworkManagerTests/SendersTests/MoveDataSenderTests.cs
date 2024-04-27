@@ -19,8 +19,8 @@ public class MoveDataSenderTests
     [InlineData(13, 213)]
     public void SendDataToPlayer_ShouldSendMessage_ToAppropriateClientId(int playerId, ushort clientId)
     {
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
-        clientIdProviderMock.Setup(provider => provider.GetClientIdForPlayer(playerId)).Returns(clientId);
+        var clientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
+        clientIdProviderMock.Setup(provider => provider.GetClientByPlayer(playerId)).Returns(clientId);
         var messageSenderMock = new Mock<IMessageSenderById>();
         var moveDataSender = new MoveDataSender(messageSenderMock.Object, clientIdProviderMock.Object);
         
@@ -36,7 +36,7 @@ public class MoveDataSenderTests
     public void SendDataToPlayer_ShouldSendMessage_WithAppropriateMoveFromServerDTO(int movePlayerId, int x, int y)
     {
         var messageSender = new TestMessageSenderById();
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        var clientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
         var moveDataSender = new MoveDataSender(messageSender, clientIdProviderMock.Object);
         var moveData = new UpgradeMoveData(movePlayerId, new Vector2Int(x, y));
         var expectedDTO = new MoveFromServerDTO(moveData);
@@ -53,7 +53,7 @@ public class MoveDataSenderTests
     public void SendDataToPlayer_ShouldSendMessage_WithMakeMoveMessageId()
     {
         var messageSender = new TestMessageSenderById();
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        var clientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
         var moveDataSender = new MoveDataSender(messageSender, clientIdProviderMock.Object);
         var moveData = new Mock<MoveData>(1, new Vector2Int(1, 1)).Object;
         
