@@ -10,17 +10,17 @@ namespace castledice_game_server.NetworkManager;
 public class TimerSwitchSender : ITimerSwitchSender
 {
     private readonly IMessageSenderById _messageSender;
-    private readonly IPlayerClientIdProvider _playerClientIdProvider;
+    private readonly IPlayerToClientIdsMap _idsMap;
 
-    public TimerSwitchSender(IMessageSenderById messageSender, IPlayerClientIdProvider playerClientIdProvider)
+    public TimerSwitchSender(IMessageSenderById messageSender, IPlayerToClientIdsMap idsMap)
     {
         _messageSender = messageSender;
-        _playerClientIdProvider = playerClientIdProvider;
+        _idsMap = idsMap;
     }
 
     public void SendTimerSwitch(int playerToSwitchId, TimeSpan timeLeft, int accepterPlayerId, bool switchTo)
     {
-        var clientId = _playerClientIdProvider.GetClientIdForPlayer(accepterPlayerId);
+        var clientId = _idsMap.GetClientByPlayer(accepterPlayerId);
         var message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientMessageType.SwitchTimer);
         var DTO = new SwitchTimerDTO(timeLeft, playerToSwitchId, switchTo);
         message.AddSwitchTimerDTO(DTO);

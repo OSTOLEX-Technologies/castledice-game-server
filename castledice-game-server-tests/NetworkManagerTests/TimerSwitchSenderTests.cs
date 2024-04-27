@@ -18,12 +18,12 @@ public class TimerSwitchSenderTests
         var accepterId = random.Next();
         var expectedClientId = (ushort)random.Next(ushort.MaxValue);
         var messageSenderMock = new Mock<IMessageSenderById>();
-        var playerClientIdProviderMock = new Mock<IPlayerClientIdProvider>();
-        playerClientIdProviderMock.Setup(x => x.GetClientIdForPlayer(accepterId)).Returns(expectedClientId);
+        var playerClientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
+        playerClientIdProviderMock.Setup(x => x.GetClientByPlayer(accepterId)).Returns(expectedClientId);
         var sender = new TimerSwitchSenderBuilder
         {
             MessageSender = messageSenderMock.Object,
-            PlayerClientIdProvider = playerClientIdProviderMock.Object
+            IdsMap = playerClientIdProviderMock.Object
         }.Build();
         
         sender.SendTimerSwitch(0, TimeSpan.Zero, accepterId, true);
@@ -65,11 +65,11 @@ public class TimerSwitchSenderTests
     private class TimerSwitchSenderBuilder
     {
         public IMessageSenderById MessageSender { get; set; } = new Mock<IMessageSenderById>().Object;
-        public IPlayerClientIdProvider PlayerClientIdProvider { get; set; } = new Mock<IPlayerClientIdProvider>().Object;
+        public IPlayerToClientIdsMap IdsMap { get; set; } = new Mock<IPlayerToClientIdsMap>().Object;
         
         public TimerSwitchSender Build()
         {
-            return new TimerSwitchSender(MessageSender, PlayerClientIdProvider);
+            return new TimerSwitchSender(MessageSender, IdsMap);
         }
     }
 }
