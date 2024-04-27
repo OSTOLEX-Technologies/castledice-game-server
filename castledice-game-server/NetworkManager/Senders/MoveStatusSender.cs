@@ -10,17 +10,17 @@ namespace castledice_game_server.NetworkManager.Senders;
 public class MoveStatusSender : IMoveStatusSender
 {
     private readonly IMessageSenderById _messageSender;
-    private readonly IPlayerClientIdProvider _playerClientIdProvider;
+    private readonly IPlayerToClientIdsMap _idsMap;
 
-    public MoveStatusSender(IMessageSenderById messageSender, IPlayerClientIdProvider playerClientIdProvider)
+    public MoveStatusSender(IMessageSenderById messageSender, IPlayerToClientIdsMap idsMap)
     {
         _messageSender = messageSender;
-        _playerClientIdProvider = playerClientIdProvider;
+        _idsMap = idsMap;
     }
 
     public void SendMoveStatusToPlayer(bool isApproved, int playerId)
     {
-        var clientId = _playerClientIdProvider.GetClientIdForPlayer(playerId);
+        var clientId = _idsMap.GetClientByPlayer(playerId);
         var message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientMessageType.ApproveMove);
         var DTO = new ApproveMoveDTO(isApproved);
         message.AddApproveMoveDTO(DTO);
