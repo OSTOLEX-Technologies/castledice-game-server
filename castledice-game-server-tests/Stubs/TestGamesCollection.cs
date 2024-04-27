@@ -35,6 +35,12 @@ public class TestGamesCollection : IGamesCollection
         return true;
     }
 
+    public bool RemoveGame(Game game)
+    {
+        GameRemoved?.Invoke(this, GameToReturnOnGameRemoved);
+        return true;
+    }
+
     public event EventHandler<Game>? GameAdded;
     public event EventHandler<Game>? GameRemoved;
 }

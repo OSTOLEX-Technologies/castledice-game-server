@@ -44,8 +44,18 @@ public class ActiveGamesCollection : IGamesCollection
     {
         if (!_games.ContainsKey(gameId)) return false;
         var game = _games[gameId];
+        _games.Remove(gameId);
         GameRemoved?.Invoke(this, game);
-        return _games.Remove(gameId);
+        return true;
+    }
+
+    public bool RemoveGame(Game game)
+    {
+        if (!_games.ContainsValue(game)) return false;
+        var gameId = GetGameId(game);
+        _games.Remove(gameId);
+        GameRemoved?.Invoke(this, game);
+        return true;
     }
 
     public event EventHandler<Game>? GameAdded;

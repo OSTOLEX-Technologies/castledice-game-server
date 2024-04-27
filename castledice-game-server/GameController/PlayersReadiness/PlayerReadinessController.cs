@@ -1,5 +1,6 @@
 ﻿using castledice_game_logic;
 using castledice_game_server.Auth;
+using castledice_game_server.GameController.General;
 using castledice_game_server.GameController.Moves;
 using castledice_game_server.Logging;
 

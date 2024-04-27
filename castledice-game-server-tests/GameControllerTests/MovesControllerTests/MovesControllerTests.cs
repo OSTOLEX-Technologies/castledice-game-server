@@ -5,6 +5,7 @@ using castledice_game_logic.GameObjects;
 using castledice_game_logic.Math;
 using castledice_game_logic.MovesLogic;
 using castledice_game_server.Exceptions;
+using castledice_game_server.GameController.General;
 using castledice_game_server.GameController.Moves;
 using static castledice_game_server_tests.ObjectCreationUtility;
 using ILogger = castledice_game_server.Logging.ILogger;
