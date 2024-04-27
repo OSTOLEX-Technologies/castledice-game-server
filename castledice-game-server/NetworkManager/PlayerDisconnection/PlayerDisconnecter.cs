@@ -6,20 +6,17 @@ namespace castledice_game_server.NetworkManager.PlayerDisconnection;
 public class PlayerDisconnecter : IPlayerDisconnecter
 {
     private readonly IClientDisconnecter _clientDisconnecter;
-    private readonly IPlayerClientIdRemover _playerClientIdRemover;
-    private readonly IPlayerClientIdProvider _playerClientIdProvider;
+    private readonly IPlayerToClientIdsMap _idsMap;
 
-    public PlayerDisconnecter(IClientDisconnecter clientDisconnecter, IPlayerClientIdRemover playerClientIdRemover, IPlayerClientIdProvider playerClientIdProvider)
+    public PlayerDisconnecter(IClientDisconnecter clientDisconnecter,  IPlayerToClientIdsMap idsMap)
     {
         _clientDisconnecter = clientDisconnecter;
-        _playerClientIdRemover = playerClientIdRemover;
-        _playerClientIdProvider = playerClientIdProvider;
+        _idsMap = idsMap;
     }
 
     public void DisconnectPlayerWithId(int playerId)
     {
-        var clientId = _playerClientIdProvider.GetClientIdForPlayer(playerId);
+        var clientId = _idsMap.GetClientByPlayer(playerId);
         _clientDisconnecter.DisconnectClient(clientId);
-        _playerClientIdRemover.RemoveClientIdForPlayer(playerId);
     }
 }

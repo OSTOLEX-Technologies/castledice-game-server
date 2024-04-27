@@ -107,7 +107,7 @@ internal class Program
         var playersDictionary = new PlayerToClientIdsMap();
         var errorSender = new ErrorSender(serverWrapper, playersDictionary);
         var idRetriever = new HttpIdRetriever(authBackendConnectionConfig.Url, httpClientWrapper);
-        var playersDisconnecter = new PlayerDisconnecter(serverWrapper, playersDictionary, playersDictionary);
+        var playersDisconnecter = new PlayerDisconnecter(serverWrapper, playersDictionary);
         var httpGameDataRepository = new HttpGameDataRepository(storageBackendConnectionConfig.Url, httpClientWrapper);
         var currentTimeProvider = new CurrentTimeProvider();
         var gameStartDataJsonConverter = new NewtonsoftGameStartDataJsonConverter();
