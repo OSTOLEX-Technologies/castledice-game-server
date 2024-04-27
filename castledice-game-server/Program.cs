@@ -126,7 +126,7 @@ internal class Program
         
         //Setting up players initialization
         var playerInitializationResultDtoSender = new PlayerInitializationResultDTOSender(serverWrapper);
-        var playerInitializationController = new PlayerInitializationController(idRetriever, playersDictionary, playersDictionary, playersDisconnecter, playerInitializationResultDtoSender, loggerWrapper);
+        var playerInitializationController = new PlayerInitializationController(idRetriever, playersDictionary, playersDisconnecter, playerInitializationResultDtoSender, loggerWrapper);
         var playerInitializer = new PlayerInitializer(playerInitializationController);
         InitializePlayerMessageHandler.SetDTOAccepter(playerInitializer);
         

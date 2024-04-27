@@ -36,13 +36,13 @@ public class PlayerInitializationControllerTests
         var retrieverMock = new Mock<IIdRetriever>();
         retrieverMock.Setup(retriever => retriever.RetrievePlayerIdAsync(It.IsAny<string>())).ReturnsAsync(playerId);
         var disconnecterMock = new Mock<IPlayerDisconnecter>();
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
-        clientIdProviderMock.Setup(c => c.PlayerHasClientId(playerId)).Returns(true);
+        var clientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
+        clientIdProviderMock.Setup(c => c.PlayerHasClient(playerId)).Returns(true);
         var initializer = new PlayerInitializerBuilder
         {
             IdRetriever = retrieverMock.Object,
             PlayerDisconnecter = disconnecterMock.Object,
-            PlayerClientIdProvider = clientIdProviderMock.Object
+            IdsMap = clientIdProviderMock.Object
         }.Build();
         
         await initializer.InitializePlayerAsync("token", 0);
@@ -59,13 +59,13 @@ public class PlayerInitializationControllerTests
         var retrieverMock = new Mock<IIdRetriever>();
         retrieverMock.Setup(retriever => retriever.RetrievePlayerIdAsync(It.IsAny<string>())).ReturnsAsync(playerId);
         var disconnecterMock = new Mock<IPlayerDisconnecter>();
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
-        clientIdProviderMock.Setup(c => c.PlayerHasClientId(playerId)).Returns(false);
+        var clientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
+        clientIdProviderMock.Setup(c => c.PlayerHasClient(playerId)).Returns(false);
         var initializer = new PlayerInitializerBuilder
         {
             IdRetriever = retrieverMock.Object,
             PlayerDisconnecter = disconnecterMock.Object,
-            PlayerClientIdProvider = clientIdProviderMock.Object
+            IdsMap = clientIdProviderMock.Object
         }.Build();
         
         await initializer.InitializePlayerAsync("token", 0);
@@ -81,16 +81,16 @@ public class PlayerInitializationControllerTests
     {
         var retrieverMock = new Mock<IIdRetriever>();
         retrieverMock.Setup(retriever => retriever.RetrievePlayerIdAsync(It.IsAny<string>())).ReturnsAsync(playerId);
-        var clientIdSaverMock = new Mock<IPlayerClientIdSaver>();
+        var clientIdSaverMock = new Mock<IPlayerToClientIdsMap>();
         var initializer = new PlayerInitializerBuilder
         {
             IdRetriever = retrieverMock.Object,
-            PlayerClientIdSaver = clientIdSaverMock.Object
+            IdsMap = clientIdSaverMock.Object
         }.Build();
         
         await initializer.InitializePlayerAsync("token", clientId);
         
-        clientIdSaverMock.Verify(saver => saver.SaveClientIdForPlayer(playerId, clientId), Times.Once);
+        clientIdSaverMock.Verify(saver => saver.SaveClientToPlayer(playerId, clientId), Times.Once);
     }
 
     [Fact]
@@ -147,15 +147,14 @@ public class PlayerInitializationControllerTests
     private class PlayerInitializerBuilder
     {
         public IIdRetriever IdRetriever { get; set; } = new Mock<IIdRetriever>().Object;
-        public IPlayerClientIdSaver PlayerClientIdSaver { get; set; } = new Mock<IPlayerClientIdSaver>().Object;
-        public IPlayerClientIdProvider PlayerClientIdProvider { get; set; } = new Mock<IPlayerClientIdProvider>().Object;
+        public IPlayerToClientIdsMap IdsMap { get; set; } = new Mock<IPlayerToClientIdsMap>().Object;
         public IPlayerDisconnecter PlayerDisconnecter { get; set; } = new Mock<IPlayerDisconnecter>().Object;
         public IPlayerInitializationResultDTOSender PlayerInitializationResultDtoSender { get; set; } = new Mock<IPlayerInitializationResultDTOSender>().Object;
         public ILogger Logger { get; set; } = new Mock<ILogger>().Object;
         
         public PlayerInitializationController Build()
         {
-            return new PlayerInitializationController(IdRetriever, PlayerClientIdSaver, PlayerClientIdProvider, PlayerDisconnecter, PlayerInitializationResultDtoSender, Logger);
+            return new PlayerInitializationController(IdRetriever, IdsMap, PlayerDisconnecter, PlayerInitializationResultDtoSender, Logger);
         }
     }
 
