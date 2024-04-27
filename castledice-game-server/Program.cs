@@ -30,6 +30,7 @@ using castledice_game_server.GameController.GameOver;
 using castledice_game_server.GameController.General;
 using castledice_game_server.GameController.Moves;
 using castledice_game_server.GameController.PlayerInitialization;
+using castledice_game_server.GameController.PlayersDisconnectHandling;
 using castledice_game_server.GameController.PlayersReadiness;
 using castledice_game_server.GameController.Timers;
 using castledice_game_server.GameRepository;
@@ -130,6 +131,11 @@ internal class Program
         var playerInitializationController = new PlayerInitializationController(idRetriever, playersDictionary, playersDisconnecter, playerInitializationResultDtoSender, loggerWrapper);
         var playerInitializer = new PlayerInitializer(playerInitializationController);
         InitializePlayerMessageHandler.SetDTOAccepter(playerInitializer);
+        
+        //Setting up player disconnect handling
+        var playerDisconnectedEventEmitter = new PlayerDisconnectedEventEmitter(serverWrapper, playersDictionary);
+        var playerDisconnectController = new PlayerDisconnectController(playerDisconnectedEventEmitter, playersDictionary, activeGamesCollection, 
+            new GameForPlayerProvider(activeGamesCollection), new PlayerDisconnectedSender(serverWrapper, playersDictionary));
         
         //Setting up game initialization
         var castlesFactoryProvider = new CastlesFactoryCreator(CastleConfigCreator);
