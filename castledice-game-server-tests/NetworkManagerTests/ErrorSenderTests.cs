@@ -16,7 +16,7 @@ public class ErrorSenderTests
     public void SendErrorToPlayer_ShouldSendMessageOnce()
     {
         var messageSenderMock = new Mock<IMessageSenderById>();
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        var clientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
         var errorSender = new ErrorSender(messageSenderMock.Object, clientIdProviderMock.Object);
         
         errorSender.SendErrorToPlayer(new ErrorData(ErrorType.GameNotSaved, "Test error message"), 1);
@@ -31,7 +31,7 @@ public class ErrorSenderTests
     public void SendErrorToPlayer_ShouldSendProperServerErrorDTO(string errorMessage, ErrorType errorType)
     {
         var messageSender = new TestMessageSenderById();
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        var clientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
         var expectedDTO = new ServerErrorDTO(new ErrorData(errorType, errorMessage));
         var errorSender = new ErrorSender(messageSender, clientIdProviderMock.Object);
         
@@ -50,8 +50,8 @@ public class ErrorSenderTests
     public void SendErrorToPlayer_ShouldSendMessageToClientId_FromGivenProvider(int playerId, ushort clientId)
     {
         var messageSenderMock = new Mock<IMessageSenderById>();
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
-        clientIdProviderMock.Setup(provider => provider.GetClientIdForPlayer(playerId)).Returns(clientId);
+        var clientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
+        clientIdProviderMock.Setup(provider => provider.GetClientByPlayer(playerId)).Returns(clientId);
         var errorSender = new ErrorSender(messageSenderMock.Object, clientIdProviderMock.Object);
         
         errorSender.SendErrorToPlayer(new ErrorData(ErrorType.GameNotSaved, "Test error message"), playerId);
@@ -63,7 +63,7 @@ public class ErrorSenderTests
     public void SendErrorToPlayer_ShouldSendMessage_WithErrorMessageId()
     {
         var messageSender = new TestMessageSenderById();
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        var clientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
         var errorSender = new ErrorSender(messageSender, clientIdProviderMock.Object);
         
         errorSender.SendErrorToPlayer(new ErrorData(ErrorType.GameNotSaved, "Test error message"), 1);
