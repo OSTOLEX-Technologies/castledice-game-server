@@ -10,18 +10,18 @@ namespace castledice_game_server.NetworkManager;
 public class CancelGameResultRetranslator : ICancelGameResultDTOAccepter
 {
     private readonly IMessageSenderById _messageSender;
-    private readonly IPlayerClientIdProvider _playerClientIdProvider;
+    private readonly IPlayerToClientIdsMap _idsMap;
 
-    public CancelGameResultRetranslator(IMessageSenderById messageSender, IPlayerClientIdProvider playerClientIdProvider)
+    public CancelGameResultRetranslator(IMessageSenderById messageSender, IPlayerToClientIdsMap idsMap)
     {
         _messageSender = messageSender;
-        _playerClientIdProvider = playerClientIdProvider;
+        _idsMap = idsMap;
     }
 
     public void AcceptCancelGameResultDTO(CancelGameResultDTO dto)
     {
         var playerId = dto.PlayerId;
-        var clientId = _playerClientIdProvider.GetClientIdForPlayer(playerId);
+        var clientId = _idsMap.GetClientByPlayer(playerId);
         var message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientMessageType.CancelGame);
         message.AddCancelGameResultDTO(dto);
         _messageSender.Send(message, clientId);

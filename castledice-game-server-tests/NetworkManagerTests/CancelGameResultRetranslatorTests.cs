@@ -19,8 +19,8 @@ public class CancelGameResultRetranslatorTests
     {
         var DTO = new CancelGameResultDTO(false, playerId);
         var messageSenderMock = new Mock<IMessageSenderById>();
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
-        clientIdProviderMock.Setup(provider => provider.GetClientIdForPlayer(playerId)).Returns(clientId);
+        var clientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
+        clientIdProviderMock.Setup(provider => provider.GetClientByPlayer(playerId)).Returns(clientId);
         var retranslator = new CancelGameResultRetranslator(messageSenderMock.Object, clientIdProviderMock.Object);
         
         retranslator.AcceptCancelGameResultDTO(DTO);
