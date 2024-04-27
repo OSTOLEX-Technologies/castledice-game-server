@@ -105,7 +105,7 @@ internal class Program
         var clientWrapper = new ClientWrapper(matchMakerClient);
         
         //Setting up common objects
-        var playersDictionary = new PlayerToClientDictionary();
+        var playersDictionary = new PlayerToClientIdsMap();
         var errorSender = new ErrorSender(serverWrapper, playersDictionary);
         var idRetriever = new HttpIdRetriever(authBackendConnectionConfig.Url, httpClientWrapper);
         var playersDisconnecter = new PlayerDisconnecter(serverWrapper, playersDictionary, playersDictionary);
