@@ -10,12 +10,12 @@ namespace castledice_game_server.NetworkManager.Senders;
 public class GameStartDataSender : IGameStartDataSender
 {
     private readonly IMessageSenderById _messageSender;
-    private readonly IPlayerClientIdProvider _playerClientIdProvider;
+    private readonly IPlayerToClientIdsMap _idsMap;
 
-    public GameStartDataSender(IMessageSenderById messageSender, IPlayerClientIdProvider playerClientIdProvider)
+    public GameStartDataSender(IMessageSenderById messageSender, IPlayerToClientIdsMap idsMap)
     {
         _messageSender = messageSender;
-        _playerClientIdProvider = playerClientIdProvider;
+        _idsMap = idsMap;
     }
 
     public void SendGameStartData(GameStartData data)
@@ -27,7 +27,7 @@ public class GameStartDataSender : IGameStartDataSender
 
     private List<ushort> GetClientIds(List<int> playerIds)
     {
-        return playerIds.Select(id => _playerClientIdProvider.GetClientIdForPlayer(id)).ToList();
+        return playerIds.Select(id => _idsMap.GetClientByPlayer(id)).ToList();
     }
 
     private void SendDTOToClients(CreateGameDTO dto, List<ushort> clientsIds)

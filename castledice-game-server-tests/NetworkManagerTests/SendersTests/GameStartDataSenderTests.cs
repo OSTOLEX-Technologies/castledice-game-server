@@ -18,10 +18,10 @@ public class GameStartDataSenderTests
     {
         var messageSenderMock = new Mock<IMessageSenderById>();
         var gameStartData = GetGameStartData(playersToClientsIds.Keys.ToArray());
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        var clientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
         foreach (var playersToClientsId in playersToClientsIds)
         {
-            clientIdProviderMock.Setup(provider => provider.GetClientIdForPlayer(playersToClientsId.Key)).Returns(playersToClientsId.Value);
+            clientIdProviderMock.Setup(provider => provider.GetClientByPlayer(playersToClientsId.Key)).Returns(playersToClientsId.Value);
         }
         var gameStartDataSender = new GameStartDataSender(messageSenderMock.Object, clientIdProviderMock.Object);
         
@@ -61,9 +61,9 @@ public class GameStartDataSenderTests
         var secondPlayerId = 2;
         var gameStartData = GetGameStartData(firstPlayerId, secondPlayerId);
         var messageSender = new TestMessageSenderById();
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
-        clientIdProviderMock.Setup(provider => provider.GetClientIdForPlayer(firstPlayerId)).Returns(3);
-        clientIdProviderMock.Setup(provider => provider.GetClientIdForPlayer(secondPlayerId)).Returns(4);
+        var clientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
+        clientIdProviderMock.Setup(provider => provider.GetClientByPlayer(firstPlayerId)).Returns(3);
+        clientIdProviderMock.Setup(provider => provider.GetClientByPlayer(secondPlayerId)).Returns(4);
         var gameStartDataSender = new GameStartDataSender(messageSender, clientIdProviderMock.Object);
         var expectedDTO = new CreateGameDTO(gameStartData);
         
@@ -80,7 +80,7 @@ public class GameStartDataSenderTests
     {
         var gameStartData = GetGameStartData(1, 2);
         var messageSender = new TestMessageSenderById();
-        var clientIdProviderMock = new Mock<IPlayerClientIdProvider>();
+        var clientIdProviderMock = new Mock<IPlayerToClientIdsMap>();
         var gameStartDataSender = new GameStartDataSender(messageSender, clientIdProviderMock.Object);
         
         gameStartDataSender.SendGameStartData(gameStartData);
