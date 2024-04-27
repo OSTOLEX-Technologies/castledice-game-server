@@ -10,17 +10,17 @@ namespace castledice_game_server.NetworkManager.Senders;
 public class ActionPointsSender : IActionPointsSender
 {
     private readonly IMessageSenderById _messageSender;
-    private readonly IPlayerClientIdProvider _playerClientIdProvider;
+    private readonly IPlayerToClientIdsMap _idsMap;
 
-    public ActionPointsSender(IMessageSenderById messageSender, IPlayerClientIdProvider playerClientIdProvider)
+    public ActionPointsSender(IMessageSenderById messageSender, IPlayerToClientIdsMap idsMap)
     {
         _messageSender = messageSender;
-        _playerClientIdProvider = playerClientIdProvider;
+        _idsMap = idsMap;
     }
 
     public void SendActionPoints(int amount, int actionPointsAccepterId, int messageAccepterId)
     {
-        var clientId = _playerClientIdProvider.GetClientIdForPlayer(messageAccepterId);
+        var clientId = _idsMap.GetClientByPlayer(messageAccepterId);
         var message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientMessageType.GiveActionPoints);
         var DTO = new GiveActionPointsDTO(actionPointsAccepterId, amount);
         message.AddGiveActionPointsDTO(DTO);

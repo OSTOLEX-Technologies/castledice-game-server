@@ -17,8 +17,8 @@ public class ActionPointsSenderTests
     [InlineData(3, 123)]
     public void SendActionPoints_ShouldSendMessage_ToAppropriateClient(int messageAccepterId, ushort clientId)
     {
-        var clientProviderMock = new Mock<IPlayerClientIdProvider>();
-        clientProviderMock.Setup(provider => provider.GetClientIdForPlayer(messageAccepterId)).Returns(clientId);
+        var clientProviderMock = new Mock<IPlayerToClientIdsMap>();
+        clientProviderMock.Setup(provider => provider.GetClientByPlayer(messageAccepterId)).Returns(clientId);
         var messageSenderMock = new Mock<IMessageSenderById>();
         var actionPointsSender = new ActionPointsSender(messageSenderMock.Object, clientProviderMock.Object);
         
@@ -34,7 +34,7 @@ public class ActionPointsSenderTests
     public void SendActionPoints_ShouldSendMessage_WithAppropriateGiveActionPointsDTO(int amount,
         int actionPointsAccepterId, int messageAccepterId)
     {
-        var clientProviderMock = new Mock<IPlayerClientIdProvider>();
+        var clientProviderMock = new Mock<IPlayerToClientIdsMap>();
         var messageSender = new TestMessageSenderById();
         var actionPointsSender = new ActionPointsSender(messageSender, clientProviderMock.Object);
         var expectedDTO = new GiveActionPointsDTO(actionPointsAccepterId, amount);
@@ -50,7 +50,7 @@ public class ActionPointsSenderTests
     [Fact]
     public void SendActionPoints_ShouldSendMessage_WithGiveActionPointsMessageId()
     {
-        var clientProviderMock = new Mock<IPlayerClientIdProvider>();
+        var clientProviderMock = new Mock<IPlayerToClientIdsMap>();
         var messageSender = new TestMessageSenderById();
         var actionPointsSender = new ActionPointsSender(messageSender, clientProviderMock.Object);
         
