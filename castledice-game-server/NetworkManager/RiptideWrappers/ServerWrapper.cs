@@ -1,14 +1,21 @@
 ﻿using Riptide;
+using Riptide.Transports;
 
 namespace castledice_game_server.NetworkManager.RiptideWrappers;
 
-public class ServerWrapper : IMessageSenderById, IClientDisconnecter
+public class ServerWrapper : IServerWrapper
 {
     private readonly Server _server;
 
     public ServerWrapper(Server server)
     {
         _server = server;
+        _server.ClientDisconnected += OnClientDisconnected;
+    }
+
+    private void OnClientDisconnected(object? sender, ServerDisconnectedEventArgs e)
+    {
+        ClientDisconnected?.Invoke(this, e);
     }
 
     public void Send(Message message, ushort clientId)
@@ -30,4 +37,8 @@ public class ServerWrapper : IMessageSenderById, IClientDisconnecter
     {
         _server.DisconnectClient(clientId, message);
     }
+
+    public Server Server => _server;
+    
+    public event EventHandler<ServerDisconnectedEventArgs>? ClientDisconnected;
 }
