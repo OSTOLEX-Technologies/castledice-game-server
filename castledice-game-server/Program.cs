@@ -108,8 +108,9 @@ internal class Program
         //Setting up common objects
         var playersDictionary = new PlayerToClientIdsMap();
         var errorSender = new ErrorSender(serverWrapper, playersDictionary);
-        var idRetriever = new HttpIdRetriever(authBackendConnectionConfig.Url, httpClientWrapper);
-        var playersDisconnecter = new PlayerDisconnecter(serverWrapper, playersDictionary);
+        var httpIdRetriever = new HttpIdRetriever(authBackendConnectionConfig.Url, httpClientWrapper);
+        var idRetriever = new CachingIdRetrieverDecorator(httpIdRetriever);
+        var playersDisconnecter = new PlayerDisconnecter(serverWrapper, playersDictionary, playersDictionary);
         var httpGameDataRepository = new HttpGameDataRepository(storageBackendConnectionConfig.Url, httpClientWrapper);
         var currentTimeProvider = new CurrentTimeProvider();
         var gameStartDataJsonConverter = new NewtonsoftGameStartDataJsonConverter();
