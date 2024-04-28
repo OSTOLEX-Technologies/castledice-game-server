@@ -110,7 +110,7 @@ internal class Program
         var errorSender = new ErrorSender(serverWrapper, playersDictionary);
         var httpIdRetriever = new HttpIdRetriever(authBackendConnectionConfig.Url, httpClientWrapper);
         var idRetriever = new CachingIdRetrieverDecorator(httpIdRetriever);
-        var playersDisconnecter = new PlayerDisconnecter(serverWrapper, playersDictionary, playersDictionary);
+        var playersDisconnecter = new PlayerDisconnecter(serverWrapper, playersDictionary);
         var httpGameDataRepository = new HttpGameDataRepository(storageBackendConnectionConfig.Url, httpClientWrapper);
         var currentTimeProvider = new CurrentTimeProvider();
         var gameStartDataJsonConverter = new NewtonsoftGameStartDataJsonConverter();
