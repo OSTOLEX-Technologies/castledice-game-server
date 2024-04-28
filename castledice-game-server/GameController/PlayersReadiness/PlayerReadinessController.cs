@@ -1,7 +1,6 @@
 ﻿using castledice_game_logic;
 using castledice_game_server.Auth;
 using castledice_game_server.GameController.General;
-using castledice_game_server.GameController.Moves;
 using castledice_game_server.Logging;
 
 namespace castledice_game_server.GameController.PlayersReadiness;
@@ -12,15 +11,31 @@ public class PlayerReadinessController : IPlayersReadinessController
     private readonly IGameForPlayerProvider _gameForPlayerProvider;
     private readonly IPlayersReadinessTracker _playersReadinessTracker;
     private readonly IGamePlayersReadinessNotifier _gamePlayersReadinessNotifier;
+    private readonly IGamesCollection _gamesCollection;
     private readonly ILogger _logger;
 
-    public PlayerReadinessController(IIdRetriever idRetriever, IGameForPlayerProvider gameForPlayerProvider, IPlayersReadinessTracker playersReadinessTracker, IGamePlayersReadinessNotifier gamePlayersReadinessNotifier, ILogger logger)
+    public PlayerReadinessController(IIdRetriever idRetriever, 
+        IGameForPlayerProvider gameForPlayerProvider, 
+        IPlayersReadinessTracker playersReadinessTracker, 
+        IGamePlayersReadinessNotifier gamePlayersReadinessNotifier,
+        IGamesCollection gamesCollection,
+        ILogger logger)
     {
         _idRetriever = idRetriever;
         _gameForPlayerProvider = gameForPlayerProvider;
         _playersReadinessTracker = playersReadinessTracker;
         _gamePlayersReadinessNotifier = gamePlayersReadinessNotifier;
         _logger = logger;
+        _gamesCollection = gamesCollection;
+        _gamesCollection.GameRemoved += OnGameRemoved;
+    }
+
+    private void OnGameRemoved(object? sender, Game e)
+    {
+        foreach (var playerId in e.GetAllPlayersIds())
+        {
+            _playersReadinessTracker.SetPlayerReadiness(playerId, false);
+        }
     }
 
     public async Task SetPlayerReadyAsync(string token)

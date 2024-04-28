@@ -184,7 +184,7 @@ internal class Program
        var playersReadinessTracker = new PlayersReadinessTracker();
        var gamePlayersReadinessNotifier = new GamePlayersReadinessNotifier();
        var playerReadinessController = new PlayerReadinessController(idRetriever, gameForPlayerProvider,
-           playersReadinessTracker, gamePlayersReadinessNotifier, loggerWrapper);
+           playersReadinessTracker, gamePlayersReadinessNotifier,  activeGamesCollection, loggerWrapper);
        var playerReadinessAccepter = new PlayerReadinessAccepter(playerReadinessController);
        PlayerReadyMessageHandler.SetAccepter(playerReadinessAccepter);
         
