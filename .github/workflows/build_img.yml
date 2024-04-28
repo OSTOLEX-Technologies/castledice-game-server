@@ -3,7 +3,7 @@ name: Build ARM image and Publish to ECR
 on:
   push:
     branches:
-      - develop
+      - feature/simple_disconnect_handling
 
 env:
   BUILD_PATH: './app/build/'
