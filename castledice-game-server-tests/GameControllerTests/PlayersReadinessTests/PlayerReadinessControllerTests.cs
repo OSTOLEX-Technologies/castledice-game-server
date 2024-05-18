@@ -1,5 +1,6 @@
 ﻿using castledice_game_logic;
 using castledice_game_server.Auth;
+using castledice_game_server.GameController;
 using castledice_game_server.GameController.General;
 using static castledice_game_server_tests.ObjectCreationUtility;
 using castledice_game_server.GameController.Moves;
@@ -136,11 +137,17 @@ public class PlayerReadinessControllerTests
         public IGameForPlayerProvider GameForPlayerProvider { get; set; } = GetGameForPlayerProviderMock().Object;
         public IPlayersReadinessTracker PlayersReadinessTracker { get; set; } = new Mock<IPlayersReadinessTracker>().Object;
         public IGamePlayersReadinessNotifier GamePlayersReadinessNotifier { get; set; } = new Mock<IGamePlayersReadinessNotifier>().Object;
+        public IGamesCollection GamesCollection { get; set; } = new Mock<IGamesCollection>().Object;
         public ILogger Logger { get; set; } = new Mock<ILogger>().Object;
         
         public PlayerReadinessController Build()
         {
-            return new PlayerReadinessController(IdRetriever, GameForPlayerProvider, PlayersReadinessTracker, GamePlayersReadinessNotifier, Logger);
+            return new PlayerReadinessController(IdRetriever, 
+                GameForPlayerProvider, 
+                PlayersReadinessTracker, 
+                GamePlayersReadinessNotifier, 
+                GamesCollection, 
+                Logger);
         }
     }
 }
