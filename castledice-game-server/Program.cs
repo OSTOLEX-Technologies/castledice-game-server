@@ -70,7 +70,7 @@ internal class Program
     {
         TscType.SwitchByActionPoints
     });
-    private static readonly IPlayerTimeSpanCreator PlayerTimeSpanCreator = new DefaultPlayerTimeSpanCreator(TimeSpan.FromMinutes(1));
+    private static readonly IPlayerTimeSpanCreator PlayerTimeSpanCreator = new DefaultPlayerTimeSpanCreator(TimeSpan.FromMinutes(10));
 
     private static readonly string GameStartDataVersion = "1.0.0";
 
