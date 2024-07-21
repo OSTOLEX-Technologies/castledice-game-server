@@ -9,6 +9,7 @@ namespace castledice_game_server.NetworkManager;
 public class RequestGameRetranslator : IRequestGameDTOAccepter
 {
     private readonly IMessageSender _messageSender;
+    private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
     public RequestGameRetranslator(IMessageSender messageSender)
     {
@@ -17,6 +18,7 @@ public class RequestGameRetranslator : IRequestGameDTOAccepter
 
     public void AcceptRequestGameDTO(RequestGameDTO requestGameDTO, ushort clientId)
     {
+        _logger.Debug($"Retranslating request game message for client with verification key: {requestGameDTO.VerificationKey}");
         var message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerMessageType.RequestGame);
         message.AddRequestGameDTO(requestGameDTO);
         _messageSender.Send(message);

@@ -9,6 +9,7 @@ namespace castledice_game_server.NetworkManager;
 public class CancelGameRetranslator : ICancelGameDTOAccepter
 {
     private readonly IMessageSender _messageSender;
+    private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
     public CancelGameRetranslator(IMessageSender messageSender)
     {
@@ -17,6 +18,7 @@ public class CancelGameRetranslator : ICancelGameDTOAccepter
 
     public void AcceptCancelGameDTO(CancelGameDTO dto, ushort clientId)
     {
+        _logger.Debug($"Retranslating cancel game message for client with verification key: {dto.VerificationKey}");
         var message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerMessageType.CancelGame);
         message.AddCancelGameDTO(dto);
         _messageSender.Send(message);

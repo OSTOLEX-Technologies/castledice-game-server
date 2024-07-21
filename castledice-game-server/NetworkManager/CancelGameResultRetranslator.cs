@@ -11,6 +11,7 @@ public class CancelGameResultRetranslator : ICancelGameResultDTOAccepter
 {
     private readonly IMessageSenderById _messageSender;
     private readonly IPlayerToClientIdsMap _idsMap;
+    private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
     public CancelGameResultRetranslator(IMessageSenderById messageSender, IPlayerToClientIdsMap idsMap)
     {
@@ -22,6 +23,7 @@ public class CancelGameResultRetranslator : ICancelGameResultDTOAccepter
     {
         var playerId = dto.PlayerId;
         var clientId = _idsMap.GetClientByPlayer(playerId);
+        _logger.Debug($"Retranslating cancel game result message to client id {clientId}");
         var message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientMessageType.CancelGame);
         message.AddCancelGameResultDTO(dto);
         _messageSender.Send(message, clientId);
