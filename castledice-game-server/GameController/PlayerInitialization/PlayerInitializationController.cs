@@ -32,11 +32,15 @@ public class PlayerInitializationController : IPlayerInitializationController
         try
         {
             var playerId = await _idRetriever.RetrievePlayerIdAsync(playerToken);
+            _logger.Debug($"Initializing player with id {playerId} and client id {clientId}");
             if (_idsMap.PlayerHasClient(playerId))
             {
+                _logger.Debug($"Player with id {playerId} already has a client id assigned. Disconnecting the old client.");
                 _playerDisconnecter.DisconnectPlayerWithId(playerId);
             }
             _idsMap.SaveClientToPlayer(playerId, clientId);
+            _logger.Debug($"Player with id {playerId} successfully initialized with client id {clientId}");
+            _logger.Debug($"Sending initialization result to client with id {clientId}");
             _playerInitializationResultDtoSender.SendInitializationResult(clientId, new PlayerInitializationResultDTO(true));
         }
         catch (Exception e)
