@@ -20,7 +20,7 @@ public class PlayerInitializationController : IPlayerInitializationController
         IPlayerInitializationResultDTOSender playerInitializationResultDtoSender,
         ILogger logger)
     {
-        _idRetriever = idRetriever;
+        _idRetriever = idRetriever; 
         _idsMap = idsMap;
         _playerDisconnecter = playerDisconnecter;
         _playerInitializationResultDtoSender = playerInitializationResultDtoSender;
