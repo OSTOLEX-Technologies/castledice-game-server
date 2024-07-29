@@ -103,6 +103,11 @@ internal class Program
         var serverWrapper = new ServerWrapper(gameServer);
         var matchMakerClient = new Client(new TcpClient());
         matchMakerClient.Connect($"{matchMakerConnectionConfig.Ip}:{matchMakerConnectionConfig.Port}");
+        matchMakerClient.Disconnected += (sender, e) =>
+        {
+            Logger.Info( $"Matchmaker disconnected. Reason: {e.Reason}");
+            matchMakerClient.Connect($"{matchMakerConnectionConfig.Ip}:{matchMakerConnectionConfig.Port}");
+        };
         var clientWrapper = new ClientWrapper(matchMakerClient);
         
         //Setting up common objects
