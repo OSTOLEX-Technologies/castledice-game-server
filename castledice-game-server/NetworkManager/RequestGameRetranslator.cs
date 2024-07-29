@@ -18,7 +18,7 @@ public class RequestGameRetranslator : IRequestGameDTOAccepter
 
     public void AcceptRequestGameDTO(RequestGameDTO requestGameDTO, ushort clientId)
     {
-        _logger.Debug($"Retranslating request game message for client with verification key: {requestGameDTO.VerificationKey}");
+        _logger.Info($"Retranslating request game message for client with verification key: {requestGameDTO.VerificationKey}");
         var message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerMessageType.RequestGame);
         message.AddRequestGameDTO(requestGameDTO);
         _messageSender.Send(message);

@@ -23,7 +23,7 @@ public class CancelGameResultRetranslator : ICancelGameResultDTOAccepter
     {
         var playerId = dto.PlayerId;
         var clientId = _idsMap.GetClientByPlayer(playerId);
-        _logger.Debug($"Retranslating cancel game result message to client id {clientId}");
+        _logger.Info($"Retranslating cancel game result message to client id {clientId}");
         var message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientMessageType.CancelGame);
         message.AddCancelGameResultDTO(dto);
         _messageSender.Send(message, clientId);

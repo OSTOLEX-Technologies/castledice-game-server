@@ -19,7 +19,7 @@ public static class CancelGameResultMessageHandler
     [MessageHandler((ushort)ServerToClientMessageType.CancelGame)]
     private static void HandleCancelGameResultMessage(Message message)
     {
-        _logger.Debug("Handling cancel game result message");
+        _logger.Info("Handling cancel game result message");
         _dtoAccepter.AcceptCancelGameResultDTO(message.GetCancelGameResultDTO());
     }
 }
